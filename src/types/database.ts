@@ -189,6 +189,15 @@ export interface Database {
           label: string;
           slug: string;
           style?: Json;
+        },
+        {
+          apartment_id?: string;
+          target_type?: "apartment" | "guide_section" | "room" | "room_item";
+          target_id?: string;
+          label?: string;
+          slug?: string;
+          style?: Json;
+          scan_count?: number;
         }
       >;
       qr_scans: Table<
@@ -264,6 +273,19 @@ export interface Database {
           video_url?: string | null;
           assigned_to?: string | null;
           due_date?: string | null;
+        },
+        {
+          room_id?: string | null;
+          title?: string;
+          description?: string | null;
+          category?: "electrical" | "water" | "furniture" | "appliances" | "cleaning" | "safety" | "other";
+          priority?: "low" | "medium" | "high" | "urgent";
+          status?: "open" | "in_progress" | "resolved" | "closed";
+          photo_url?: string | null;
+          video_url?: string | null;
+          assigned_to?: string | null;
+          due_date?: string | null;
+          resolved_at?: string | null;
         }
       >;
       maintenance_events: Table<

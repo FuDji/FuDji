@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { apartmentSchema } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
+import { createQrCode } from "@/lib/data/qr";
 
 export type FormState = { error?: string } | undefined;
 
@@ -78,6 +79,20 @@ export async function createApartment(_prev: FormState, formData: FormData): Pro
     .single();
 
   if (error) return { error: error.message };
+
+  const { data: created } = await supabase
+    .from("apartments")
+    .select("id")
+    .eq("slug", data.slug)
+    .single();
+  if (created) {
+    await createQrCode(supabase, {
+      apartmentId: created.id,
+      targetType: "apartment",
+      targetId: created.id,
+      label: `${parsed.data.name} — Main QR`,
+    });
+  }
 
   revalidatePath("/apartments");
   revalidatePath("/dashboard");
