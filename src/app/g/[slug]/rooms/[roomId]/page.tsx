@@ -84,7 +84,6 @@ export default async function GuestRoomPage({
 
               {item.video_url && (
                 <div className="mt-3 aspect-video w-full overflow-hidden rounded-xl bg-secondary">
-                  {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
                   <video src={item.video_url} controls className="h-full w-full object-cover" />
                 </div>
               )}

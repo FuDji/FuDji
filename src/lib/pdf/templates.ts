@@ -11,7 +11,7 @@ import {
   sectionTitle,
   PDF_LAYOUT,
 } from "@/lib/pdf/builder";
-import type { Apartment, EmergencyContact, GuideSection, Room, InventoryItem, QrCode as QrCodeRow } from "@/types";
+import type { Apartment, EmergencyContact, GuideSection, Room, InventoryItem } from "@/types";
 
 function save(doc: ReturnType<typeof createDoc>, filename: string) {
   doc.save(filename);
@@ -28,9 +28,9 @@ function textOfSection(section?: GuideSection) {
 
 export function generateHouseRulesPdf(apartment: Apartment, houseRulesSection?: GuideSection) {
   const doc = createDoc();
-  let y = drawHeader(doc, apartment.name, "House Rules");
+  const y = drawHeader(doc, apartment.name, "House Rules");
   const text = textOfSection(houseRulesSection) || "House rules have not been added yet.";
-  y = bodyText(doc, text, y);
+  bodyText(doc, text, y);
   drawFooter(doc, apartment.name, 1);
   save(doc, `${apartment.slug}-house-rules.pdf`);
 }
@@ -38,9 +38,9 @@ export function generateHouseRulesPdf(apartment: Apartment, houseRulesSection?: 
 export function generateWifiCardPdf(apartment: Apartment) {
   const doc = createDoc();
   drawHeader(doc, apartment.name, "WiFi Access");
-  let y = 70;
-  y = labelValue(doc, "Network", apartment.wifi_name || "—", y);
-  y = labelValue(doc, "Password", apartment.wifi_password || "—", y + 6);
+  const y = 70;
+  const y2 = labelValue(doc, "Network", apartment.wifi_name || "—", y);
+  labelValue(doc, "Password", apartment.wifi_password || "—", y2 + 6);
   drawFooter(doc, apartment.name, 1);
   save(doc, `${apartment.slug}-wifi-card.pdf`);
 }
@@ -61,8 +61,8 @@ export function generateEmergencyContactsPdf(apartment: Apartment, contacts: Eme
 
 export function generateParkingPdf(apartment: Apartment) {
   const doc = createDoc();
-  let y = drawHeader(doc, apartment.name, "Parking Instructions");
-  y = bodyText(doc, apartment.parking_info || "Parking instructions have not been added yet.", y);
+  const y = drawHeader(doc, apartment.name, "Parking Instructions");
+  bodyText(doc, apartment.parking_info || "Parking instructions have not been added yet.", y);
   drawFooter(doc, apartment.name, 1);
   save(doc, `${apartment.slug}-parking.pdf`);
 }

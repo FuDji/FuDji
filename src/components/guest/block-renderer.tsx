@@ -33,7 +33,6 @@ export function BlockRenderer({ block }: { block: GuideBlock }) {
           {embed ? (
             <iframe src={embed} className="h-full w-full" allowFullScreen />
           ) : (
-            // eslint-disable-next-line jsx-a11y/media-has-caption
             <video src={block.url} controls className="h-full w-full object-cover" />
           )}
         </div>

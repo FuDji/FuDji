@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FuDji
 
-## Getting Started
+The guest experience layer for independent hosts. FuDji starts where the booking ends — digital
+guest guides, room-by-room instructions, QR codes, inventory and maintenance tracking, all in one
+premium dashboard.
 
-First, run the development server:
+## Stack
+
+Next.js 16 (App Router, Turbopack) · TypeScript · Tailwind CSS v4 · Supabase (Postgres + Auth) ·
+React Query · Zod · React Hook Form · Framer Motion · Recharts · `qrcode` · `jspdf`
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 1. Create a Supabase project
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create a project at [supabase.com](https://supabase.com), then run the SQL files in
+`supabase/migrations/` **in order** (0001, 0002, 0003) via the SQL Editor — they create every
+table, RLS policy, and the cleaner-report trigger.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 2. Configure environment variables
 
-## Learn More
+Fill in `.env.local`:
 
-To learn more about Next.js, take a look at the following resources:
+```
+NEXT_PUBLIC_SUPABASE_URL=          # Project Settings → API
+NEXT_PUBLIC_SUPABASE_ANON_KEY=     # Project Settings → API
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+ANTHROPIC_API_KEY=                 # optional — powers the AI concierge; falls back to a
+                                    # simple keyword search over the guide content if unset
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Run it
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm dev
+```
 
-## Deploy on Vercel
+## Deploying without GitHub
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+You can deploy straight from this folder with the Vercel CLI — no repo required:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npx vercel
+```
+
+Add the environment variables above in the Vercel project settings (Production + Preview), then
+redeploy.
+
+## Project structure
+
+- `src/app/(auth)` — login, register, forgot/reset password, email verification
+- `src/app/dashboard`, `src/app/apartments` — owner-facing app, global shell
+- `src/app/apartments/[slug]/*` — per-apartment sections (Overview, Guest Guide, Room Guides,
+  QR Codes, Inventory, Maintenance, Analytics, Print Center, Settings)
+- `src/app/g/[slug]` — public, no-login guest page (mobile-first)
+- `src/app/qr/[slug]` — QR redirect + scan-tracking route
+- `src/app/api/concierge` — AI concierge endpoint
+- `src/lib/data/*` — Supabase data-access functions
+- `src/lib/pdf/*` — Print Center PDF templates
+- `supabase/migrations/*` — database schema, RLS policies, triggers
+
+## Notes
+
+- Every room and room item automatically gets its own permanent QR code (`/qr/[slug]`) that
+  redirects to the current guest-facing content and logs a scan.
+- The AI concierge answers only from the apartment's own guide/room content (guest guide sections,
+  room instructions, FAQs) — no external knowledge, no booking data.
+- Analytics deliberately excludes booking revenue, per product scope.

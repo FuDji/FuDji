@@ -5,7 +5,6 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { updateNotificationPreferences } from "@/app/apartments/actions";
