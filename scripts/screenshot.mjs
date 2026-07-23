@@ -5,6 +5,8 @@ const pages = [
   { url: "http://localhost:3000/", file: "landing.png", full: true },
   { url: "http://localhost:3000/login", file: "login.png", full: false },
   { url: "http://localhost:3000/register", file: "register.png", full: false },
+  { url: "http://localhost:3000/forgot-password", file: "forgot-password.png", full: false },
+  { url: "http://localhost:3000/verify-email", file: "verify-email.png", full: false },
 ];
 
 const outDir = process.argv[2] || "/tmp/screens";
