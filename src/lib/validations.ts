@@ -92,6 +92,15 @@ export const maintenanceIssueSchema = z.object({
   photo_url: z.string().url().optional().or(z.literal("")),
 });
 
+export const apartmentBrandingSchema = z.object({
+  logo_url: z.string().url().optional().or(z.literal("")),
+  brand_color: z.string().optional().or(z.literal("")),
+  font: z.string().optional().or(z.literal("")),
+  language: z.string().optional().or(z.literal("")),
+  custom_domain: z.string().optional().or(z.literal("")),
+  timezone: z.string().optional().or(z.literal("")),
+});
+
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type ApartmentInput = z.infer<typeof apartmentSchema>;

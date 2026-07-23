@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { requireUser } from "@/lib/auth";
-import { apartmentSchema } from "@/lib/validations";
+import { apartmentSchema, apartmentBrandingSchema } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
 import { createQrCode } from "@/lib/data/qr";
 
@@ -170,4 +170,46 @@ export async function removeGalleryImage(imageId: string) {
   const { supabase } = await requireUser();
   await supabase.from("apartment_gallery").delete().eq("id", imageId);
   revalidatePath(`/apartments`);
+}
+
+export async function updateApartmentBranding(apartmentId: string, slug: string, formData: FormData) {
+  const parsed = apartmentBrandingSchema.safeParse({
+    logo_url: formData.get("logo_url"),
+    brand_color: formData.get("brand_color"),
+    font: formData.get("font"),
+    language: formData.get("language"),
+    custom_domain: formData.get("custom_domain"),
+    timezone: formData.get("timezone"),
+  });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
+
+  const { supabase } = await requireUser();
+  const { error } = await supabase
+    .from("apartments")
+    .update({
+      logo_url: parsed.data.logo_url || null,
+      brand_color: parsed.data.brand_color || "#4F8CFF",
+      font: parsed.data.font || "Inter",
+      language: parsed.data.language || "en",
+      custom_domain: parsed.data.custom_domain || null,
+      timezone: parsed.data.timezone || "UTC",
+    })
+    .eq("id", apartmentId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/apartments/${slug}/settings`);
+  return {};
+}
+
+export async function updateNotificationPreferences(apartmentId: string, slug: string, formData: FormData) {
+  const { supabase } = await requireUser();
+  await supabase.from("notification_preferences").upsert({
+    apartment_id: apartmentId,
+    email_maintenance: formData.get("email_maintenance") === "on",
+    email_inventory: formData.get("email_inventory") === "on",
+    email_guest_activity: formData.get("email_guest_activity") === "on",
+    email_weekly_report: formData.get("email_weekly_report") === "on",
+  });
+  revalidatePath(`/apartments/${slug}/settings`);
 }

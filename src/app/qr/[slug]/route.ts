@@ -33,9 +33,15 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
   } else if (qr.target_type === "guide_section") {
     const { data: section } = await supabase
       .from("guide_sections")
-      .select("key")
+      .select("key, view_count")
       .eq("id", qr.target_id)
       .maybeSingle();
+    if (section) {
+      await supabase
+        .from("guide_sections")
+        .update({ view_count: section.view_count + 1 })
+        .eq("id", qr.target_id);
+    }
     destination = section ? `/g/${apartment.slug}#${section.key}` : `/g/${apartment.slug}`;
   }
 

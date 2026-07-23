@@ -126,6 +126,15 @@ export interface Database {
           position?: number;
           published?: boolean;
           blocks?: GuideBlock[];
+        },
+        {
+          key?: string;
+          title?: string;
+          icon?: string | null;
+          position?: number;
+          published?: boolean;
+          blocks?: GuideBlock[];
+          view_count?: number;
         }
       >;
       rooms: Table<
