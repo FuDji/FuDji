@@ -47,7 +47,7 @@ export function QrDownloadAll({ apartmentName, codes }: { apartmentName: string;
   return (
     <Button variant="secondary" onClick={downloadAll} disabled={pending || codes.length === 0}>
       {pending ? <Loader2 className="size-4 animate-spin" /> : <PackageOpen className="size-4" />}
-      Download all (ZIP)
+      Preuzmi sve (ZIP)
     </Button>
   );
 }

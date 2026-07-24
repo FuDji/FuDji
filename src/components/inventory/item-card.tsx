@@ -26,7 +26,7 @@ export function ItemCard({ apartmentId, slug, item }: { apartmentId: string; slu
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{item.name}</p>
         <p className="text-xs text-muted-foreground">
-          {item.quantity} / min {item.min_quantity}
+          {item.quantity} / min. {item.min_quantity}
           {item.location && (
             <>
               {" · "}
@@ -41,7 +41,7 @@ export function ItemCard({ apartmentId, slug, item }: { apartmentId: string; slu
           <Button
             variant="ghost"
             size="icon-sm"
-            title="Mark resolved"
+            title="Označi kao rešeno"
             disabled={pending}
             onClick={() => startTransition(() => resolveInventoryItem(item.id, slug))}
           >

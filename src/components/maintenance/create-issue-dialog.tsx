@@ -34,24 +34,24 @@ export function CreateIssueDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <Button onClick={() => setOpen(true)}>
-        <Plus className="size-4" /> Add Maintenance
+        <Plus className="size-4" /> Dodaj kvar
       </Button>
       <DialogContent className="max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Report a maintenance issue</DialogTitle>
+          <DialogTitle>Prijavi kvar</DialogTitle>
         </DialogHeader>
         <form action={formAction} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="issue-title">Title</Label>
-            <Input id="issue-title" name="title" placeholder="Leaking kitchen faucet" required />
+            <Label htmlFor="issue-title">Naslov</Label>
+            <Input id="issue-title" name="title" placeholder="Curi slavina u kuhinji" required />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="issue-description">Description</Label>
+            <Label htmlFor="issue-description">Opis</Label>
             <Textarea id="issue-description" name="description" rows={3} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="issue-category">Category</Label>
+              <Label htmlFor="issue-category">Kategorija</Label>
               <Select name="category" defaultValue="other">
                 <SelectTrigger id="issue-category">
                   <SelectValue />
@@ -66,7 +66,7 @@ export function CreateIssueDialog({
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="issue-priority">Priority</Label>
+              <Label htmlFor="issue-priority">Prioritet</Label>
               <Select name="priority" defaultValue="medium">
                 <SelectTrigger id="issue-priority">
                   <SelectValue />
@@ -83,10 +83,10 @@ export function CreateIssueDialog({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="issue-room">Room</Label>
+              <Label htmlFor="issue-room">Soba</Label>
               <Select name="room_id">
                 <SelectTrigger id="issue-room">
-                  <SelectValue placeholder="None" />
+                  <SelectValue placeholder="Nijedna" />
                 </SelectTrigger>
                 <SelectContent>
                   {rooms.map((r) => (
@@ -98,17 +98,17 @@ export function CreateIssueDialog({
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="issue-due">Due date</Label>
+              <Label htmlFor="issue-due">Rok</Label>
               <Input id="issue-due" name="due_date" type="date" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="issue-assignee">Assign to</Label>
-              <Input id="issue-assignee" name="assigned_to" placeholder="Name" />
+              <Label htmlFor="issue-assignee">Zaduži</Label>
+              <Input id="issue-assignee" name="assigned_to" placeholder="Ime" />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="issue-photo">Photo URL</Label>
+              <Label htmlFor="issue-photo">URL fotografije</Label>
               <Input id="issue-photo" name="photo_url" />
             </div>
           </div>
@@ -120,7 +120,7 @@ export function CreateIssueDialog({
             </div>
           )}
 
-          <SubmitButton>Create issue</SubmitButton>
+          <SubmitButton>Prijavi kvar</SubmitButton>
         </form>
       </DialogContent>
     </Dialog>

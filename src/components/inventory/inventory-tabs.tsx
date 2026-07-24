@@ -21,7 +21,7 @@ export function InventoryTabs({
   return (
     <Tabs defaultValue="all">
       <TabsList className="flex-wrap h-auto">
-        <TabsTrigger value="all">All ({items.length})</TabsTrigger>
+        <TabsTrigger value="all">Sve ({items.length})</TabsTrigger>
         {INVENTORY_CATEGORIES.map((cat) => {
           const count = items.filter((i) => i.category === cat.value).length;
           return (
@@ -64,8 +64,8 @@ function ItemGrid({
     return (
       <EmptyState
         icon={Package}
-        title="No items here yet"
-        description="Track plates, towels, appliances and supplies so cleaners and guests always know what's where."
+        title="Ovde još nema stavki"
+        description="Prati tanjire, peškire, uređaje i zalihe kako bi spremačice i gosti uvek znali gde šta stoji."
         action={<ItemDialog apartmentId={apartmentId} slug={slug} defaultCategory={defaultCategory} />}
       />
     );

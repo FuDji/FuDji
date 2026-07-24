@@ -43,11 +43,11 @@ export function RoomHeader({ slug, room }: { slug: string; room: Room }) {
     <>
       <PageHeader
         title={room.name}
-        description="Manage instructions, warnings and tips for every appliance in this room."
+        description="Upravljaj uputstvima, upozorenjima i savetima za svaki uređaj u ovoj sobi."
         actions={
           <>
             <Button variant="secondary" onClick={() => setOpen(true)}>
-              <Pencil className="size-4" /> Edit room
+              <Pencil className="size-4" /> Uredi sobu
             </Button>
             <Button variant="outline" onClick={remove} disabled={pending}>
               {pending ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
@@ -59,25 +59,25 @@ export function RoomHeader({ slug, room }: { slug: string; room: Room }) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit room</DialogTitle>
+            <DialogTitle>Uredi sobu</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="room-name">Name</Label>
+              <Label htmlFor="room-name">Naziv</Label>
               <Input id="room-name" value={name} onChange={(e) => setName(e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="room-cover">Cover image URL</Label>
+              <Label htmlFor="room-cover">URL naslovne slike</Label>
               <Input id="room-cover" value={coverImage} onChange={(e) => setCoverImage(e.target.value)} />
             </div>
           </div>
           <DialogFooter>
             <Button variant="secondary" onClick={() => setOpen(false)}>
-              Cancel
+              Otkaži
             </Button>
             <Button onClick={save} disabled={pending}>
               {pending && <Loader2 className="size-4 animate-spin" />}
-              Save
+              Sačuvaj
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -13,7 +13,7 @@ import type { MaintenanceIssue } from "@/types";
 export function IssueBoard({ slug, issues }: { slug: string; issues: MaintenanceIssue[] }) {
   if (issues.length === 0) {
     return (
-      <EmptyState icon={Wrench} title="No maintenance issues" description="Nice — nothing needs fixing right now." />
+      <EmptyState icon={Wrench} title="Nema prijavljenih kvarova" description="Odlično — trenutno nema ničega za popravku." />
     );
   }
 
@@ -61,7 +61,7 @@ export function IssueBoard({ slug, issues }: { slug: string; issues: Maintenance
               })}
               {columnIssues.length === 0 && (
                 <div className="rounded-xl border border-dashed border-border py-6 text-center text-xs text-muted-foreground">
-                  Empty
+                  Prazno
                 </div>
               )}
             </div>

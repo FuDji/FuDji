@@ -8,8 +8,8 @@ export function MaintenanceChart({ data }: { data: { label: string; count: numbe
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Maintenance frequency</CardTitle>
-        <p className="text-sm text-muted-foreground">Issues reported per month, last 6 months</p>
+        <CardTitle className="text-base">Učestalost kvarova</CardTitle>
+        <p className="text-sm text-muted-foreground">Prijavljeni kvarovi po mesecu, poslednjih 6 meseci</p>
       </CardHeader>
       <CardContent className="pb-6">
         <div className="h-56 w-full">
@@ -22,7 +22,7 @@ export function MaintenanceChart({ data }: { data: { label: string; count: numbe
                 labelStyle={{ color: "#94A3B8" }}
                 cursor={{ fill: "rgba(255,255,255,0.03)" }}
               />
-              <Bar dataKey="count" fill="#F59E0B" radius={[6, 6, 0, 0]} name="Issues" />
+              <Bar dataKey="count" fill="#F59E0B" radius={[6, 6, 0, 0]} name="Kvarovi" />
             </BarChart>
           </ResponsiveContainer>
         </div>

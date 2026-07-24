@@ -34,8 +34,8 @@ export function ItemList({
     return (
       <EmptyState
         icon={Wrench}
-        title="No items in this room yet"
-        description="Add appliances like the coffee machine, TV or AC so guests always know how to use them."
+        title="Još nema stavki u ovoj sobi"
+        description="Dodaj uređaje poput aparata za kafu, TV-a ili klime kako bi gosti uvek znali kako da ih koriste."
       />
     );
   }
@@ -72,7 +72,7 @@ export function ItemList({
             <p className="line-clamp-3 text-sm text-muted-foreground">{item.instructions}</p>
           )}
           {(item.faqs?.length ?? 0) > 0 && (
-            <p className="mt-2 text-xs text-muted-foreground">{item.faqs.length} FAQ{item.faqs.length === 1 ? "" : "s"}</p>
+            <p className="mt-2 text-xs text-muted-foreground">{item.faqs.length} {item.faqs.length === 1 ? "pitanje" : "pitanja"}</p>
           )}
         </Card>
       ))}

@@ -20,16 +20,16 @@ export default async function RoomGuidesPage({ params }: { params: Promise<{ slu
   return (
     <div>
       <PageHeader
-        title="Room Guides"
-        description="Room-by-room instructions, warnings and tips for every appliance."
+        title="Vodiči po sobama"
+        description="Uputstva, upozorenja i saveti za svaki uređaj, soba po soba."
         actions={<AddRoomDialog apartmentId={apartment.id} slug={slug} />}
       />
 
       {rooms.length === 0 ? (
         <EmptyState
           icon={DoorOpen}
-          title="No rooms yet"
-          description="Add the Kitchen, Bathroom or Living Room to start guiding your guests through the apartment."
+          title="Još nema soba"
+          description="Dodaj Kuhinju, Kupatilo ili Dnevnu sobu da počneš da vodiš goste kroz apartman."
           action={<AddRoomDialog apartmentId={apartment.id} slug={slug} />}
         />
       ) : (

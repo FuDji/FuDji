@@ -48,20 +48,20 @@ export function ItemDialog({
         </Button>
       ) : (
         <Button onClick={() => setOpen(true)}>
-          <Plus className="size-4" /> Add item
+          <Plus className="size-4" /> Dodaj stavku
         </Button>
       )}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{item ? "Edit item" : "Add inventory item"}</DialogTitle>
+          <DialogTitle>{item ? "Izmeni stavku" : "Dodaj stavku u inventar"}</DialogTitle>
         </DialogHeader>
         <form action={formAction} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="inv-name">Name</Label>
-            <Input id="inv-name" name="name" defaultValue={item?.name} placeholder="6 Plates" required />
+            <Label htmlFor="inv-name">Naziv</Label>
+            <Input id="inv-name" name="name" defaultValue={item?.name} placeholder="6 tanjira" required />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="inv-category">Category</Label>
+            <Label htmlFor="inv-category">Kategorija</Label>
             <Select name="category" defaultValue={item?.category ?? defaultCategory ?? "kitchen"}>
               <SelectTrigger id="inv-category">
                 <SelectValue />
@@ -77,11 +77,11 @@ export function ItemDialog({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="inv-qty">Quantity</Label>
+              <Label htmlFor="inv-qty">Količina</Label>
               <Input id="inv-qty" name="quantity" type="number" min={0} defaultValue={item?.quantity ?? 1} required />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="inv-min">Minimum quantity</Label>
+              <Label htmlFor="inv-min">Minimalna količina</Label>
               <Input
                 id="inv-min"
                 name="min_quantity"
@@ -93,15 +93,15 @@ export function ItemDialog({
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="inv-location">Location</Label>
-            <Input id="inv-location" name="location" defaultValue={item?.location ?? ""} placeholder="Kitchen cabinet" />
+            <Label htmlFor="inv-location">Lokacija</Label>
+            <Input id="inv-location" name="location" defaultValue={item?.location ?? ""} placeholder="Kuhinjski element" />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="inv-photo">Photo URL</Label>
+            <Label htmlFor="inv-photo">URL fotografije</Label>
             <Input id="inv-photo" name="photo_url" defaultValue={item?.photo_url ?? ""} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="inv-notes">Notes</Label>
+            <Label htmlFor="inv-notes">Napomene</Label>
             <Textarea id="inv-notes" name="notes" rows={2} defaultValue={item?.notes ?? ""} />
           </div>
 
@@ -112,7 +112,7 @@ export function ItemDialog({
             </div>
           )}
 
-          <SubmitButton>{item ? "Save changes" : "Add item"}</SubmitButton>
+          <SubmitButton>{item ? "Sačuvaj izmene" : "Dodaj stavku"}</SubmitButton>
         </form>
       </DialogContent>
     </Dialog>

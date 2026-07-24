@@ -35,9 +35,7 @@ export function RoomCard({
           </div>
           <div className="min-w-0">
             <p className="truncate text-sm font-medium">{room.name}</p>
-            <p className="text-xs text-muted-foreground">
-              {room.itemCount} item{room.itemCount === 1 ? "" : "s"}
-            </p>
+            <p className="text-xs text-muted-foreground">{room.itemCount} stavki</p>
           </div>
         </div>
       </Card>

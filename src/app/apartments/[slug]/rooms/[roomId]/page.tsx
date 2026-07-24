@@ -35,7 +35,7 @@ export default async function RoomDetailPage({
           slug={slug}
           trigger={
             <Button>
-              <Plus className="size-4" /> Add item
+              <Plus className="size-4" /> Dodaj stavku
             </Button>
           }
         />

@@ -22,8 +22,8 @@ export default async function MaintenancePage({ params }: { params: Promise<{ sl
   return (
     <div>
       <PageHeader
-        title="Maintenance"
-        description="Track and resolve issues before guests ever notice them."
+        title="Održavanje"
+        description="Prati i reši probleme pre nego što ih gosti uopšte primete."
         actions={<CreateIssueDialog apartmentId={apartment.id} slug={slug} rooms={rooms} />}
       />
       <IssueBoard slug={slug} issues={issues} />

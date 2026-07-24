@@ -12,10 +12,10 @@ import { QrDownloadAll } from "@/components/qr/qr-download-all";
 import { GenerateSectionQrDialog } from "@/components/qr/generate-section-qr-dialog";
 
 const GROUP_LABELS: Record<string, string> = {
-  apartment: "Apartment",
-  room: "Rooms",
-  room_item: "Room items",
-  guide_section: "Guest guide sections",
+  apartment: "Apartman",
+  room: "Sobe",
+  room_item: "Stavke u sobama",
+  guide_section: "Sekcije vodiča za goste",
 };
 
 export default async function QrCodesPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -42,8 +42,8 @@ export default async function QrCodesPage({ params }: { params: Promise<{ slug: 
   return (
     <div>
       <PageHeader
-        title="QR Code Center"
-        description="Branded, scannable codes for your apartment, rooms and appliances."
+        title="Centar za QR kodove"
+        description="Brendirani kodovi za skeniranje — za apartman, sobe i uređaje."
         actions={
           <>
             <GenerateSectionQrDialog apartmentId={apartment.id} slug={slug} sections={availableSections} />
@@ -55,8 +55,8 @@ export default async function QrCodesPage({ params }: { params: Promise<{ slug: 
       {codes.length === 0 ? (
         <EmptyState
           icon={QrCode}
-          title="No QR codes yet"
-          description="QR codes are created automatically when you add rooms and items — or generate one for a guest guide section."
+          title="Još nema QR kodova"
+          description="QR kodovi se automatski kreiraju kada dodaš sobe i stavke — ili generiši jedan za sekciju vodiča za goste."
         />
       ) : (
         <div className="space-y-8">

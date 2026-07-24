@@ -24,19 +24,19 @@ export default async function AnalyticsPage({ params }: { params: Promise<{ slug
 
   return (
     <div>
-      <PageHeader title="Analytics" description="How guests actually use your apartment — no booking data here." />
+      <PageHeader title="Analitika" description="Kako gosti zapravo koriste tvoj apartman — bez podataka o rezervacijama." />
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="Total QR scans" value={data.totalScans} icon={ScanLine} />
-        <StatCard label="Guide views" value={data.totalViews} icon={Eye} tone="success" />
+        <StatCard label="Ukupno skeniranja QR koda" value={data.totalScans} icon={ScanLine} />
+        <StatCard label="Pregledi vodiča" value={data.totalViews} icon={Eye} tone="success" />
         <StatCard
-          label="Avg. repair time"
+          label="Prosečno vreme popravke"
           value={data.avgRepairHours > 0 ? `${data.avgRepairHours}h` : "—"}
           icon={Timer}
           tone="warning"
         />
         <StatCard
-          label="Most problematic room"
+          label="Soba sa najviše problema"
           value={data.mostProblematicRoom?.name ?? "—"}
           icon={AlertTriangle}
           tone={data.mostProblematicRoom ? "destructive" : "success"}
@@ -51,11 +51,11 @@ export default async function AnalyticsPage({ params }: { params: Promise<{ slug
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Most scanned QR codes</CardTitle>
+            <CardTitle className="text-base">Najskenirniji QR kodovi</CardTitle>
           </CardHeader>
           <CardContent className="pb-6">
             {data.topQrCodes.length === 0 ? (
-              <EmptyState icon={QrCode} title="No scans yet" className="border-none py-6" />
+              <EmptyState icon={QrCode} title="Još nema skeniranja" className="border-none py-6" />
             ) : (
               <ul className="space-y-1">
                 {data.topQrCodes.map((qr) => (
@@ -71,11 +71,11 @@ export default async function AnalyticsPage({ params }: { params: Promise<{ slug
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Most viewed guides</CardTitle>
+            <CardTitle className="text-base">Najgledaniji vodiči</CardTitle>
           </CardHeader>
           <CardContent className="pb-6">
             {data.topGuides.length === 0 ? (
-              <EmptyState icon={BookOpenText} title="No views yet" className="border-none py-6" />
+              <EmptyState icon={BookOpenText} title="Još nema pregleda" className="border-none py-6" />
             ) : (
               <ul className="space-y-1">
                 {data.topGuides.map((section) => (
@@ -91,11 +91,11 @@ export default async function AnalyticsPage({ params }: { params: Promise<{ slug
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Inventory losses</CardTitle>
+            <CardTitle className="text-base">Gubici u inventaru</CardTitle>
           </CardHeader>
           <CardContent className="pb-6">
             {data.inventoryAlerts.length === 0 ? (
-              <EmptyState icon={PackageX} title="Nothing missing or broken" className="border-none py-6" />
+              <EmptyState icon={PackageX} title="Ništa ne nedostaje niti je pokvareno" className="border-none py-6" />
             ) : (
               <ul className="space-y-1">
                 {data.inventoryAlerts.slice(0, 6).map((item) => (
@@ -112,12 +112,12 @@ export default async function AnalyticsPage({ params }: { params: Promise<{ slug
 
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle className="text-base">Maintenance by category</CardTitle>
-          <p className="text-sm text-muted-foreground">Last 90 days</p>
+          <CardTitle className="text-base">Održavanje po kategoriji</CardTitle>
+          <p className="text-sm text-muted-foreground">Poslednjih 90 dana</p>
         </CardHeader>
         <CardContent className="pb-6">
           {data.categoryBreakdown.length === 0 ? (
-            <EmptyState icon={AlertTriangle} title="No maintenance data yet" className="border-none py-6" />
+            <EmptyState icon={AlertTriangle} title="Još nema podataka o održavanju" className="border-none py-6" />
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {data.categoryBreakdown.map(({ category, count }) => {
@@ -129,7 +129,7 @@ export default async function AnalyticsPage({ params }: { params: Promise<{ slug
                     </div>
                     <div>
                       <p className="text-sm font-medium">{meta?.label ?? category}</p>
-                      <p className="text-xs text-muted-foreground">{count} issue{count === 1 ? "" : "s"}</p>
+                      <p className="text-xs text-muted-foreground">{count} {count === 1 ? "prijava" : "prijave"}</p>
                     </div>
                   </div>
                 );

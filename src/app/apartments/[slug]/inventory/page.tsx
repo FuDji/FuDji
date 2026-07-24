@@ -18,8 +18,8 @@ export default async function InventoryPage({ params }: { params: Promise<{ slug
   return (
     <div>
       <PageHeader
-        title="Inventory"
-        description="Everything that should be in this apartment, and its current condition."
+        title="Inventar"
+        description="Sve što treba da postoji u ovom apartmanu i njegovo trenutno stanje."
         actions={<ItemDialog apartmentId={apartment.id} slug={slug} />}
       />
       <InventoryTabs apartmentId={apartment.id} slug={slug} items={items} />

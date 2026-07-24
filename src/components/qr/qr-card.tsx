@@ -16,6 +16,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { QrCode } from "@/types";
 
+const QR_TARGET_LABELS: Record<string, string> = {
+  apartment: "apartman",
+  room: "soba",
+  room_item: "stavka u sobi",
+  guide_section: "sekcija vodiča",
+};
+
 const QR_OPTIONS = {
   errorCorrectionLevel: "H" as const,
   margin: 1,
@@ -59,7 +66,7 @@ export function QrCardItem({ qr, logoUrl }: { qr: QrCode; logoUrl?: string | nul
 
   function copyLink() {
     navigator.clipboard.writeText(targetUrl);
-    toast.success("Link copied");
+    toast.success("Link kopiran");
   }
 
   return (
@@ -81,17 +88,17 @@ export function QrCardItem({ qr, logoUrl }: { qr: QrCode; logoUrl?: string | nul
 
       <p className="truncate text-center text-sm font-medium">{qr.label}</p>
       <div className="mt-1.5 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
-        <ScanLine className="size-3.5" /> {qr.scan_count} scans
+        <ScanLine className="size-3.5" /> {qr.scan_count} skeniranja
       </div>
 
       <div className="mt-3 flex items-center justify-center gap-2">
         <Button variant="secondary" size="sm" onClick={copyLink}>
-          <Copy className="size-3.5" /> Copy
+          <Copy className="size-3.5" /> Kopiraj
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button size="sm">
-              <Download className="size-3.5" /> Download
+              <Download className="size-3.5" /> Preuzmi
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -102,7 +109,7 @@ export function QrCardItem({ qr, logoUrl }: { qr: QrCode; logoUrl?: string | nul
       </div>
 
       <Badge variant="secondary" className="mt-3 w-full justify-center capitalize">
-        {qr.target_type.replace("_", " ")}
+        {QR_TARGET_LABELS[qr.target_type] ?? qr.target_type.replace("_", " ")}
       </Badge>
     </Card>
   );

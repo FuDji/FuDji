@@ -79,7 +79,7 @@ export function IssueDetail({
               </span>
               {issue.due_date && (
                 <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <CalendarDays className="size-3.5" /> Due {formatDate(issue.due_date)}
+                  <CalendarDays className="size-3.5" /> Rok {formatDate(issue.due_date)}
                 </span>
               )}
               {issue.assigned_to && (
@@ -98,7 +98,7 @@ export function IssueDetail({
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Timeline</CardTitle>
+              <CardTitle className="text-base">Istorija</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 pb-6">
               {events.map((event) => (
@@ -114,14 +114,14 @@ export function IssueDetail({
               ))}
               <div className="flex gap-2 pt-2">
                 <Textarea
-                  placeholder="Add a comment…"
+                  placeholder="Dodaj komentar…"
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   rows={2}
                 />
                 <Button onClick={submitComment} disabled={pending || !comment.trim()}>
                   {pending && <Loader2 className="size-4 animate-spin" />}
-                  Post
+                  Objavi
                 </Button>
               </div>
             </CardContent>
@@ -129,7 +129,7 @@ export function IssueDetail({
         </div>
 
         <Card className="h-fit p-5">
-          <h3 className="mb-3 text-sm font-medium text-muted-foreground">Change status</h3>
+          <h3 className="mb-3 text-sm font-medium text-muted-foreground">Promeni status</h3>
           <div className="space-y-2">
             {MAINTENANCE_STATUSES.map((status) => (
               <Button

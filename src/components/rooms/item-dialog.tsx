@@ -82,63 +82,63 @@ export function ItemDialog({
       <div onClick={() => setOpen(true)}>{trigger}</div>
       <DialogContent className="max-h-[85vh] max-w-xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{item ? "Edit item" : "Add item"}</DialogTitle>
-          <DialogDescription>Give guests everything they need to use it confidently.</DialogDescription>
+          <DialogTitle>{item ? "Izmeni stavku" : "Dodaj stavku"}</DialogTitle>
+          <DialogDescription>Daj gostima sve što im je potrebno da je koriste bez brige.</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="item-name">Name</Label>
-            <Input id="item-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Coffee Machine" />
+            <Label htmlFor="item-name">Naziv</Label>
+            <Input id="item-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Aparat za kafu" />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="item-instructions">Instructions</Label>
+            <Label htmlFor="item-instructions">Uputstvo</Label>
             <Textarea
               id="item-instructions"
               value={instructions}
               onChange={(e) => setInstructions(e.target.value)}
               rows={3}
-              placeholder="Step-by-step how to use it…"
+              placeholder="Uputstvo korak po korak za korišćenje…"
             />
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="item-video">Video URL</Label>
+              <Label htmlFor="item-video">URL videa</Label>
               <Input id="item-video" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="item-images">Image URLs (one per line)</Label>
+              <Label htmlFor="item-images">URL-ovi slika (jedan po redu)</Label>
               <Input id="item-images" value={images} onChange={(e) => setImages(e.target.value)} />
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="item-warnings">Warnings</Label>
+              <Label htmlFor="item-warnings">Upozorenja</Label>
               <Textarea id="item-warnings" value={warnings} onChange={(e) => setWarnings(e.target.value)} rows={2} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="item-tips">Tips</Label>
+              <Label htmlFor="item-tips">Saveti</Label>
               <Textarea id="item-tips" value={tips} onChange={(e) => setTips(e.target.value)} rows={2} />
             </div>
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label>FAQs</Label>
+              <Label>Česta pitanja</Label>
               <Button type="button" variant="ghost" size="sm" onClick={addFaq}>
-                <Plus className="size-3.5" /> Add FAQ
+                <Plus className="size-3.5" /> Dodaj pitanje
               </Button>
             </div>
             {faqs.map((faq, i) => (
               <div key={i} className="flex items-start gap-2 rounded-lg border border-border p-2.5">
                 <div className="flex-1 space-y-1.5">
                   <Input
-                    placeholder="Question"
+                    placeholder="Pitanje"
                     value={faq.question}
                     onChange={(e) => updateFaq(i, { question: e.target.value })}
                   />
                   <Input
-                    placeholder="Answer"
+                    placeholder="Odgovor"
                     value={faq.answer}
                     onChange={(e) => updateFaq(i, { answer: e.target.value })}
                   />
@@ -153,11 +153,11 @@ export function ItemDialog({
 
         <DialogFooter>
           <Button variant="secondary" onClick={() => setOpen(false)}>
-            Cancel
+            Otkaži
           </Button>
           <Button onClick={save} disabled={pending || !name.trim()}>
             {pending && <Loader2 className="size-4 animate-spin" />}
-            Save item
+            Sačuvaj stavku
           </Button>
         </DialogFooter>
       </DialogContent>

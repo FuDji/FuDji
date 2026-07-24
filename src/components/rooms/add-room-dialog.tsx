@@ -46,12 +46,12 @@ export function AddRoomDialog({ apartmentId, slug }: { apartmentId: string; slug
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <Button onClick={() => setOpen(true)}>
-        <Plus className="size-4" /> Add Room
+        <Plus className="size-4" /> Dodaj sobu
       </Button>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Add a room</DialogTitle>
-          <DialogDescription>Every room gets its own QR code automatically.</DialogDescription>
+          <DialogTitle>Dodaj sobu</DialogTitle>
+          <DialogDescription>Svaka soba automatski dobija svoj QR kod.</DialogDescription>
         </DialogHeader>
 
         <div className="grid max-h-72 grid-cols-2 gap-2 overflow-y-auto pr-1 sm:grid-cols-3">
@@ -72,16 +72,16 @@ export function AddRoomDialog({ apartmentId, slug }: { apartmentId: string; slug
 
         <div className="flex items-end gap-2 border-t border-border pt-4">
           <div className="flex-1 space-y-1.5">
-            <Label htmlFor="custom-room">Custom room</Label>
+            <Label htmlFor="custom-room">Prilagođena soba</Label>
             <Input
               id="custom-room"
-              placeholder="e.g. Home Office"
+              placeholder="npr. Radna soba"
               value={customName}
               onChange={(e) => setCustomName(e.target.value)}
             />
           </div>
           <Button variant="secondary" onClick={handleCustom} disabled={pending || !customName.trim()}>
-            Create
+            Napravi
           </Button>
         </div>
       </DialogContent>

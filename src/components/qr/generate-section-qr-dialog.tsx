@@ -39,12 +39,12 @@ export function GenerateSectionQrDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <Button variant="secondary" onClick={() => setOpen(true)}>
-        <Plus className="size-4" /> Generate QR for guide section
+        <Plus className="size-4" /> Generiši QR za sekciju vodiča
       </Button>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Generate a QR code</DialogTitle>
-          <DialogDescription>Pick a guest guide section to link directly.</DialogDescription>
+          <DialogTitle>Generiši QR kod</DialogTitle>
+          <DialogDescription>Izaberi sekciju vodiča za goste za direktno povezivanje.</DialogDescription>
         </DialogHeader>
         <div className="max-h-72 space-y-1 overflow-y-auto">
           {sections.map((section) => (

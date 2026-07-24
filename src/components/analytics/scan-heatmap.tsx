@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const DAYS = ["Ned", "Pon", "Uto", "Sre", "Čet", "Pet", "Sub"];
 
 export function ScanHeatmap({ data }: { data: number[][] }) {
   const max = Math.max(1, ...data.flat());
@@ -8,8 +8,8 @@ export function ScanHeatmap({ data }: { data: number[][] }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">QR scan activity</CardTitle>
-        <p className="text-sm text-muted-foreground">By day &amp; hour, last 30 days</p>
+        <CardTitle className="text-base">Aktivnost skeniranja QR koda</CardTitle>
+        <p className="text-sm text-muted-foreground">Po danu i satu, poslednjih 30 dana</p>
       </CardHeader>
       <CardContent className="overflow-x-auto pb-6">
         <div className="flex min-w-[640px] gap-1">
@@ -34,7 +34,7 @@ export function ScanHeatmap({ data }: { data: number[][] }) {
                   {row.map((value, hourIndex) => (
                     <div
                       key={hourIndex}
-                      title={`${value} scans`}
+                      title={`${value} skeniranja`}
                       className="h-4 flex-1 rounded-sm"
                       style={{
                         background:
