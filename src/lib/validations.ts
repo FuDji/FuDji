@@ -1,38 +1,38 @@
 import { z } from "zod";
 
 export const loginSchema = z.object({
-  email: z.string().email("Enter a valid email"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  email: z.string().email("Unesi ispravan email"),
+  password: z.string().min(8, "Lozinka mora imati bar 8 karaktera"),
 });
 
 export const registerSchema = z
   .object({
-    fullName: z.string().min(2, "Enter your full name"),
-    email: z.string().email("Enter a valid email"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
+    fullName: z.string().min(2, "Unesi ime i prezime"),
+    email: z.string().email("Unesi ispravan email"),
+    password: z.string().min(8, "Lozinka mora imati bar 8 karaktera"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: "Lozinke se ne poklapaju",
     path: ["confirmPassword"],
   });
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email("Enter a valid email"),
+  email: z.string().email("Unesi ispravan email"),
 });
 
 export const resetPasswordSchema = z
   .object({
-    password: z.string().min(8, "Password must be at least 8 characters"),
+    password: z.string().min(8, "Lozinka mora imati bar 8 karaktera"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: "Lozinke se ne poklapaju",
     path: ["confirmPassword"],
   });
 
 export const apartmentSchema = z.object({
-  name: z.string().min(2, "Name is required"),
+  name: z.string().min(2, "Naziv je obavezan"),
   logo_url: z.string().url().optional().or(z.literal("")),
   hero_image_url: z.string().url().optional().or(z.literal("")),
   address: z.string().optional().or(z.literal("")),
@@ -51,19 +51,19 @@ export const apartmentSchema = z.object({
 });
 
 export const guideSectionSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  title: z.string().min(1, "Naslov je obavezan"),
   icon: z.string().optional(),
   published: z.boolean().optional(),
 });
 
 export const roomSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z.string().min(1, "Naziv je obavezan"),
   icon: z.string().optional(),
   cover_image_url: z.string().url().optional().or(z.literal("")),
 });
 
 export const roomItemSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z.string().min(1, "Naziv je obavezan"),
   icon: z.string().optional(),
   instructions: z.string().optional().or(z.literal("")),
   video_url: z.string().url().optional().or(z.literal("")),
@@ -72,7 +72,7 @@ export const roomItemSchema = z.object({
 });
 
 export const inventoryItemSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z.string().min(1, "Naziv je obavezan"),
   category: z.enum(["kitchen", "bathroom", "bedroom", "living_room", "outdoor", "cleaning_supplies"]),
   quantity: z.coerce.number().int().min(0),
   min_quantity: z.coerce.number().int().min(0),
@@ -82,7 +82,7 @@ export const inventoryItemSchema = z.object({
 });
 
 export const maintenanceIssueSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  title: z.string().min(1, "Naslov je obavezan"),
   description: z.string().optional().or(z.literal("")),
   category: z.enum(["electrical", "water", "furniture", "appliances", "cleaning", "safety", "other"]),
   priority: z.enum(["low", "medium", "high", "urgent"]),

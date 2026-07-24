@@ -13,13 +13,13 @@ import { updateApartmentBranding } from "@/app/apartments/actions";
 import type { Apartment } from "@/types";
 
 const LANGUAGES = [
-  { value: "en", label: "English" },
-  { value: "es", label: "Spanish" },
-  { value: "fr", label: "French" },
-  { value: "de", label: "German" },
-  { value: "it", label: "Italian" },
-  { value: "pt", label: "Portuguese" },
-  { value: "sr", label: "Serbian" },
+  { value: "en", label: "Engleski" },
+  { value: "es", label: "Španski" },
+  { value: "fr", label: "Francuski" },
+  { value: "de", label: "Nemački" },
+  { value: "it", label: "Italijanski" },
+  { value: "pt", label: "Portugalski" },
+  { value: "sr", label: "Srpski" },
 ];
 
 const FONTS = ["Inter", "Manrope", "Poppins", "Sora", "Work Sans"];
@@ -30,8 +30,8 @@ export function BrandingForm({ apartment }: { apartment: Apartment }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Branding &amp; localization</CardTitle>
-        <CardDescription>How your guest-facing pages look and speak.</CardDescription>
+        <CardTitle className="text-base">Brendiranje i lokalizacija</CardTitle>
+        <CardDescription>Kako izgledaju i "govore" stranice koje vide gosti.</CardDescription>
       </CardHeader>
       <CardContent>
         <form
@@ -40,16 +40,16 @@ export function BrandingForm({ apartment }: { apartment: Apartment }) {
             const result = await updateApartmentBranding(apartment.id, apartment.slug, formData);
             setPending(false);
             if (result?.error) toast.error(result.error);
-            else toast.success("Branding updated");
+            else toast.success("Brendiranje ažurirano");
           }}
           className="grid gap-4 sm:grid-cols-2"
         >
           <div className="space-y-1.5">
-            <Label htmlFor="logo_url">Logo URL</Label>
+            <Label htmlFor="logo_url">URL logotipa</Label>
             <Input id="logo_url" name="logo_url" defaultValue={apartment.logo_url ?? ""} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="brand_color">Brand color</Label>
+            <Label htmlFor="brand_color">Brend boja</Label>
             <div className="flex items-center gap-2">
               <Input
                 id="brand_color"
@@ -77,7 +77,7 @@ export function BrandingForm({ apartment }: { apartment: Apartment }) {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="language">Language</Label>
+            <Label htmlFor="language">Jezik</Label>
             <Select name="language" defaultValue={apartment.language ?? "en"}>
               <SelectTrigger id="language">
                 <SelectValue />
@@ -92,17 +92,17 @@ export function BrandingForm({ apartment }: { apartment: Apartment }) {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="custom_domain">Custom domain</Label>
+            <Label htmlFor="custom_domain">Prilagođeni domen</Label>
             <Input id="custom_domain" name="custom_domain" placeholder="stay.yourbrand.com" defaultValue={apartment.custom_domain ?? ""} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="timezone">Timezone</Label>
+            <Label htmlFor="timezone">Vremenska zona</Label>
             <Input id="timezone" name="timezone" placeholder="Europe/Belgrade" defaultValue={apartment.timezone ?? "UTC"} />
           </div>
           <div className="sm:col-span-2 flex justify-end">
             <Button type="submit" disabled={pending}>
               {pending && <Loader2 className="size-4 animate-spin" />}
-              Save
+              Sačuvaj
             </Button>
           </div>
         </form>

@@ -28,16 +28,16 @@ export default async function ApartmentSettingsPage({ params }: { params: Promis
 
   return (
     <div>
-      <PageHeader title="Settings" description="Configure everything about this apartment." />
+      <PageHeader title="Podešavanja" description="Podesi sve što se tiče ovog apartmana." />
 
       <Tabs defaultValue="general">
         <TabsList className="mb-6 flex-wrap h-auto">
-          <TabsTrigger value="general">General</TabsTrigger>
-          <TabsTrigger value="branding">Branding</TabsTrigger>
-          <TabsTrigger value="contacts">Contacts</TabsTrigger>
-          <TabsTrigger value="gallery">Gallery</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          <TabsTrigger value="danger">Danger zone</TabsTrigger>
+          <TabsTrigger value="general">Opšte</TabsTrigger>
+          <TabsTrigger value="branding">Brendiranje</TabsTrigger>
+          <TabsTrigger value="contacts">Kontakti</TabsTrigger>
+          <TabsTrigger value="gallery">Galerija</TabsTrigger>
+          <TabsTrigger value="notifications">Obaveštenja</TabsTrigger>
+          <TabsTrigger value="danger">Opasna zona</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general">

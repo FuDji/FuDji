@@ -27,8 +27,8 @@ export function GalleryManager({ apartmentId, images }: { apartmentId: string; i
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Gallery</CardTitle>
-        <CardDescription>Extra photos shown on the guest guide.</CardDescription>
+        <CardTitle className="text-base">Galerija</CardTitle>
+        <CardDescription>Dodatne fotografije prikazane u vodiču za goste.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
@@ -45,10 +45,10 @@ export function GalleryManager({ apartmentId, images }: { apartmentId: string; i
           ))}
         </div>
         <div className="mt-4 flex items-end gap-2">
-          <Input placeholder="Image URL" value={url} onChange={(e) => setUrl(e.target.value)} />
+          <Input placeholder="URL slike" value={url} onChange={(e) => setUrl(e.target.value)} />
           <Button onClick={add} disabled={pending || !url.trim()}>
             {pending ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
-            Add
+            Dodaj
           </Button>
         </div>
       </CardContent>

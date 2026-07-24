@@ -18,12 +18,12 @@ export default function ForgotPasswordPage() {
         <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-success/15 text-success">
           <MailCheck className="size-6" />
         </div>
-        <h1 className="text-xl font-semibold">Check your email</h1>
+        <h1 className="text-xl font-semibold">Proveri svoj email</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          We sent a password reset link to your inbox.
+          Poslali smo link za resetovanje lozinke na tvoj email.
         </p>
         <Link href="/login" className="mt-6 inline-block text-sm text-primary hover:underline">
-          Back to sign in
+          Nazad na prijavu
         </Link>
       </div>
     );
@@ -32,16 +32,16 @@ export default function ForgotPasswordPage() {
   return (
     <div>
       <div className="mb-6 text-center">
-        <h1 className="text-xl font-semibold">Reset your password</h1>
+        <h1 className="text-xl font-semibold">Resetuj lozinku</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Enter your email and we&apos;ll send you a reset link
+          Unesi svoj email i poslaćemo ti link za resetovanje
         </p>
       </div>
 
       <form action={formAction} className="space-y-4">
         <div className="space-y-1.5">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" placeholder="you@example.com" required />
+          <Input id="email" name="email" type="email" placeholder="ti@primer.com" required />
         </div>
 
         {state?.error && (
@@ -51,13 +51,13 @@ export default function ForgotPasswordPage() {
           </div>
         )}
 
-        <SubmitButton>Send reset link</SubmitButton>
+        <SubmitButton>Pošalji link za resetovanje</SubmitButton>
       </form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        Remembered it?{" "}
+        Setio si se lozinke?{" "}
         <Link href="/login" className="text-primary hover:underline">
-          Sign in
+          Prijavi se
         </Link>
       </p>
     </div>

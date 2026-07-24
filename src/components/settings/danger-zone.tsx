@@ -24,33 +24,33 @@ export function DangerZone({ apartmentId, apartmentName }: { apartmentId: string
   return (
     <Card className="border-destructive/30">
       <CardHeader>
-        <CardTitle className="text-base text-destructive">Danger zone</CardTitle>
-        <CardDescription>Deleting an apartment removes all its data permanently.</CardDescription>
+        <CardTitle className="text-base text-destructive">Opasna zona</CardTitle>
+        <CardDescription>Brisanje apartmana trajno uklanja sve njegove podatke.</CardDescription>
       </CardHeader>
       <CardContent>
         <Button variant="outline" className="border-destructive/40 text-destructive hover:bg-destructive/10" onClick={() => setOpen(true)}>
-          <Trash2 className="size-4" /> Delete apartment
+          <Trash2 className="size-4" /> Obriši apartman
         </Button>
       </CardContent>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete {apartmentName}?</DialogTitle>
+            <DialogTitle>Obrisati {apartmentName}?</DialogTitle>
             <DialogDescription>
-              This permanently deletes the apartment, its guest guide, rooms, inventory, maintenance history and QR
-              codes. This cannot be undone.
+              Ovo trajno briše apartman, njegov vodič za goste, sobe, inventar, istoriju održavanja i QR
+              kodove. Ova radnja se ne može poništiti.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-1.5">
             <label className="text-xs text-muted-foreground">
-              Type <span className="font-medium text-foreground">{apartmentName}</span> to confirm
+              Unesi <span className="font-medium text-foreground">{apartmentName}</span> za potvrdu
             </label>
             <Input value={confirmText} onChange={(e) => setConfirmText(e.target.value)} />
           </div>
           <DialogFooter>
             <Button variant="secondary" onClick={() => setOpen(false)}>
-              Cancel
+              Otkaži
             </Button>
             <Button
               variant="destructive"
@@ -58,7 +58,7 @@ export function DangerZone({ apartmentId, apartmentName }: { apartmentId: string
               onClick={() => startTransition(() => deleteApartment(apartmentId))}
             >
               {pending && <Loader2 className="size-4 animate-spin" />}
-              Delete permanently
+              Trajno obriši
             </Button>
           </DialogFooter>
         </DialogContent>

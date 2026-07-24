@@ -15,27 +15,27 @@ export default function RegisterPage() {
   return (
     <div>
       <div className="mb-6 text-center">
-        <h1 className="text-xl font-semibold">Create your account</h1>
+        <h1 className="text-xl font-semibold">Napravi nalog</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Start managing your rentals in minutes
+          Počni da upravljaš svojim smeštajima za par minuta
         </p>
       </div>
 
       <form action={formAction} className="space-y-4">
         <div className="space-y-1.5">
-          <Label htmlFor="fullName">Full name</Label>
-          <Input id="fullName" name="fullName" placeholder="Jane Cooper" required />
+          <Label htmlFor="fullName">Ime i prezime</Label>
+          <Input id="fullName" name="fullName" placeholder="Jovana Jovanović" required />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" placeholder="you@example.com" required />
+          <Input id="email" name="email" type="email" placeholder="ti@primer.com" required />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">Lozinka</Label>
           <Input id="password" name="password" type="password" placeholder="••••••••" required />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="confirmPassword">Confirm password</Label>
+          <Label htmlFor="confirmPassword">Potvrdi lozinku</Label>
           <Input id="confirmPassword" name="confirmPassword" type="password" placeholder="••••••••" required />
         </div>
 
@@ -46,13 +46,13 @@ export default function RegisterPage() {
           </div>
         )}
 
-        <SubmitButton>Create account</SubmitButton>
+        <SubmitButton>Napravi nalog</SubmitButton>
       </form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        Already have an account?{" "}
+        Već imaš nalog?{" "}
         <Link href="/login" className="text-primary hover:underline">
-          Sign in
+          Prijavi se
         </Link>
       </p>
     </div>

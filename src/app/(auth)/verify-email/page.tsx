@@ -7,13 +7,13 @@ export default function VerifyEmailPage() {
       <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-primary/15 text-primary">
         <MailCheck className="size-6" />
       </div>
-      <h1 className="text-xl font-semibold">Verify your email</h1>
+      <h1 className="text-xl font-semibold">Potvrdi svoj email</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        We sent a confirmation link to your inbox. Click it to activate your account and start
-        managing your properties.
+        Poslali smo link za potvrdu na tvoj email. Klikni na njega da aktiviraš nalog i počneš da
+        upravljaš svojim nekretninama.
       </p>
       <Link href="/login" className="mt-6 inline-block text-sm text-primary hover:underline">
-        Back to sign in
+        Nazad na prijavu
       </Link>
     </div>
   );

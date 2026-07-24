@@ -26,8 +26,8 @@ export function ContactsManager({ apartmentId, contacts }: { apartmentId: string
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Emergency contacts</CardTitle>
-        <CardDescription>Police, ambulance, landlord, building manager…</CardDescription>
+        <CardTitle className="text-base">Hitni kontakti</CardTitle>
+        <CardDescription>Policija, hitna pomoć, vlasnik, upravnik zgrade…</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {contacts.map((contact) => (
@@ -48,14 +48,14 @@ export function ContactsManager({ apartmentId, contacts }: { apartmentId: string
         ))}
         <div className="flex items-end gap-2 pt-2">
           <div className="flex-1 space-y-1.5">
-            <Input placeholder="Label (e.g. Police)" value={label} onChange={(e) => setLabel(e.target.value)} />
+            <Input placeholder="Naziv (npr. Policija)" value={label} onChange={(e) => setLabel(e.target.value)} />
           </div>
           <div className="flex-1 space-y-1.5">
-            <Input placeholder="Phone number" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <Input placeholder="Broj telefona" value={phone} onChange={(e) => setPhone(e.target.value)} />
           </div>
           <Button onClick={add} disabled={pending || !label.trim() || !phone.trim()}>
             {pending ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
-            Add
+            Dodaj
           </Button>
         </div>
       </CardContent>

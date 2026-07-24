@@ -15,22 +15,22 @@ export default function LoginPage() {
   return (
     <div>
       <div className="mb-6 text-center">
-        <h1 className="text-xl font-semibold">Welcome back</h1>
+        <h1 className="text-xl font-semibold">Dobrodošli nazad</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Sign in to manage your properties
+          Prijavi se da upravljaš svojim nekretninama
         </p>
       </div>
 
       <form action={formAction} className="space-y-4">
         <div className="space-y-1.5">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" placeholder="you@example.com" required />
+          <Input id="email" name="email" type="email" placeholder="ti@primer.com" required />
         </div>
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">Lozinka</Label>
             <Link href="/forgot-password" className="text-xs text-primary hover:underline">
-              Forgot password?
+              Zaboravljena lozinka?
             </Link>
           </div>
           <Input id="password" name="password" type="password" placeholder="••••••••" required />
@@ -43,13 +43,13 @@ export default function LoginPage() {
           </div>
         )}
 
-        <SubmitButton>Sign in</SubmitButton>
+        <SubmitButton>Prijavi se</SubmitButton>
       </form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        Don&apos;t have an account?{" "}
+        Nemaš nalog?{" "}
         <Link href="/register" className="text-primary hover:underline">
-          Create one
+          Napravi ga
         </Link>
       </p>
     </div>

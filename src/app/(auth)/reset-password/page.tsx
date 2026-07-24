@@ -14,17 +14,17 @@ export default function ResetPasswordPage() {
   return (
     <div>
       <div className="mb-6 text-center">
-        <h1 className="text-xl font-semibold">Set a new password</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Make it strong and memorable</p>
+        <h1 className="text-xl font-semibold">Postavi novu lozinku</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Neka bude jaka i lako pamtljiva</p>
       </div>
 
       <form action={formAction} className="space-y-4">
         <div className="space-y-1.5">
-          <Label htmlFor="password">New password</Label>
+          <Label htmlFor="password">Nova lozinka</Label>
           <Input id="password" name="password" type="password" placeholder="••••••••" required />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="confirmPassword">Confirm password</Label>
+          <Label htmlFor="confirmPassword">Potvrdi lozinku</Label>
           <Input id="confirmPassword" name="confirmPassword" type="password" placeholder="••••••••" required />
         </div>
 
@@ -35,7 +35,7 @@ export default function ResetPasswordPage() {
           </div>
         )}
 
-        <SubmitButton>Update password</SubmitButton>
+        <SubmitButton>Ažuriraj lozinku</SubmitButton>
       </form>
     </div>
   );

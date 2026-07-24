@@ -29,7 +29,7 @@ export default async function PrintCenterPage({ params }: { params: Promise<{ sl
   return (
     <div>
       <PageHeader
-        title="Print Center"
+        title="Centar za štampu"
         description="Lepi, štampi-spremni PDF-ovi — od knjige dobrodošlice do QR postera."
       />
       <PrintGrid

@@ -13,10 +13,10 @@ import type { Database } from "@/types/database";
 type Prefs = Database["public"]["Tables"]["notification_preferences"]["Row"];
 
 const OPTIONS: { key: keyof Omit<Prefs, "apartment_id">; label: string; description: string }[] = [
-  { key: "email_maintenance", label: "Maintenance updates", description: "New issues and status changes" },
-  { key: "email_inventory", label: "Inventory alerts", description: "Low stock, missing or broken items" },
-  { key: "email_guest_activity", label: "Guest activity", description: "QR scans and guide views" },
-  { key: "email_weekly_report", label: "Weekly report", description: "A summary every Monday" },
+  { key: "email_maintenance", label: "Ažuriranja o održavanju", description: "Novi kvarovi i promene statusa" },
+  { key: "email_inventory", label: "Upozorenja o inventaru", description: "Nisko stanje, nedostajuće ili pokvarene stavke" },
+  { key: "email_guest_activity", label: "Aktivnost gostiju", description: "Skeniranja QR koda i pregledi vodiča" },
+  { key: "email_weekly_report", label: "Nedeljni izveštaj", description: "Rezime svakog ponedeljka" },
 ];
 
 export function NotificationForm({ apartmentId, slug, prefs }: { apartmentId: string; slug: string; prefs: Prefs }) {
@@ -31,14 +31,14 @@ export function NotificationForm({ apartmentId, slug, prefs }: { apartmentId: st
     }
     await updateNotificationPreferences(apartmentId, slug, formData);
     setPending(false);
-    toast.success("Notification preferences saved");
+    toast.success("Podešavanja obaveštenja sačuvana");
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Notification preferences</CardTitle>
-        <CardDescription>Choose what you want to be emailed about.</CardDescription>
+        <CardTitle className="text-base">Podešavanja obaveštenja</CardTitle>
+        <CardDescription>Izaberi o čemu želiš da dobijaš email obaveštenja.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {OPTIONS.map((opt) => (
@@ -56,7 +56,7 @@ export function NotificationForm({ apartmentId, slug, prefs }: { apartmentId: st
         <div className="flex justify-end">
           <Button onClick={save} disabled={pending}>
             {pending && <Loader2 className="size-4 animate-spin" />}
-            Save
+            Sačuvaj
           </Button>
         </div>
       </CardContent>

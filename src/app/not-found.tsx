@@ -17,12 +17,12 @@ export default function NotFound() {
         <div className="mx-auto mb-5 flex size-14 items-center justify-center rounded-2xl bg-secondary text-muted-foreground">
           <Compass className="size-6" />
         </div>
-        <h1 className="text-2xl font-semibold">Page not found</h1>
+        <h1 className="text-2xl font-semibold">Stranica nije pronađena</h1>
         <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-          The page you&apos;re looking for doesn&apos;t exist or may have been moved.
+          Stranica koju tražiš ne postoji ili je možda premeštena.
         </p>
         <Button asChild className="mt-8">
-          <Link href="/">Back to home</Link>
+          <Link href="/">Nazad na početnu</Link>
         </Button>
       </div>
     </div>
