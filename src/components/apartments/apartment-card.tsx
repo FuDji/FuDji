@@ -6,6 +6,12 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Apartment } from "@/types";
 
+const STATUS_LABELS: Record<Apartment["status"], string> = {
+  active: "aktivan",
+  draft: "nacrt",
+  archived: "arhiviran",
+};
+
 export function ApartmentCard({ apartment }: { apartment: Apartment }) {
   return (
     <Link href={`/apartments/${apartment.slug}/overview`}>
@@ -29,7 +35,7 @@ export function ApartmentCard({ apartment }: { apartment: Apartment }) {
             variant={apartment.status === "active" ? "success" : "secondary"}
             className="absolute right-3 top-3"
           >
-            {apartment.status}
+            {STATUS_LABELS[apartment.status]}
           </Badge>
         </div>
         <div className="space-y-2 p-5 pt-4">

@@ -37,13 +37,13 @@ import type { GuideBlock } from "@/types/database";
 import type { GuideSection } from "@/types";
 
 const BLOCK_TYPES: { type: GuideBlock["type"]; label: string; icon: typeof TextIcon }[] = [
-  { type: "text", label: "Text", icon: TextIcon },
-  { type: "image", label: "Image", icon: ImageIcon },
+  { type: "text", label: "Tekst", icon: TextIcon },
+  { type: "image", label: "Slika", icon: ImageIcon },
   { type: "video", label: "Video", icon: Video },
   { type: "pdf", label: "PDF", icon: FileText },
   { type: "link", label: "Link", icon: Link2 },
-  { type: "button", label: "Button", icon: MousePointerClick },
-  { type: "map", label: "Map", icon: MapIcon },
+  { type: "button", label: "Dugme", icon: MousePointerClick },
+  { type: "map", label: "Mapa", icon: MapIcon },
 ];
 
 function newBlock(type: GuideBlock["type"]): GuideBlock {
@@ -83,7 +83,7 @@ export function BlockEditor({ slug, section }: { slug: string; section: GuideSec
     startTransition(async () => {
       await updateGuideSectionMeta(section.id, slug, { title, icon: section.icon ?? "Sparkles", published });
       await updateGuideSectionBlocks(section.id, slug, blocks);
-      toast.success("Section saved");
+      toast.success("Sekcija sačuvana");
       router.refresh();
     });
   }
@@ -103,12 +103,12 @@ export function BlockEditor({ slug, section }: { slug: string; section: GuideSec
           <div className="flex items-center gap-2">
             <Switch checked={published} onCheckedChange={setPublished} id="published" />
             <Label htmlFor="published" className="text-sm text-muted-foreground">
-              Published
+              Objavljeno
             </Label>
           </div>
           <Button onClick={save} disabled={pending}>
             {pending && <Loader2 className="size-4 animate-spin" />}
-            Save
+            Sačuvaj
           </Button>
         </div>
       </div>
@@ -116,8 +116,8 @@ export function BlockEditor({ slug, section }: { slug: string; section: GuideSec
       {blocks.length === 0 ? (
         <EmptyState
           icon={TextIcon}
-          title="This section is empty"
-          description="Add text, images, videos, links, buttons or a map to build this page."
+          title="Ova sekcija je prazna"
+          description="Dodaj tekst, slike, video, linkove, dugmad ili mapu da napraviš ovu stranicu."
         />
       ) : (
         <div className="space-y-3">
@@ -138,7 +138,7 @@ export function BlockEditor({ slug, section }: { slug: string; section: GuideSec
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary">
-            <Plus className="size-4" /> Add block
+            <Plus className="size-4" /> Dodaj blok
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
@@ -191,7 +191,7 @@ function BlockCard({
       <CardContent className="p-0">
         {block.type === "text" && (
           <Textarea
-            placeholder="Write something helpful for your guests…"
+            placeholder="Napiši nešto korisno za goste…"
             value={block.content ?? ""}
             onChange={(e) => onChange({ content: e.target.value })}
             rows={4}
@@ -199,7 +199,7 @@ function BlockCard({
         )}
         {(block.type === "image" || block.type === "video" || block.type === "pdf") && (
           <Input
-            placeholder={`${meta.label} URL`}
+            placeholder={`URL — ${meta.label}`}
             value={block.url ?? ""}
             onChange={(e) => onChange({ url: e.target.value })}
           />
@@ -207,7 +207,7 @@ function BlockCard({
         {block.type === "link" && (
           <div className="grid gap-2 sm:grid-cols-2">
             <Input
-              placeholder="Label"
+              placeholder="Naziv"
               value={block.label ?? ""}
               onChange={(e) => onChange({ label: e.target.value })}
             />
@@ -221,7 +221,7 @@ function BlockCard({
         {block.type === "button" && (
           <div className="grid gap-2 sm:grid-cols-2">
             <Input
-              placeholder="Button text"
+              placeholder="Tekst dugmeta"
               value={block.label ?? ""}
               onChange={(e) => onChange({ label: e.target.value })}
             />
@@ -235,7 +235,7 @@ function BlockCard({
         {block.type === "map" && (
           <div className="grid gap-2 sm:grid-cols-3">
             <Input
-              placeholder="Address / label"
+              placeholder="Adresa / naziv"
               value={block.label ?? ""}
               onChange={(e) => onChange({ label: e.target.value })}
               className="sm:col-span-1"
@@ -243,14 +243,14 @@ function BlockCard({
             <Input
               type="number"
               step="any"
-              placeholder="Latitude"
+              placeholder="Geografska širina"
               value={block.lat ?? ""}
               onChange={(e) => onChange({ lat: e.target.value ? Number(e.target.value) : undefined })}
             />
             <Input
               type="number"
               step="any"
-              placeholder="Longitude"
+              placeholder="Geografska dužina"
               value={block.lng ?? ""}
               onChange={(e) => onChange({ lng: e.target.value ? Number(e.target.value) : undefined })}
             />

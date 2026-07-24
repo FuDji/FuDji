@@ -6,13 +6,13 @@ import { createApartment } from "@/app/apartments/actions";
 
 export default async function NewApartmentPage() {
   const { user } = await requireUser();
-  const fullName = (user.user_metadata?.full_name as string) || user.email?.split("@")[0] || "there";
+  const fullName = (user.user_metadata?.full_name as string) || user.email?.split("@")[0] || "tamo";
 
   return (
     <AppShell active="apartments" user={{ name: fullName, email: user.email ?? "" }}>
-      <PageHeader title="New apartment" description="Add a property to start building its guest experience." />
+      <PageHeader title="Novi apartman" description="Dodaj apartman i počni da praviš iskustvo za goste." />
       <div className="max-w-3xl">
-        <ApartmentForm action={createApartment} submitLabel="Create apartment" />
+        <ApartmentForm action={createApartment} submitLabel="Napravi apartman" />
       </div>
     </AppShell>
   );

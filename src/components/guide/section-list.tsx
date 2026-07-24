@@ -56,7 +56,7 @@ export function SectionList({ slug, sections }: { slug: string; sections: GuideS
     startTransition(async () => {
       setOptimistic(items.filter((s) => s.id !== section.id));
       await deleteGuideSection(section.id, slug);
-      toast.success(`"${section.title}" deleted`);
+      toast.success(`"${section.title}" obrisano`);
     });
   }
 
@@ -71,11 +71,11 @@ export function SectionList({ slug, sections }: { slug: string; sections: GuideS
           <Link href={`/apartments/${slug}/guide/${section.id}`} className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium">{section.title}</p>
             <p className="text-xs text-muted-foreground">
-              {section.blocks?.length ?? 0} block{section.blocks?.length === 1 ? "" : "s"} · {section.view_count} views
+              {section.blocks?.length ?? 0} blok(ova) · {section.view_count} pregleda
             </p>
           </Link>
           <Badge variant={section.published ? "success" : "secondary"}>
-            {section.published ? "Published" : "Draft"}
+            {section.published ? "Objavljeno" : "Nacrt"}
           </Badge>
           <div className="flex shrink-0 items-center gap-1">
             <Button variant="ghost" size="icon-sm" onClick={() => move(index, -1)} disabled={index === 0}>

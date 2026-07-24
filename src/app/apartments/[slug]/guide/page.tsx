@@ -20,16 +20,16 @@ export default async function GuestGuidePage({ params }: { params: Promise<{ slu
   return (
     <div>
       <PageHeader
-        title="Guest Guide"
-        description="The digital handbook your guests see the moment they check in."
+        title="Vodič za goste"
+        description="Digitalni priručnik koji tvoji gosti vide čim se prijave."
         actions={<AddSectionDialog apartmentId={apartment.id} slug={slug} />}
       />
 
       {sections.length === 0 ? (
         <EmptyState
           icon={BookOpenText}
-          title="No sections yet"
-          description="Start with Welcome, WiFi and House Rules — guests will see them at yourdomain.com/g/apartment-name"
+          title="Još nema sekcija"
+          description="Počni sa Dobrodošlicom, WiFi-jem i Kućnim pravilima — gosti će ih videti na tvomsajt.com/g/naziv-apartmana"
           action={<AddSectionDialog apartmentId={apartment.id} slug={slug} />}
         />
       ) : (

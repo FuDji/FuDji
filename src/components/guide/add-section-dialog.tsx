@@ -54,12 +54,12 @@ export function AddSectionDialog({ apartmentId, slug }: { apartmentId: string; s
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <Button onClick={() => setOpen(true)}>
-        <Plus className="size-4" /> Add Section
+        <Plus className="size-4" /> Dodaj sekciju
       </Button>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Add guest guide section</DialogTitle>
-          <DialogDescription>Pick a template or create a custom section.</DialogDescription>
+          <DialogTitle>Dodaj sekciju vodiča za goste</DialogTitle>
+          <DialogDescription>Izaberi šablon ili napravi prilagođenu sekciju.</DialogDescription>
         </DialogHeader>
 
         <div className="grid max-h-72 grid-cols-2 gap-2 overflow-y-auto pr-1 sm:grid-cols-3">
@@ -80,16 +80,16 @@ export function AddSectionDialog({ apartmentId, slug }: { apartmentId: string; s
 
         <div className="flex items-end gap-2 border-t border-border pt-4">
           <div className="flex-1 space-y-1.5">
-            <Label htmlFor="custom-title">Custom section</Label>
+            <Label htmlFor="custom-title">Prilagođena sekcija</Label>
             <Input
               id="custom-title"
-              placeholder="e.g. Local markets"
+              placeholder="npr. Lokalne pijace"
               value={customTitle}
               onChange={(e) => setCustomTitle(e.target.value)}
             />
           </div>
           <Button variant="secondary" onClick={handleCustom} disabled={pending || !customTitle.trim()}>
-            Create
+            Napravi
           </Button>
         </div>
       </DialogContent>

@@ -38,7 +38,7 @@ export default async function ApartmentOverviewPage({
 
   return (
     <div>
-      <PageHeader title="Overview" description="A snapshot of how this apartment is doing." />
+      <PageHeader title="Pregled" description="Brz uvid u to kako posluje ovaj apartman." />
 
       <Card className="mb-6 overflow-hidden py-0">
         <div className="relative h-48 w-full bg-secondary sm:h-64">
@@ -60,22 +60,24 @@ export default async function ApartmentOverviewPage({
                 </p>
               )}
             </div>
-            <Badge variant={apartment.status === "active" ? "success" : "secondary"}>{apartment.status}</Badge>
+            <Badge variant={apartment.status === "active" ? "success" : "secondary"}>
+              {apartment.status === "active" ? "aktivan" : apartment.status === "draft" ? "nacrt" : "arhiviran"}
+            </Badge>
           </div>
         </div>
       </Card>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="Rooms" value={overview.roomCount} icon={DoorOpen} />
-        <StatCard label="Guide sections" value={overview.guideSectionCount} icon={BookOpenText} tone="success" />
+        <StatCard label="Sobe" value={overview.roomCount} icon={DoorOpen} />
+        <StatCard label="Sekcije vodiča" value={overview.guideSectionCount} icon={BookOpenText} tone="success" />
         <StatCard
-          label="Inventory alerts"
+          label="Upozorenja inventara"
           value={overview.inventoryAlertCount}
           icon={Package}
           tone={overview.inventoryAlertCount > 0 ? "destructive" : "success"}
         />
         <StatCard
-          label="Open maintenance"
+          label="Otvoreno održavanje"
           value={overview.openMaintenanceCount}
           icon={Wrench}
           tone={overview.openMaintenanceCount > 0 ? "warning" : "success"}
@@ -85,17 +87,17 @@ export default async function ApartmentOverviewPage({
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader className="flex-row items-center justify-between">
-            <CardTitle className="text-base">Latest maintenance</CardTitle>
+            <CardTitle className="text-base">Poslednje održavanje</CardTitle>
             <Link
               href={`/apartments/${slug}/maintenance`}
               className="flex items-center gap-1 text-xs text-primary hover:underline"
             >
-              View all <ArrowUpRight className="size-3" />
+              Pogledaj sve <ArrowUpRight className="size-3" />
             </Link>
           </CardHeader>
           <CardContent>
             {overview.latestMaintenance.length === 0 ? (
-              <EmptyState icon={Wrench} title="No issues reported" className="border-none py-8" />
+              <EmptyState icon={Wrench} title="Nema prijavljenih problema" className="border-none py-8" />
             ) : (
               <ul className="space-y-1">
                 {overview.latestMaintenance.map((issue) => (
@@ -120,17 +122,17 @@ export default async function ApartmentOverviewPage({
 
         <Card>
           <CardHeader className="flex-row items-center justify-between">
-            <CardTitle className="text-base">Most scanned QR codes</CardTitle>
+            <CardTitle className="text-base">Najskeniraniji QR kodovi</CardTitle>
             <Link
               href={`/apartments/${slug}/qr-codes`}
               className="flex items-center gap-1 text-xs text-primary hover:underline"
             >
-              View all <ArrowUpRight className="size-3" />
+              Pogledaj sve <ArrowUpRight className="size-3" />
             </Link>
           </CardHeader>
           <CardContent>
             {overview.topQrCodes.length === 0 ? (
-              <EmptyState icon={QrCode} title="No QR codes yet" className="border-none py-8" />
+              <EmptyState icon={QrCode} title="Još nema QR kodova" className="border-none py-8" />
             ) : (
               <ul className="space-y-1">
                 {overview.topQrCodes.map((qr) => (
@@ -144,7 +146,7 @@ export default async function ApartmentOverviewPage({
                       </div>
                       <span className="text-sm">{qr.label}</span>
                     </div>
-                    <span className="text-sm font-medium text-muted-foreground">{qr.scan_count} scans</span>
+                    <span className="text-sm font-medium text-muted-foreground">{qr.scan_count} skeniranja</span>
                   </li>
                 ))}
               </ul>
@@ -154,17 +156,17 @@ export default async function ApartmentOverviewPage({
 
         <Card className="lg:col-span-2">
           <CardHeader className="flex-row items-center justify-between">
-            <CardTitle className="text-base">Most viewed guest pages</CardTitle>
+            <CardTitle className="text-base">Najgledanije stranice za goste</CardTitle>
             <Link
               href={`/apartments/${slug}/guide`}
               className="flex items-center gap-1 text-xs text-primary hover:underline"
             >
-              Edit guide <ArrowUpRight className="size-3" />
+              Uredi vodič <ArrowUpRight className="size-3" />
             </Link>
           </CardHeader>
           <CardContent>
             {overview.topGuides.length === 0 ? (
-              <EmptyState icon={Eye} title="No guide views yet" className="border-none py-8" />
+              <EmptyState icon={Eye} title="Još nema pregleda vodiča" className="border-none py-8" />
             ) : (
               <div className="grid gap-3 sm:grid-cols-2">
                 {overview.topGuides.map((section) => (

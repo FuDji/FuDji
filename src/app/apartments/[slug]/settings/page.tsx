@@ -42,7 +42,7 @@ export default async function ApartmentSettingsPage({ params }: { params: Promis
 
         <TabsContent value="general">
           <div className="max-w-3xl">
-            <ApartmentForm action={boundUpdate} defaultValues={apartment} submitLabel="Save changes" />
+            <ApartmentForm action={boundUpdate} defaultValues={apartment} submitLabel="Sačuvaj izmene" />
           </div>
         </TabsContent>
         <TabsContent value="branding">

@@ -17,7 +17,7 @@ export default async function ApartmentLayout({
 
   if (!apartment) notFound();
 
-  const fullName = (user.user_metadata?.full_name as string) || user.email?.split("@")[0] || "there";
+  const fullName = (user.user_metadata?.full_name as string) || user.email?.split("@")[0] || "tamo";
 
   return (
     <ApartmentShell apartment={apartment} user={{ name: fullName, email: user.email ?? "" }}>

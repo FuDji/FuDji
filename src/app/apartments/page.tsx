@@ -12,17 +12,17 @@ import { Button } from "@/components/ui/button";
 export default async function ApartmentsPage() {
   const { supabase, user } = await requireUser();
   const apartments = await listApartments(supabase, user.id);
-  const fullName = (user.user_metadata?.full_name as string) || user.email?.split("@")[0] || "there";
+  const fullName = (user.user_metadata?.full_name as string) || user.email?.split("@")[0] || "tamo";
 
   return (
     <AppShell active="apartments" user={{ name: fullName, email: user.email ?? "" }}>
       <PageHeader
-        title="Apartments"
-        description="Manage the guest experience for every property you own."
+        title="Apartmani"
+        description="Upravljaj iskustvom gostiju za svaki apartman koji poseduješ."
         actions={
           <Button asChild>
             <Link href="/apartments/new">
-              <Plus className="size-4" /> New Apartment
+              <Plus className="size-4" /> Novi apartman
             </Link>
           </Button>
         }
@@ -31,12 +31,12 @@ export default async function ApartmentsPage() {
       {apartments.length === 0 ? (
         <EmptyState
           icon={Building2}
-          title="No apartments yet"
-          description="Add your first property to start building its guest guide, room instructions and QR codes."
+          title="Još nema apartmana"
+          description="Dodaj svoj prvi apartman i počni da praviš vodič za goste, uputstva po sobama i QR kodove."
           action={
             <Button asChild>
               <Link href="/apartments/new">
-                <Plus className="size-4" /> New Apartment
+                <Plus className="size-4" /> Novi apartman
               </Link>
             </Button>
           }
