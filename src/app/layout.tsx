@@ -12,11 +12,11 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "FuDji — The operating system for your rental",
-    template: "%s · FuDji",
+    default: "Boravak — Operativni sistem za tvoj apartman",
+    template: "%s · Boravak",
   },
   description:
-    "FuDji helps apartment owners manage guest guides, room instructions, inventory, and maintenance — all in one beautiful dashboard.",
+    "Boravak pomaže vlasnicima apartmana da upravljaju vodičima za goste, uputstvima po sobama, inventarom i održavanjem — sve u jednom preglednom panelu.",
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} dark`} suppressHydrationWarning>
+    <html lang="sr" className={`${inter.variable} dark`} suppressHydrationWarning>
       <body className="min-h-screen bg-background font-sans text-foreground">
         <Providers>{children}</Providers>
       </body>

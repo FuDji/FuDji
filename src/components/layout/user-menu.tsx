@@ -36,19 +36,19 @@ export function UserMenu({
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>My account</DropdownMenuLabel>
+        <DropdownMenuLabel>Moj nalog</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <UserIcon /> Profile
+          <UserIcon /> Profil
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Settings /> Preferences
+          <Settings /> Podešavanja
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <form action={signOut} className="w-full">
           <DropdownMenuItem variant="destructive" asChild>
             <button type="submit" className="w-full">
-              <LogOut /> Sign out
+              <LogOut /> Odjava
             </button>
           </DropdownMenuItem>
         </form>

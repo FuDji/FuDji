@@ -95,7 +95,7 @@ export async function getDashboardStats(supabase: Client, ownerId: string): Prom
     id: m.id,
     type: "maintenance",
     title: m.title,
-    apartmentName: nameById.get(m.apartment_id) ?? "Apartment",
+    apartmentName: nameById.get(m.apartment_id) ?? "Apartman",
     createdAt: m.created_at,
   }));
 
@@ -113,14 +113,14 @@ export async function getDashboardStats(supabase: Client, ownerId: string): Prom
 function emptyTrend() {
   return Array.from({ length: 7 }).map((_, i) => {
     const d = new Date(Date.now() - (6 - i) * 24 * 60 * 60 * 1000);
-    return { date: d.toLocaleDateString("en-US", { weekday: "short" }), scans: 0, views: 0 };
+    return { date: d.toLocaleDateString("sr-Latn-RS", { weekday: "short" }), scans: 0, views: 0 };
   });
 }
 
 function buildTrend(viewTimestamps: string[], scanTimestamps: string[]) {
   const days = Array.from({ length: 7 }).map((_, i) => {
     const d = new Date(Date.now() - (6 - i) * 24 * 60 * 60 * 1000);
-    return { key: d.toDateString(), date: d.toLocaleDateString("en-US", { weekday: "short" }), scans: 0, views: 0 };
+    return { key: d.toDateString(), date: d.toLocaleDateString("sr-Latn-RS", { weekday: "short" }), scans: 0, views: 0 };
   });
   const byKey = new Map(days.map((d) => [d.key, d]));
 

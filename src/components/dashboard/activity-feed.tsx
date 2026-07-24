@@ -8,12 +8,12 @@ import type { ActivityItem } from "@/lib/data/dashboard";
 export function ActivityFeed({ items }: { items: ActivityItem[] }) {
   return (
     <Card className="p-5">
-      <h3 className="mb-4 text-sm font-medium text-muted-foreground">Recent activity</h3>
+      <h3 className="mb-4 text-sm font-medium text-muted-foreground">Nedavna aktivnost</h3>
       {items.length === 0 ? (
         <EmptyState
           icon={Wrench}
-          title="No activity yet"
-          description="Once you add apartments and guests start scanning QR codes, activity will show up here."
+          title="Još nema aktivnosti"
+          description="Kad dodaš apartmane i gosti počnu da skeniraju QR kodove, aktivnost će se pojaviti ovde."
           className="border-none py-10"
         />
       ) : (

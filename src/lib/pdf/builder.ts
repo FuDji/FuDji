@@ -3,7 +3,7 @@ import { jsPDF } from "jspdf";
 const PAGE_W = 210;
 const PAGE_H = 297;
 const MARGIN = 18;
-const ACCENT = "#4F8CFF";
+const DEFAULT_ACCENT = "#4F8CFF";
 const INK = "#0B0D12";
 const MUTED = "#64748B";
 
@@ -11,39 +11,78 @@ export function createDoc() {
   return new jsPDF({ unit: "mm", format: "a4" });
 }
 
-export function drawHeader(doc: jsPDF, apartmentName: string, title: string) {
-  doc.setFillColor(ACCENT);
+export async function loadImageAsDataUrl(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    return await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(typeof reader.result === "string" ? reader.result : null);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
+export function drawHeader(
+  doc: jsPDF,
+  apartmentName: string,
+  title: string,
+  opts?: { accentColor?: string; logoDataUrl?: string | null }
+) {
+  const accentColor = opts?.accentColor ?? DEFAULT_ACCENT;
+
+  doc.setFillColor(accentColor);
   doc.rect(0, 0, PAGE_W, 6, "F");
+
+  if (opts?.logoDataUrl) {
+    // ~32px at 96dpi
+    const logoSize = 8.5;
+    try {
+      doc.addImage(opts.logoDataUrl, (PAGE_W - logoSize) / 2, 10, logoSize, logoSize, undefined, "FAST");
+    } catch {
+      // ignore malformed/unsupported image data — header still renders without it
+    }
+  }
 
   doc.setTextColor(MUTED);
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text(apartmentName.toUpperCase(), MARGIN, 20);
+  doc.text(apartmentName.toUpperCase(), MARGIN, opts?.logoDataUrl ? 28 : 20, { align: "left" });
 
   doc.setTextColor(INK);
   doc.setFontSize(24);
   doc.setFont("helvetica", "bold");
-  doc.text(title, MARGIN, 32);
+  doc.text(title, MARGIN, opts?.logoDataUrl ? 40 : 32);
 
   doc.setDrawColor(230, 230, 235);
-  doc.line(MARGIN, 38, PAGE_W - MARGIN, 38);
+  doc.line(MARGIN, opts?.logoDataUrl ? 46 : 38, PAGE_W - MARGIN, opts?.logoDataUrl ? 46 : 38);
 
-  return 48;
+  return opts?.logoDataUrl ? 56 : 48;
 }
 
 export function drawFooter(doc: jsPDF, apartmentName: string, page: number) {
   doc.setFontSize(8);
   doc.setTextColor(MUTED);
   doc.setFont("helvetica", "normal");
-  doc.text(`${apartmentName} · Generated with FuDji`, MARGIN, PAGE_H - 10);
+  doc.text(`${apartmentName} · Generisano uz Boravak`, MARGIN, PAGE_H - 10);
   doc.text(String(page), PAGE_W - MARGIN, PAGE_H - 10, { align: "right" });
 }
 
-export function sectionTitle(doc: jsPDF, text: string, y: number) {
+export function sectionTitle(doc: jsPDF, text: string, y: number, accentColor?: string) {
   doc.setTextColor(INK);
   doc.setFontSize(13);
   doc.setFont("helvetica", "bold");
   doc.text(text, MARGIN, y);
+  if (accentColor) {
+    doc.setDrawColor(accentColor);
+    doc.setLineWidth(0.8);
+    doc.line(MARGIN, y + 1.5, MARGIN + 10, y + 1.5);
+    doc.setLineWidth(0.2);
+  }
   return y + 7;
 }
 
@@ -68,8 +107,8 @@ export function labelValue(doc: jsPDF, label: string, value: string, y: number) 
   return y + 14;
 }
 
-export function checkboxLine(doc: jsPDF, text: string, y: number) {
-  doc.setDrawColor(180, 180, 190);
+export function checkboxLine(doc: jsPDF, text: string, y: number, accentColor?: string) {
+  doc.setDrawColor(accentColor ?? "#B4B4BE");
   doc.rect(MARGIN, y - 4, 4.5, 4.5);
   doc.setTextColor(30, 30, 40);
   doc.setFontSize(10.5);
@@ -89,3 +128,4 @@ export function ensureSpace(doc: jsPDF, y: number, needed: number, apartmentName
 }
 
 export const PDF_LAYOUT = { PAGE_W, PAGE_H, MARGIN };
+export { DEFAULT_ACCENT };

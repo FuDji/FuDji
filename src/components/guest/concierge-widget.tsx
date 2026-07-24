@@ -19,7 +19,7 @@ export function ConciergeWidget({ apartmentId, apartmentName }: { apartmentId: s
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const key = `fudji-concierge-${apartmentId}`;
+    const key = `boravak-concierge-${apartmentId}`;
     let id = sessionStorage.getItem(key);
     if (!id) {
       id = crypto.randomUUID();
@@ -47,9 +47,9 @@ export function ConciergeWidget({ apartmentId, apartmentName }: { apartmentId: s
         body: JSON.stringify({ apartmentId, sessionId, message: text }),
       });
       const data = await res.json();
-      setMessages((prev) => [...prev, { role: "assistant", content: data.reply ?? "Sorry, I couldn't answer that." }]);
+      setMessages((prev) => [...prev, { role: "assistant", content: data.reply ?? "Nažalost, ne mogu da odgovorim na to." }]);
     } catch {
-      setMessages((prev) => [...prev, { role: "assistant", content: "Something went wrong. Please try again." }]);
+      setMessages((prev) => [...prev, { role: "assistant", content: "Nešto je pošlo po zlu. Pokušaj ponovo." }]);
     } finally {
       setPending(false);
     }
@@ -65,7 +65,7 @@ export function ConciergeWidget({ apartmentId, apartmentName }: { apartmentId: s
         )}
       >
         <Sparkles className="size-4" />
-        Ask a question
+        Postavi pitanje
       </button>
 
       {open && (
@@ -77,8 +77,8 @@ export function ConciergeWidget({ apartmentId, apartmentName }: { apartmentId: s
                 <Bot className="size-5" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-medium">{apartmentName} Concierge</p>
-                <p className="text-xs text-muted-foreground">Ask about WiFi, parking, house rules…</p>
+                <p className="text-sm font-medium">{apartmentName} — asistent</p>
+                <p className="text-xs text-muted-foreground">Pitaj o WiFi-u, parkingu, kućnim pravilima…</p>
               </div>
               <button onClick={() => setOpen(false)} className="rounded-lg p-1.5 text-muted-foreground hover:bg-secondary">
                 <X className="size-4" />
@@ -89,7 +89,7 @@ export function ConciergeWidget({ apartmentId, apartmentName }: { apartmentId: s
               {messages.length === 0 && (
                 <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-sm text-muted-foreground">
                   <Sparkles className="size-6 text-primary/50" />
-                  Ask me anything about this apartment.
+                  Pitaj me bilo šta o ovom apartmanu.
                 </div>
               )}
               {messages.map((m, i) => (
@@ -107,7 +107,7 @@ export function ConciergeWidget({ apartmentId, apartmentName }: { apartmentId: s
               ))}
               {pending && (
                 <div className="flex w-fit items-center gap-2 rounded-2xl bg-secondary px-3.5 py-2.5 text-sm text-muted-foreground">
-                  <Loader2 className="size-3.5 animate-spin" /> Thinking…
+                  <Loader2 className="size-3.5 animate-spin" /> Razmišljam…
                 </div>
               )}
             </div>
@@ -117,7 +117,7 @@ export function ConciergeWidget({ apartmentId, apartmentName }: { apartmentId: s
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && send()}
-                placeholder="Type your question…"
+                placeholder="Upiši svoje pitanje…"
                 className="flex-1 rounded-xl border border-input bg-input/60 px-3.5 py-2.5 text-sm outline-none focus:border-ring"
               />
               <button

@@ -8,42 +8,42 @@ import { cn } from "@/lib/utils";
 const tiers = [
   {
     name: "Starter",
-    price: "$0",
-    period: "forever",
-    description: "For hosts with a single apartment",
-    features: ["1 apartment", "Guest guide & room guides", "5 QR codes", "Basic inventory"],
-    cta: "Start free",
+    price: "0 €",
+    period: "zauvek",
+    description: "Za domaćine sa jednim apartmanom",
+    features: ["1 apartman", "Vodič za goste i sobe", "5 QR kodova", "Osnovni inventar"],
+    cta: "Počni besplatno",
     highlighted: false,
   },
   {
-    name: "Host",
-    price: "$19",
-    period: "per apartment / mo",
-    description: "For growing hosts and small portfolios",
+    name: "Domaćin",
+    price: "19 €",
+    period: "po apartmanu / mesečno",
+    description: "Za domaćine u rastu i manje portfolije",
     features: [
-      "Unlimited apartments",
-      "Unlimited QR codes",
-      "Maintenance workflows",
-      "Analytics & heatmaps",
-      "Print center",
+      "Neograničeno apartmana",
+      "Neograničeno QR kodova",
+      "Tok rada za održavanje",
+      "Analitika i toplotne mape",
+      "Print centar",
       "AI concierge",
     ],
-    cta: "Start free trial",
+    cta: "Počni besplatnu probu",
     highlighted: true,
   },
   {
     name: "Portfolio",
-    price: "Custom",
-    period: "for property managers",
-    description: "For teams managing many units",
+    price: "Po dogovoru",
+    period: "za menadžere nekretnina",
+    description: "Za timove koji upravljaju sa više jedinica",
     features: [
-      "Everything in Host",
-      "Team roles & permissions",
-      "Custom domain",
-      "Priority support",
-      "White-label guest pages",
+      "Sve iz Domaćin plana",
+      "Timske uloge i dozvole",
+      "Sopstveni domen",
+      "Prioritetna podrška",
+      "Stranice za goste bez brendiranja",
     ],
-    cta: "Talk to us",
+    cta: "Kontaktiraj nas",
     highlighted: false,
   },
 ];
@@ -52,8 +52,8 @@ export function Pricing() {
   return (
     <section id="pricing" className="mx-auto max-w-6xl px-6 py-24">
       <Reveal className="mx-auto max-w-xl text-center">
-        <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Simple, apartment-based pricing</h2>
-        <p className="mt-4 text-muted-foreground">Start free. Upgrade only when you need more.</p>
+        <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Jednostavne cene po apartmanu</h2>
+        <p className="mt-4 text-muted-foreground">Počni besplatno. Nadogradi samo kad ti zatreba.</p>
       </Reveal>
 
       <div className="mt-14 grid gap-6 lg:grid-cols-3">

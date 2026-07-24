@@ -12,8 +12,8 @@ export function ActivityChart({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Guest activity</CardTitle>
-        <p className="text-sm text-muted-foreground">QR scans &amp; guide views, last 7 days</p>
+        <CardTitle className="text-base">Aktivnost gostiju</CardTitle>
+        <p className="text-sm text-muted-foreground">QR skeniranja i pregledi vodiča, poslednjih 7 dana</p>
       </CardHeader>
       <CardContent className="pb-6">
         <div className="h-64 w-full">
@@ -52,7 +52,7 @@ export function ActivityChart({
                 stroke="#4F8CFF"
                 strokeWidth={2}
                 fill="url(#scans)"
-                name="QR scans"
+                name="QR skeniranja"
               />
               <Area
                 type="monotone"
@@ -60,7 +60,7 @@ export function ActivityChart({
                 stroke="#22C55E"
                 strokeWidth={2}
                 fill="url(#views)"
-                name="Guide views"
+                name="Pregledi vodiča"
               />
             </AreaChart>
           </ResponsiveContainer>

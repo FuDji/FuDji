@@ -10,8 +10,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/apartments", label: "Apartments", icon: Building2 },
+  { href: "/dashboard", label: "Kontrolna tabla", icon: LayoutDashboard },
+  { href: "/apartments", label: "Apartmani", icon: Building2 },
 ];
 
 export function MobileNav({ active }: { active: "dashboard" | "apartments" }) {
@@ -52,7 +52,7 @@ export function MobileNav({ active }: { active: "dashboard" | "apartments" }) {
           </nav>
           <Button asChild className="mt-4 w-full" onClick={() => setOpen(false)}>
             <Link href="/apartments/new">
-              <Plus className="size-4" /> New Apartment
+              <Plus className="size-4" /> Novi apartman
             </Link>
           </Button>
         </SheetContent>

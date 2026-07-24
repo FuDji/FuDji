@@ -29,7 +29,7 @@ export function Hero() {
           transition={{ duration: 0.5 }}
         >
           <Badge variant="secondary" className="mb-6">
-            Built for independent hosts &amp; boutique property managers
+            Napravljeno za samostalne domaćine i butik menadžere apartmana
           </Badge>
         </motion.div>
 
@@ -39,8 +39,8 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.05 }}
           className="text-balance text-4xl font-semibold tracking-tight text-gradient sm:text-5xl md:text-6xl"
         >
-          The guest experience layer
-          <br className="hidden sm:block" /> for your apartment
+          Iskustvo gostiju
+          <br className="hidden sm:block" /> za tvoj apartman
         </motion.h1>
 
         <motion.p
@@ -49,8 +49,9 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="mx-auto mt-6 max-w-xl text-balance text-lg text-muted-foreground"
         >
-          FuDji starts where the booking ends. Digital guest guides, room instructions,
-          inventory and maintenance tracking — in one beautifully simple dashboard.
+          Boravak počinje tamo gde se rezervacija završava. Digitalni vodiči za goste,
+          uputstva po sobama, praćenje inventara i održavanja — sve u jednom
+          preglednom panelu.
         </motion.p>
 
         <motion.div
@@ -61,12 +62,12 @@ export function Hero() {
         >
           <Button asChild size="lg" className="group">
             <Link href="/register">
-              Start free
+              Počni besplatno
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </Button>
           <Button asChild size="lg" variant="glass">
-            <Link href="#product">See how it works</Link>
+            <Link href="#product">Pogledaj kako radi</Link>
           </Button>
         </motion.div>
       </div>
@@ -86,10 +87,10 @@ export function Hero() {
           </div>
           <div className="grid gap-4 p-6 md:grid-cols-4">
             {[
-              { label: "Open Maintenance", value: "3", icon: Wrench, tone: "warning" },
-              { label: "Inventory Alerts", value: "2", icon: Package, tone: "destructive" },
-              { label: "QR Scans (7d)", value: "184", icon: QrCode, tone: "primary" },
-              { label: "Guide Views (7d)", value: "412", icon: BookOpenText, tone: "success" },
+              { label: "Otvoreno održavanje", value: "3", icon: Wrench, tone: "warning" },
+              { label: "Upozorenja inventara", value: "2", icon: Package, tone: "destructive" },
+              { label: "QR skeniranja (7d)", value: "184", icon: QrCode, tone: "primary" },
+              { label: "Pregledi vodiča (7d)", value: "412", icon: BookOpenText, tone: "success" },
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
@@ -105,7 +106,7 @@ export function Hero() {
             ))}
           </div>
           <div className="grid gap-4 px-6 pb-6 md:grid-cols-3">
-            {["Sunset Loft — Barcelona", "Harbor View #4", "Palm Street Studio"].map((name, i) => (
+            {["Sunčani Studio — Beograd", "Pogled na Reku #4", "Apartman Cvetna"].map((name, i) => (
               <motion.div
                 key={name}
                 initial={{ opacity: 0, y: 12 }}
@@ -115,7 +116,7 @@ export function Hero() {
               >
                 <div className="mb-3 h-20 rounded-lg bg-gradient-to-br from-primary/20 to-transparent" />
                 <div className="text-sm font-medium">{name}</div>
-                <div className="mt-1 text-xs text-muted-foreground">Guide · 12 sections</div>
+                <div className="mt-1 text-xs text-muted-foreground">Vodič · 12 sekcija</div>
               </motion.div>
             ))}
           </div>

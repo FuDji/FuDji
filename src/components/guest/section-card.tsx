@@ -16,7 +16,7 @@ export function SectionCard({ section }: { section: GuideSection }) {
           <BlockRenderer key={block.id} block={block} />
         ))}
         {section.blocks.length === 0 && (
-          <p className="text-sm text-muted-foreground">Nothing here yet.</p>
+          <p className="text-sm text-muted-foreground">Ovde još nema sadržaja.</p>
         )}
       </div>
     </section>

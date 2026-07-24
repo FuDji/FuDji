@@ -6,6 +6,7 @@ import { ArrowLeft, ImageOff, Lightbulb, TriangleAlert } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getPublicApartment } from "@/lib/data/apartments";
 import { getPublicRoom, getPublicRoomItems } from "@/lib/data/public";
+import { getContrastColor, withDefaultBrandColor } from "@/lib/color";
 import { DynamicIcon } from "@/lib/icon-map";
 import { cn } from "@/lib/utils";
 
@@ -27,9 +28,15 @@ export default async function GuestRoomPage({
   if (!room || room.apartment_id !== apartment.id) notFound();
 
   const items = await getPublicRoomItems(supabase, roomId);
+  const brandColor = withDefaultBrandColor(apartment.brand_color);
+  const brandStyle = {
+    "--primary": brandColor,
+    "--ring": brandColor,
+    "--primary-foreground": getContrastColor(brandColor),
+  } as React.CSSProperties;
 
   return (
-    <div className="min-h-screen pb-16">
+    <div className="min-h-screen pb-16" style={brandStyle}>
       <div className="relative h-48 w-full bg-secondary">
         {room.cover_image_url ? (
           <Image src={room.cover_image_url} alt={room.name} fill className="object-cover" unoptimized />
@@ -62,7 +69,9 @@ export default async function GuestRoomPage({
               id={item.id}
               className={cn(
                 "scroll-mt-20 rounded-2xl border bg-card p-5",
-                highlightId === item.id ? "border-primary shadow-[0_0_0_3px_rgba(79,140,255,0.2)]" : "border-border"
+                highlightId === item.id
+                  ? "border-primary shadow-[0_0_0_3px_color-mix(in_oklab,var(--primary)_25%,transparent)]"
+                  : "border-border"
               )}
             >
               <div className="mb-3 flex items-center gap-3">
@@ -116,7 +125,7 @@ export default async function GuestRoomPage({
           ))}
 
           {items.length === 0 && (
-            <p className="py-10 text-center text-sm text-muted-foreground">No instructions added for this room yet.</p>
+            <p className="py-10 text-center text-sm text-muted-foreground">Za ovu sobu još nema dodatih uputstava.</p>
           )}
         </div>
       </div>

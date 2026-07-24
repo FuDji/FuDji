@@ -14,51 +14,51 @@ import { Reveal } from "./reveal";
 const features = [
   {
     icon: BookOpenText,
-    title: "Digital guest guides",
+    title: "Digitalni vodiči za goste",
     description:
-      "WiFi, house rules, restaurants, emergency numbers — beautifully organized and always up to date.",
+      "WiFi, kućna pravila, restorani, hitni brojevi — lepo organizovano i uvek ažurno.",
   },
   {
     icon: DoorOpen,
-    title: "Room-by-room instructions",
+    title: "Uputstva po sobama",
     description:
-      "Every appliance gets its own mini-guide. No more guests texting you at midnight about the AC.",
+      "Svaki uređaj dobija svoj mini-vodič. Gosti vas više neće zvati u ponoć zbog klime.",
   },
   {
     icon: QrCode,
-    title: "Branded QR codes",
+    title: "Brendirani QR kodovi",
     description:
-      "Generate scannable codes for every room and item. Print stickers, posters or A4 sheets in one click.",
+      "Generiši kodove za skeniranje za svaku sobu i uređaj. Odštampaj nalepnice, postere ili A4 listove u jednom kliku.",
   },
   {
     icon: Package,
-    title: "Inventory tracking",
+    title: "Praćenje inventara",
     description:
-      "Know exactly what's in every apartment. Cleaners flag missing or broken items instantly.",
+      "Znaj tačno šta se nalazi u svakom apartmanu. Čistačice odmah prijavljuju nedostajuće ili pokvarene stvari.",
   },
   {
     icon: Wrench,
-    title: "Maintenance workflows",
+    title: "Održavanje bez glavobolje",
     description:
-      "Log issues with photos, assign them, and track resolution time — all from your phone.",
+      "Prijavi probleme sa fotografijama, dodeli ih nekome i prati vreme rešavanja — sve sa telefona.",
   },
   {
     icon: BarChart3,
-    title: "Real usage analytics",
+    title: "Prava analitika korišćenja",
     description:
-      "See which guides guests actually read, which QR codes get scanned, and where problems repeat.",
+      "Vidi koje vodiče gosti zaista čitaju, koji QR kodovi se skeniraju i gde se problemi ponavljaju.",
   },
   {
     icon: Printer,
-    title: "Print-ready templates",
+    title: "Šabloni spremni za štampu",
     description:
-      "Welcome books, WiFi cards, room labels and posters — export polished PDFs in seconds.",
+      "Knjige dobrodošlice, WiFi kartice, oznake soba i posteri — izvezi uređene PDF-ove za par sekundi.",
   },
   {
     icon: Sparkles,
     title: "AI concierge",
     description:
-      "Guests ask questions in their own language; FuDji answers using your apartment's knowledge base.",
+      "Gosti postavljaju pitanja na svom jeziku; Boravak odgovara koristeći bazu znanja tvog apartmana.",
   },
 ];
 
@@ -67,11 +67,11 @@ export function Features() {
     <section id="features" className="mx-auto max-w-6xl px-6 py-24">
       <Reveal className="mx-auto max-w-2xl text-center">
         <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-          Everything happens after check-in
+          Sve se dešava posle check-in-a
         </h2>
         <p className="mt-4 text-muted-foreground">
-          FuDji isn&apos;t a booking engine. It&apos;s the operating system for the stay itself —
-          designed for hosts who care about the guest experience.
+          Boravak nije sistem za rezervacije. To je operativni sistem za sam boravak —
+          napravljen za domaćine kojima je stalo do iskustva gostiju.
         </p>
       </Reveal>
 

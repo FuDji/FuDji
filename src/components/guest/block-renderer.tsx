@@ -48,7 +48,7 @@ export function BlockRenderer({ block }: { block: GuideBlock }) {
           className="flex items-center gap-3 rounded-xl border border-border bg-card p-3.5"
         >
           <FileText className="size-5 text-primary" />
-          <span className="flex-1 text-sm font-medium">View PDF document</span>
+          <span className="flex-1 text-sm font-medium">Pogledaj PDF dokument</span>
           <ExternalLink className="size-4 text-muted-foreground" />
         </a>
       ) : null;
@@ -74,7 +74,7 @@ export function BlockRenderer({ block }: { block: GuideBlock }) {
           rel="noopener noreferrer"
           className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground"
         >
-          {block.label || "Open"}
+          {block.label || "Otvori"}
         </a>
       ) : null;
 
@@ -89,7 +89,7 @@ export function BlockRenderer({ block }: { block: GuideBlock }) {
           className="flex items-center gap-3 rounded-xl border border-border bg-card p-3.5"
         >
           <MapPin className="size-5 text-primary" />
-          <span className="flex-1 text-sm font-medium">{block.label || "Open location in Maps"}</span>
+          <span className="flex-1 text-sm font-medium">{block.label || "Otvori lokaciju na mapi"}</span>
           <ExternalLink className="size-4 text-muted-foreground" />
         </a>
       );

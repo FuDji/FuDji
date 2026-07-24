@@ -13,7 +13,7 @@ export default async function DashboardPage() {
   const { supabase, user } = await requireUser();
   const stats = await getDashboardStats(supabase, user.id);
 
-  const fullName = (user.user_metadata?.full_name as string) || user.email?.split("@")[0] || "there";
+  const fullName = (user.user_metadata?.full_name as string) || user.email?.split("@")[0] || "tamo";
 
   return (
     <AppShell
@@ -21,27 +21,27 @@ export default async function DashboardPage() {
       user={{ name: fullName, email: user.email ?? "", avatarUrl: user.user_metadata?.avatar_url }}
     >
       <PageHeader
-        title={`Welcome back, ${fullName.split(" ")[0]}`}
-        description="Here's what's happening across your properties."
+        title={`Dobrodošao/la nazad, ${fullName.split(" ")[0]}`}
+        description="Evo šta se dešava na tvojim apartmanima."
       />
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
-        <StatCard label="Total Apartments" value={stats.totalApartments} icon={Building2} tone="primary" />
+        <StatCard label="Ukupno apartmana" value={stats.totalApartments} icon={Building2} tone="primary" />
         <StatCard
-          label="Open Maintenance"
+          label="Otvoreno održavanje"
           value={stats.openMaintenance}
           icon={Wrench}
           tone={stats.openMaintenance > 0 ? "warning" : "success"}
         />
         <StatCard
-          label="Inventory Alerts"
+          label="Upozorenja inventara"
           value={stats.inventoryAlerts}
           icon={Package}
           tone={stats.inventoryAlerts > 0 ? "destructive" : "success"}
         />
-        <StatCard label="QR Codes" value={stats.totalQrCodes} icon={QrCode} tone="primary" />
+        <StatCard label="QR kodovi" value={stats.totalQrCodes} icon={QrCode} tone="primary" />
         <StatCard
-          label="Guide Views (7d)"
+          label="Pregledi vodiča (7d)"
           value={stats.guideViews7d}
           icon={BookOpenText}
           tone="success"

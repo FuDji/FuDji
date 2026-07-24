@@ -4,10 +4,10 @@ import { QrCode, BookOpenText, Wrench, Package } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 const actions = [
-  { href: "/apartments/new", label: "New Apartment", icon: Package, tone: "primary" },
-  { href: "/apartments", label: "Generate QR", icon: QrCode, tone: "success" },
-  { href: "/apartments", label: "Create Guest Guide", icon: BookOpenText, tone: "warning" },
-  { href: "/apartments", label: "Add Maintenance", icon: Wrench, tone: "destructive" },
+  { href: "/apartments/new", label: "Novi apartman", icon: Package, tone: "primary" },
+  { href: "/apartments", label: "Generiši QR", icon: QrCode, tone: "success" },
+  { href: "/apartments", label: "Napravi vodič za goste", icon: BookOpenText, tone: "warning" },
+  { href: "/apartments", label: "Dodaj održavanje", icon: Wrench, tone: "destructive" },
 ] as const;
 
 const toneClasses = {
@@ -20,7 +20,7 @@ const toneClasses = {
 export function QuickActions() {
   return (
     <Card className="p-5">
-      <h3 className="mb-4 text-sm font-medium text-muted-foreground">Quick actions</h3>
+      <h3 className="mb-4 text-sm font-medium text-muted-foreground">Brze akcije</h3>
       <div className="grid grid-cols-2 gap-3">
         {actions.map((action) => (
           <Link

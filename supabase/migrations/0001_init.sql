@@ -1,4 +1,4 @@
--- FuDji core schema
+-- Boravak core schema
 -- Enable extensions
 create extension if not exists "pgcrypto";
 

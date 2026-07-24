@@ -27,6 +27,7 @@ export function PrintGrid({
   contacts,
   inventoryItems,
   qrCodes,
+  parkingImageUrl,
 }: {
   apartment: Apartment;
   sections: GuideSection[];
@@ -34,6 +35,7 @@ export function PrintGrid({
   contacts: EmergencyContact[];
   inventoryItems: InventoryItem[];
   qrCodes: QrCode[];
+  parkingImageUrl?: string | null;
 }) {
   const [generating, setGenerating] = useState<string | null>(null);
 
@@ -43,7 +45,7 @@ export function PrintGrid({
       const houseRules = sections.find((s) => s.key === "house_rules");
       switch (key) {
         case "welcome_book":
-          generateWelcomeBookPdf(apartment, sections, contacts);
+          await generateWelcomeBookPdf(apartment, sections, contacts);
           break;
         case "house_rules":
           generateHouseRulesPdf(apartment, houseRules);
@@ -55,10 +57,10 @@ export function PrintGrid({
           generateEmergencyContactsPdf(apartment, contacts);
           break;
         case "parking_instructions":
-          generateParkingPdf(apartment);
+          await generateParkingPdf(apartment, parkingImageUrl);
           break;
         case "room_labels":
-          generateRoomLabelsPdf(apartment, rooms);
+          await generateRoomLabelsPdf(apartment, rooms);
           break;
         case "qr_posters":
           await generateQrPostersPdf(apartment, qrCodes, window.location.origin);
@@ -97,7 +99,7 @@ export function PrintGrid({
             ) : (
               <Download className="size-4" />
             )}
-            Generate PDF
+            Generiši PDF
           </Button>
         </Card>
       ))}

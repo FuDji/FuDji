@@ -5,11 +5,14 @@ import { CalendarCheck, CalendarX, ImageOff, MapPin, Phone, ShieldAlert } from "
 import { createClient } from "@/lib/supabase/server";
 import { getPublicApartment } from "@/lib/data/apartments";
 import { getPublicGuideSections, getPublicRooms, logGuideView } from "@/lib/data/public";
+import { getContrastColor, withDefaultBrandColor } from "@/lib/color";
 import { WifiCard } from "@/components/guest/wifi-card";
 import { SectionNav } from "@/components/guest/section-nav";
 import { SectionCard } from "@/components/guest/section-card";
 import { RoomGrid } from "@/components/guest/room-grid";
+import { GalleryStrip } from "@/components/guest/gallery-strip";
 import { ConciergeWidget } from "@/components/guest/concierge-widget";
+import { Button } from "@/components/ui/button";
 
 export default async function GuestGuidePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -25,9 +28,15 @@ export default async function GuestGuidePage({ params }: { params: Promise<{ slu
   await logGuideView(supabase, apartment.id, null).catch(() => {});
 
   const contacts = apartment.emergency_contacts;
+  const brandColor = withDefaultBrandColor(apartment.brand_color);
+  const brandStyle = {
+    "--primary": brandColor,
+    "--ring": brandColor,
+    "--primary-foreground": getContrastColor(brandColor),
+  } as React.CSSProperties;
 
   return (
-    <div className="min-h-screen pb-24">
+    <div className="min-h-screen pb-24" style={brandStyle}>
       <div className="relative h-64 w-full bg-secondary sm:h-80">
         {apartment.hero_image_url ? (
           <Image src={apartment.hero_image_url} alt={apartment.name} fill priority className="object-cover" unoptimized />
@@ -60,16 +69,26 @@ export default async function GuestGuidePage({ params }: { params: Promise<{ slu
           <div className="mt-5 grid grid-cols-2 gap-3">
             <div className="rounded-xl border border-border p-3">
               <CalendarCheck className="mb-1.5 size-4 text-primary" />
-              <p className="text-xs text-muted-foreground">Check-in</p>
+              <p className="text-xs text-muted-foreground">Prijava</p>
               <p className="text-sm font-medium">{apartment.check_in_time}</p>
             </div>
             <div className="rounded-xl border border-border p-3">
               <CalendarX className="mb-1.5 size-4 text-primary" />
-              <p className="text-xs text-muted-foreground">Check-out</p>
+              <p className="text-xs text-muted-foreground">Odjava</p>
               <p className="text-sm font-medium">{apartment.check_out_time}</p>
             </div>
           </div>
+
+          {apartment.phone && (
+            <Button asChild className="mt-3 w-full">
+              <a href={`tel:${apartment.phone}`}>
+                <Phone className="size-4" /> Pozovite domaćina
+              </a>
+            </Button>
+          )}
         </div>
+
+        <GalleryStrip images={apartment.apartment_gallery} />
 
         {apartment.wifi_name && apartment.wifi_password && (
           <div className="mb-6">
@@ -79,7 +98,7 @@ export default async function GuestGuidePage({ params }: { params: Promise<{ slu
 
         {rooms.length > 0 && (
           <div className="mb-8">
-            <h2 className="mb-3 text-sm font-medium text-muted-foreground">Explore the apartment</h2>
+            <h2 className="mb-3 text-sm font-medium text-muted-foreground">Istraži apartman</h2>
             <RoomGrid slug={slug} rooms={rooms} />
           </div>
         )}
@@ -98,7 +117,7 @@ export default async function GuestGuidePage({ params }: { params: Promise<{ slu
               <div className="flex size-10 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
                 <ShieldAlert className="size-5" />
               </div>
-              <h2 className="text-lg font-semibold">Emergency contacts</h2>
+              <h2 className="text-lg font-semibold">Hitni kontakti</h2>
             </div>
             <div className="space-y-2">
               {contacts.map((contact) => (

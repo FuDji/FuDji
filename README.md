@@ -1,6 +1,6 @@
-# FuDji
+# Boravak
 
-The guest experience layer for independent hosts. FuDji starts where the booking ends — digital
+The guest experience layer for independent hosts. Boravak starts where the booking ends — digital
 guest guides, room-by-room instructions, QR codes, inventory and maintenance tracking, all in one
 premium dashboard.
 

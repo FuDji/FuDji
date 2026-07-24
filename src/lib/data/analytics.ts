@@ -67,14 +67,14 @@ export async function getApartmentAnalytics(supabase: Client, apartmentId: strin
   let mostProblematicRoom: { name: string; count: number } | null = null;
   for (const [roomId, count] of roomIssueCounts) {
     if (!mostProblematicRoom || count > mostProblematicRoom.count) {
-      mostProblematicRoom = { name: rooms.get(roomId) ?? "Room", count };
+      mostProblematicRoom = { name: rooms.get(roomId) ?? "Soba", count };
     }
   }
 
   const monthlyBuckets = Array.from({ length: 6 }).map((_, i) => {
     const d = new Date();
     d.setMonth(d.getMonth() - (5 - i));
-    return { key: `${d.getFullYear()}-${d.getMonth()}`, label: d.toLocaleDateString("en-US", { month: "short" }), count: 0 };
+    return { key: `${d.getFullYear()}-${d.getMonth()}`, label: d.toLocaleDateString("sr-Latn-RS", { month: "short" }), count: 0 };
   });
   const bucketByKey = new Map(monthlyBuckets.map((b) => [b.key, b]));
   for (const issue of allIssues) {

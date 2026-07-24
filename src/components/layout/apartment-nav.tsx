@@ -17,15 +17,15 @@ import {
 import { cn } from "@/lib/utils";
 
 export const APARTMENT_NAV_ITEMS = [
-  { segment: "overview", label: "Overview", icon: LayoutDashboard },
-  { segment: "guide", label: "Guest Guide", icon: BookOpenText },
-  { segment: "rooms", label: "Room Guides", icon: DoorOpen },
-  { segment: "qr-codes", label: "QR Codes", icon: QrCode },
-  { segment: "inventory", label: "Inventory", icon: Package },
-  { segment: "maintenance", label: "Maintenance", icon: Wrench },
-  { segment: "analytics", label: "Analytics", icon: BarChart3 },
-  { segment: "print-center", label: "Print Center", icon: Printer },
-  { segment: "settings", label: "Settings", icon: Settings },
+  { segment: "overview", label: "Pregled", icon: LayoutDashboard },
+  { segment: "guide", label: "Vodič za goste", icon: BookOpenText },
+  { segment: "rooms", label: "Vodiči po sobama", icon: DoorOpen },
+  { segment: "qr-codes", label: "QR kodovi", icon: QrCode },
+  { segment: "inventory", label: "Inventar", icon: Package },
+  { segment: "maintenance", label: "Održavanje", icon: Wrench },
+  { segment: "analytics", label: "Analitika", icon: BarChart3 },
+  { segment: "print-center", label: "Print centar", icon: Printer },
+  { segment: "settings", label: "Podešavanja", icon: Settings },
 ] as const;
 
 export function ApartmentNav({ slug, onNavigate }: { slug: string; onNavigate?: () => void }) {

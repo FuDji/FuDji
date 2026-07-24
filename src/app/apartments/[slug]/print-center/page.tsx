@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { requireUser } from "@/lib/auth";
-import { getOwnedApartment, listEmergencyContacts } from "@/lib/data/apartments";
+import { getOwnedApartment, listEmergencyContacts, listGalleryImages } from "@/lib/data/apartments";
 import { listGuideSections } from "@/lib/data/guide";
 import { listRooms } from "@/lib/data/rooms";
 import { listInventoryItems } from "@/lib/data/inventory";
@@ -15,19 +15,22 @@ export default async function PrintCenterPage({ params }: { params: Promise<{ sl
   const apartment = await getOwnedApartment(supabase, slug, user.id);
   if (!apartment) notFound();
 
-  const [sections, rooms, contacts, inventoryItems, qrCodes] = await Promise.all([
+  const [sections, rooms, contacts, inventoryItems, qrCodes, gallery] = await Promise.all([
     listGuideSections(supabase, apartment.id),
     listRooms(supabase, apartment.id),
     listEmergencyContacts(supabase, apartment.id),
     listInventoryItems(supabase, apartment.id),
     listQrCodes(supabase, apartment.id),
+    listGalleryImages(supabase, apartment.id),
   ]);
+
+  const parkingImageUrl = gallery[0]?.url ?? apartment.hero_image_url;
 
   return (
     <div>
       <PageHeader
         title="Print Center"
-        description="Beautiful, print-ready PDFs — from welcome books to QR posters."
+        description="Lepi, štampi-spremni PDF-ovi — od knjige dobrodošlice do QR postera."
       />
       <PrintGrid
         apartment={apartment}
@@ -36,6 +39,7 @@ export default async function PrintCenterPage({ params }: { params: Promise<{ sl
         contacts={contacts}
         inventoryItems={inventoryItems}
         qrCodes={qrCodes}
+        parkingImageUrl={parkingImageUrl}
       />
     </div>
   );

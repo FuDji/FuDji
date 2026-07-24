@@ -8,8 +8,8 @@ import { MobileNav } from "@/components/layout/mobile-nav";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/apartments", label: "Apartments", icon: Building2 },
+  { href: "/dashboard", label: "Kontrolna tabla", icon: LayoutDashboard },
+  { href: "/apartments", label: "Apartmani", icon: Building2 },
 ];
 
 export function AppShell({
@@ -50,7 +50,7 @@ export function AppShell({
         <div className="p-3">
           <Button asChild className="w-full">
             <Link href="/apartments/new">
-              <Plus className="size-4" /> New Apartment
+              <Plus className="size-4" /> Novi apartman
             </Link>
           </Button>
         </div>
