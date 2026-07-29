@@ -1,77 +1,73 @@
 import {
-  BookOpenText,
-  DoorOpen,
-  QrCode,
-  Package,
-  Wrench,
-  BarChart3,
-  Printer,
-  Sparkles,
+  Target,
+  Receipt,
+  Zap,
+  Radar,
+  Banknote,
+  Headset,
+  MapPinned,
+  ShieldCheck,
 } from "lucide-react";
 
 import { Reveal } from "./reveal";
 
 const features = [
   {
-    icon: BookOpenText,
-    title: "Digitalni vodiči za goste",
+    icon: Target,
+    title: "98.4% uručenosti",
     description:
-      "WiFi, kućna pravila, restorani, hitni brojevi — lepo organizovano i uvek ažurno.",
+      "Najviša stopa uspešnih isporuka na tržištu — svaka pošiljka je potvrđena i evidentirana.",
   },
   {
-    icon: DoorOpen,
-    title: "Uputstva po sobama",
+    icon: Receipt,
+    title: "Transparentne cene",
     description:
-      "Svaki uređaj dobija svoj mini-vodič. Gosti vas više neće zvati u ponoć zbog klime.",
+      "Cena po pošiljci je poznata unapred. Bez paušala, bez skrivenih troškova, bez sitnih slova.",
   },
   {
-    icon: QrCode,
-    title: "Brendirani QR kodovi",
+    icon: Zap,
+    title: "Isporuka isti dan",
     description:
-      "Generiši kodove za skeniranje za svaku sobu i uređaj. Odštampaj nalepnice, postere ili A4 listove u jednom kliku.",
+      "Pošiljka poslata ujutru stiže do primaoca isti dan, u svim većim gradovima Srbije.",
   },
   {
-    icon: Package,
-    title: "Praćenje inventara",
+    icon: Radar,
+    title: "Praćenje uživo",
     description:
-      "Znaj tačno šta se nalazi u svakom apartmanu. Čistačice odmah prijavljuju nedostajuće ili pokvarene stvari.",
+      "Pratite tačnu lokaciju svoje pošiljke od preuzimanja do uručenja, u realnom vremenu.",
   },
   {
-    icon: Wrench,
-    title: "Održavanje bez glavobolje",
-    description:
-      "Prijavi probleme sa fotografijama, dodeli ih nekome i prati vreme rešavanja — sve sa telefona.",
+    icon: Banknote,
+    title: "Naplata pouzeća",
+    description: "Novac od pouzeća stiže na vaš račun u roku od 24 sata od uručenja.",
   },
   {
-    icon: BarChart3,
-    title: "Prava analitika korišćenja",
-    description:
-      "Vidi koje vodiče gosti zaista čitaju, koji QR kodovi se skeniraju i gde se problemi ponavljaju.",
+    icon: MapPinned,
+    title: "Pokrivenost cele Srbije",
+    description: "Dostavljamo u svim većim gradovima i opštinama, svakog radnog dana.",
   },
   {
-    icon: Printer,
-    title: "Šabloni spremni za štampu",
-    description:
-      "Knjige dobrodošlice, WiFi kartice, oznake soba i posteri — izvezi uređene PDF-ove za par sekundi.",
+    icon: Headset,
+    title: "Podrška kad zatreba",
+    description: "Naš tim je dostupan telefonom i chatom — brzi odgovori, bez čekanja u redu.",
   },
   {
-    icon: Sparkles,
-    title: "AI concierge",
-    description:
-      "Gosti postavljaju pitanja na svom jeziku; Boravak odgovara koristeći bazu znanja tvog apartmana.",
+    icon: ShieldCheck,
+    title: "Sigurnost pošiljke",
+    description: "Svaka pošiljka je osigurana i tretirana sa istom pažnjom, bez obzira na veličinu.",
   },
 ];
 
 export function Features() {
   return (
-    <section id="features" className="mx-auto max-w-6xl px-6 py-24">
+    <section id="zasto-mi" className="mx-auto max-w-6xl px-6 py-24 scroll-mt-16">
       <Reveal className="mx-auto max-w-2xl text-center">
         <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-          Sve se dešava posle check-in-a
+          Zašto biraju Prime Delivery
         </h2>
         <p className="mt-4 text-muted-foreground">
-          Boravak nije sistem za rezervacije. To je operativni sistem za sam boravak —
-          napravljen za domaćine kojima je stalo do iskustva gostiju.
+          Ne obećavamo brzinu — merimo je. Evo zašto nam preduzeća i prodavnice
+          poveravaju svoje pošiljke.
         </p>
       </Reveal>
 

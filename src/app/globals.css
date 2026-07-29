@@ -6,27 +6,27 @@
 :root {
   --radius: 1rem;
 
-  /* FuDji brand palette */
-  --background: #0b0d12;
+  /* Prime Delivery brand palette */
+  --background: #060445;
   --foreground: #ffffff;
 
-  --card: #131722;
+  --card: #0d0a63;
   --card-foreground: #ffffff;
 
-  --popover: #131722;
+  --popover: #0d0a63;
   --popover-foreground: #ffffff;
 
-  --primary: #4f8cff;
-  --primary-foreground: #ffffff;
+  --primary: #f5ca48;
+  --primary-foreground: #0b0836;
 
-  --secondary: #1a1f2c;
+  --secondary: #100c72;
   --secondary-foreground: #ffffff;
 
-  --muted: #171b26;
-  --muted-foreground: #94a3b8;
+  --muted: #0c0958;
+  --muted-foreground: #a9a6d9;
 
-  --accent: #1a2032;
-  --accent-foreground: #4f8cff;
+  --accent: #14109c;
+  --accent-foreground: #f5ca48;
 
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
@@ -37,23 +37,23 @@
   --warning: #f59e0b;
   --warning-foreground: #1c1102;
 
-  --border: #232735;
-  --input: #1a1f2c;
-  --ring: #4f8cff;
+  --border: #1c1780;
+  --input: #100c72;
+  --ring: #f5ca48;
 
-  --chart-1: #4f8cff;
+  --chart-1: #f5ca48;
   --chart-2: #22c55e;
   --chart-3: #f59e0b;
   --chart-4: #a78bfa;
   --chart-5: #ef4444;
 
-  --sidebar: #0e1118;
+  --sidebar: #050340;
   --sidebar-foreground: #ffffff;
-  --sidebar-border: #232735;
-  --sidebar-accent: #171b26;
+  --sidebar-border: #1c1780;
+  --sidebar-accent: #0c0958;
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-primary: #4f8cff;
-  --sidebar-primary-foreground: #ffffff;
+  --sidebar-primary: #f5ca48;
+  --sidebar-primary-foreground: #0b0836;
 }
 
 @theme inline {
@@ -181,13 +181,16 @@
     border: 1px solid var(--border);
   }
   .text-gradient {
-    background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #f5ca48 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
   .accent-gradient {
     background: linear-gradient(135deg, #4f8cff 0%, #7db2ff 100%);
+  }
+  .prime-gradient {
+    background: linear-gradient(135deg, #f5ca48 0%, #fde08a 100%);
   }
   .glow-primary {
     box-shadow: 0 0 0 1px color-mix(in oklab, var(--primary) 40%, transparent),
@@ -209,5 +212,54 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+  .prime-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+    background: linear-gradient(
+      90deg,
+      var(--primary) 0%,
+      var(--primary) var(--slider-progress, 50%),
+      var(--input) var(--slider-progress, 50%),
+      var(--input) 100%
+    );
+    outline: none;
+  }
+  .prime-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    size: 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 3px solid var(--background);
+    box-shadow: 0 0 0 1px var(--primary), 0 4px 16px -2px color-mix(in oklab, var(--primary) 60%, transparent);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  .prime-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.12);
+  }
+  .prime-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 3px solid var(--background);
+    box-shadow: 0 0 0 1px var(--primary), 0 4px 16px -2px color-mix(in oklab, var(--primary) 60%, transparent);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  .prime-slider::-moz-range-thumb:hover {
+    transform: scale(1.12);
+  }
+  .prime-slider::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background: transparent;
   }
 }
