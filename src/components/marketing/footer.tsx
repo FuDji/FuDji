@@ -8,14 +8,11 @@ export function MarketingFooter() {
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
         <Logo />
         <p className="text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Boravak. Iskustvo gostiju za samostalne domaćine.
+          © {new Date().getFullYear()} Prime Bite. Naručivanje obroka za firme.
         </p>
         <div className="flex gap-5 text-sm text-muted-foreground">
           <Link href="/login" className="hover:text-foreground">
             Prijava
-          </Link>
-          <Link href="/register" className="hover:text-foreground">
-            Započni
           </Link>
         </div>
       </div>

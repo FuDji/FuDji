@@ -44,3 +44,46 @@ export function slugify(input: string) {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 }
+
+export function formatMoney(amount: number) {
+  return new Intl.NumberFormat("sr-RS", {
+    maximumFractionDigits: 0,
+  }).format(amount) + " RSD";
+}
+
+/** Returns YYYY-MM-DD for the local date, avoiding UTC-shift bugs from toISOString(). */
+export function toDateKey(date: Date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+export function todayKey() {
+  return toDateKey(new Date());
+}
+
+export function addDays(date: Date, days: number) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+export function formatDateSr(date: string | Date) {
+  return new Intl.DateTimeFormat("sr-RS", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  }).format(new Date(date));
+}
+
+/** Is "now" past HH:MM cutoff time for the given date-key? Always true for past dates. */
+export function isPastCutoff(dateKey: string, cutoffTime: string, now = new Date()) {
+  const todayK = toDateKey(now);
+  if (dateKey < todayK) return true;
+  if (dateKey > todayK) return false;
+  const [h, m] = cutoffTime.split(":").map(Number);
+  const cutoff = new Date(now);
+  cutoff.setHours(h ?? 0, m ?? 0, 0, 0);
+  return now.getTime() >= cutoff.getTime();
+}

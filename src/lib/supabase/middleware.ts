@@ -2,6 +2,9 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 import type { Database } from "@/types/database";
+import { ROLE_HOME } from "@/lib/constants";
+
+const PORTAL_PREFIXES = ["/app", "/company", "/restaurant", "/admin"] as const;
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -39,22 +42,38 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
-  const isAuthRoute = ["/login", "/register", "/forgot-password", "/verify-email"].some((p) =>
+  const isAuthRoute = ["/login", "/forgot-password", "/reset-password"].some((p) =>
     path.startsWith(p)
   );
-  const isProtectedRoute = path.startsWith("/dashboard") || path.startsWith("/apartments");
+  const isPortalRoute = PORTAL_PREFIXES.some((p) => path.startsWith(p));
 
-  if (!user && isProtectedRoute) {
+  if (!user && isPortalRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("redirect", path);
     return NextResponse.redirect(url);
   }
 
-  if (user && isAuthRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+  if (user && (isAuthRoute || isPortalRoute)) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    const home = (profile && ROLE_HOME[profile.role]) || "/app";
+
+    if (isAuthRoute) {
+      const url = request.nextUrl.clone();
+      url.pathname = home;
+      return NextResponse.redirect(url);
+    }
+
+    if (isPortalRoute && !path.startsWith(home)) {
+      const url = request.nextUrl.clone();
+      url.pathname = home;
+      return NextResponse.redirect(url);
+    }
   }
 
   return response;

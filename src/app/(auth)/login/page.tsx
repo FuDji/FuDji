@@ -17,7 +17,7 @@ export default function LoginPage() {
       <div className="mb-6 text-center">
         <h1 className="text-xl font-semibold">Dobrodošli nazad</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Prijavi se da upravljaš svojim nekretninama
+          Prijavi se na svoj Prime Bite nalog
         </p>
       </div>
 
@@ -47,10 +47,7 @@ export default function LoginPage() {
       </form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        Nemaš nalog?{" "}
-        <Link href="/register" className="text-primary hover:underline">
-          Napravi ga
-        </Link>
+        Nalog se dobija pozivnicom od tvoje firme, restorana ili administratora.
       </p>
     </div>
   );

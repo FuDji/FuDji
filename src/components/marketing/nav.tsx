@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 const links = [
   { href: "#product", label: "Proizvod" },
   { href: "#features", label: "Funkcije" },
-  { href: "#pricing", label: "Cene" },
+  { href: "#portals", label: "Portali" },
 ];
 
 export function MarketingNav() {
@@ -34,11 +34,8 @@ export function MarketingNav() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/login">Prijava</Link>
-          </Button>
           <Button asChild size="sm">
-            <Link href="/register">Započni</Link>
+            <Link href="/login">Prijava</Link>
           </Button>
         </div>
       </div>
