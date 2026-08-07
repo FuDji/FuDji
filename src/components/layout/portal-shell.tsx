@@ -7,22 +7,23 @@ import { Logo } from "@/components/brand/logo";
 import { UserMenu } from "@/components/layout/user-menu";
 import { PortalMobileNav } from "@/components/layout/portal-mobile-nav";
 import { cn } from "@/lib/utils";
-import type { NavItem } from "@/components/layout/portal-nav-items";
+import { NAV_BY_PORTAL, type PortalKey } from "@/components/layout/portal-nav-items";
 
 const ROOTS = ["/app", "/company", "/restaurant", "/admin"];
 
 export function PortalShell({
-  navItems,
+  portal,
   user,
   badge,
   children,
 }: {
-  navItems: NavItem[];
+  portal: PortalKey;
   user: { name: string; email: string; avatarUrl?: string | null };
   badge?: string;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const navItems = NAV_BY_PORTAL[portal];
 
   return (
     <div className="flex min-h-screen">
@@ -60,7 +61,7 @@ export function PortalShell({
 
       <div className="flex min-h-screen flex-1 flex-col md:pl-64">
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur-xl md:px-8">
-          <PortalMobileNav navItems={navItems} />
+          <PortalMobileNav portal={portal} />
           <div className="hidden md:block" />
           <UserMenu name={user.name} email={user.email} avatarUrl={user.avatarUrl} />
         </header>

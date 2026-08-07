@@ -46,7 +46,7 @@ export function slugify(input: string) {
 }
 
 export function formatMoney(amount: number) {
-  return new Intl.NumberFormat("sr-RS", {
+  return new Intl.NumberFormat("sr-Latn-RS", {
     maximumFractionDigits: 0,
   }).format(amount) + " RSD";
 }
@@ -70,7 +70,7 @@ export function addDays(date: Date, days: number) {
 }
 
 export function formatDateSr(date: string | Date) {
-  return new Intl.DateTimeFormat("sr-RS", {
+  return new Intl.DateTimeFormat("sr-Latn-RS", {
     weekday: "short",
     day: "numeric",
     month: "short",

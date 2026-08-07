@@ -1,4 +1,4 @@
-export const CURRENCY_LOCALE = "sr-RS";
+export const CURRENCY_LOCALE = "sr-Latn-RS";
 export const CURRENCY = "RSD";
 
 export const PAYMENT_TYPE_LABELS = {

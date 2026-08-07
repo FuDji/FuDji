@@ -54,3 +54,17 @@ export const ADMIN_NAV: NavItem[] = [
   { href: "/admin/rewards", label: "Nagrade", icon: Gift },
   { href: "/admin/export", label: "Export", icon: Download },
 ];
+
+export type PortalKey = "employee" | "office_manager" | "restaurant_staff" | "admin";
+
+/**
+ * Keyed lookup so server-component layouts can pass a plain string prop to
+ * the client-side shell instead of the nav array itself — icon components
+ * (functions) can't cross the server/client boundary as props.
+ */
+export const NAV_BY_PORTAL: Record<PortalKey, NavItem[]> = {
+  employee: EMPLOYEE_NAV,
+  office_manager: COMPANY_NAV,
+  restaurant_staff: RESTAURANT_NAV,
+  admin: ADMIN_NAV,
+};

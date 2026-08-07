@@ -9,11 +9,12 @@ import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import type { NavItem } from "@/components/layout/portal-nav-items";
+import { NAV_BY_PORTAL, type PortalKey } from "@/components/layout/portal-nav-items";
 
-export function PortalMobileNav({ navItems }: { navItems: NavItem[] }) {
+export function PortalMobileNav({ portal }: { portal: PortalKey }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const navItems = NAV_BY_PORTAL[portal];
 
   return (
     <div className="md:hidden">

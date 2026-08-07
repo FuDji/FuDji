@@ -30,7 +30,7 @@ export default async function TodayPage() {
     <div>
       <PageHeader
         title="Danas"
-        description={new Intl.DateTimeFormat("sr-RS", {
+        description={new Intl.DateTimeFormat("sr-Latn-RS", {
           weekday: "long",
           day: "numeric",
           month: "long",
