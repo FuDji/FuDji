@@ -40,7 +40,10 @@ const optionalNumber = () =>
 
 export const loginSchema = z.object({
   email: z.string().email("Unesi ispravan email"),
-  password: z.string().min(8, "Lozinka mora imati bar 8 karaktera"),
+  // No length/strength rule here — the account may have been created directly
+  // in Supabase with a shorter password. Strength rules belong on the forms
+  // that actually set a new password (reset / accept-invite), not on login.
+  password: z.string().min(1, "Unesi lozinku"),
 });
 
 export const forgotPasswordSchema = z.object({
