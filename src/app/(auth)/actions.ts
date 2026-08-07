@@ -119,20 +119,57 @@ export async function acceptInvite(_prev: FormState, formData: FormData): Promis
     user_metadata: { full_name: invite.full_name },
   });
 
-  if (createError || !created.user) {
-    return { error: createError?.message ?? "Nalog nije mogao biti kreiran." };
+  let userId: string;
+
+  if (createError || !created?.user) {
+    const alreadyRegistered =
+      createError?.code === "email_exists" ||
+      createError?.code === "user_already_exists" ||
+      createError?.message?.toLowerCase().includes("already been registered");
+
+    if (!alreadyRegistered) {
+      return { error: createError?.message ?? "Nalog nije mogao biti kreiran." };
+    }
+
+    // The auth user already exists for this email. This normally means its
+    // `profiles` row was deleted by hand at some point — deleting from
+    // `profiles` doesn't cascade back to `auth.users`, so the account
+    // becomes an orphan that createUser() will always reject. Find it and
+    // adopt it instead of leaving the invite permanently stuck.
+    let existing: { id: string } | undefined;
+    for (let page = 1; !existing; page++) {
+      const { data: list, error: listError } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
+      if (listError || !list?.users.length) break;
+      existing = list.users.find((u) => u.email?.toLowerCase() === invite.email.toLowerCase());
+      if (list.users.length < 1000) break;
+    }
+    if (!existing) {
+      return {
+        error: "Nalog sa ovim mejlom već postoji u Supabase Auth-u, ali profil nije mogao biti pronađen. Obriši ga u Authentication → Users i pošalji novu pozivnicu.",
+      };
+    }
+
+    const { error: updateError } = await admin.auth.admin.updateUserById(existing.id, {
+      password: parsed.data.password,
+      email_confirm: true,
+    });
+    if (updateError) return { error: "Lozinka nije mogla biti postavljena." };
+    userId = existing.id;
+  } else {
+    userId = created.user.id;
   }
 
-  await admin
-    .from("profiles")
-    .update({
-      full_name: invite.full_name,
-      role: invite.role,
-      company_id: invite.company_id,
-      restaurant_id: invite.restaurant_id,
-      daily_budget_override: invite.daily_budget_override,
-    })
-    .eq("id", created.user.id);
+  const { error: profileError } = await admin.from("profiles").upsert({
+    id: userId,
+    email: invite.email,
+    full_name: invite.full_name,
+    role: invite.role,
+    company_id: invite.company_id,
+    restaurant_id: invite.restaurant_id,
+    daily_budget_override: invite.daily_budget_override,
+    active: true,
+  });
+  if (profileError) return { error: "Profil nije mogao biti sačuvan." };
 
   await admin
     .from("invitations")
