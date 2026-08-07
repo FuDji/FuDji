@@ -120,6 +120,7 @@ export function CompanyDialog({ company }: { company?: Company }) {
                 defaultValue={company?.delivery_time?.slice(0, 5) ?? "12:00"}
                 required
               />
+              <p className="text-xs text-muted-foreground">Min. 1h posle roka za naručivanje.</p>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="delivery_tolerance_minutes">Tolerancija (min)</Label>

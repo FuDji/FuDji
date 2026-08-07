@@ -29,6 +29,11 @@ export async function requireProfile() {
 
   if (!profile) redirect("/login");
 
+  if (!profile.active) {
+    await supabase.auth.signOut();
+    redirect("/login?error=account_deactivated");
+  }
+
   return { supabase, user, profile };
 }
 

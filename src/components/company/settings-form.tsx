@@ -74,12 +74,14 @@ export function CompanySettingsForm({ company }: { company: Company }) {
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="space-y-1.5">
-          <Label htmlFor="cutoff_time">Rok za naručivanje</Label>
-          <Input id="cutoff_time" name="cutoff_time" type="time" defaultValue={company.cutoff_time.slice(0, 5)} required />
+          <Label htmlFor="cutoff_time_readonly">Rok za naručivanje</Label>
+          <Input id="cutoff_time_readonly" value={company.cutoff_time.slice(0, 5)} disabled />
+          <p className="text-xs text-muted-foreground">Menja samo administrator.</p>
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="delivery_time">Termin dostave</Label>
           <Input id="delivery_time" name="delivery_time" type="time" defaultValue={company.delivery_time.slice(0, 5)} required />
+          <p className="text-xs text-muted-foreground">Mora biti bar 1h posle roka za naručivanje.</p>
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="delivery_tolerance_minutes">Tolerancija (min)</Label>

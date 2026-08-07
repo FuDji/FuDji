@@ -1,13 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { Suspense, useActionState } from "react";
+import { useSearchParams } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 
 import { signIn, type FormState } from "../actions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SubmitButton } from "@/components/auth/submit-button";
+
+function DeactivatedNotice() {
+  const params = useSearchParams();
+  if (params.get("error") !== "account_deactivated") return null;
+
+  return (
+    <div className="mb-4 flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+      <AlertCircle className="size-4 shrink-0" />
+      Ovaj nalog je deaktiviran. Obrati se administratoru.
+    </div>
+  );
+}
 
 export default function LoginPage() {
   const [state, formAction] = useActionState<FormState, FormData>(signIn, undefined);
@@ -20,6 +33,10 @@ export default function LoginPage() {
           Prijavi se na svoj Prime Bite nalog
         </p>
       </div>
+
+      <Suspense fallback={null}>
+        <DeactivatedNotice />
+      </Suspense>
 
       <form action={formAction} className="space-y-4">
         <div className="space-y-1.5">

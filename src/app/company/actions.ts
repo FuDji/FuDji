@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 
 import { requireRole } from "@/lib/auth";
-import { inviteEmployeeSchema, companySchema } from "@/lib/validations";
+import { inviteEmployeeSchema, companySettingsSchema } from "@/lib/validations";
+import { deliveryGapMinutes, MIN_DELIVERY_GAP_MINUTES } from "@/lib/utils";
 
 export type ActionState = { error?: string; success?: boolean; inviteLink?: string } | undefined;
 
@@ -95,7 +96,7 @@ export async function updateCompanySettings(
   const { supabase, profile } = await requireRole("office_manager");
   if (!profile.company_id) return { error: "Nalog nije povezan ni sa jednom firmom." };
 
-  const parsed = companySchema.safeParse({
+  const parsed = companySettingsSchema.safeParse({
     name: formData.get("name"),
     address: formData.get("address"),
     contact_phone: formData.get("contact_phone"),
@@ -104,11 +105,21 @@ export async function updateCompanySettings(
     daily_budget: formData.get("daily_budget"),
     monthly_budget: formData.get("monthly_budget") || null,
     mixed_cap: formData.get("mixed_cap") || null,
-    cutoff_time: formData.get("cutoff_time"),
     delivery_time: formData.get("delivery_time"),
     delivery_tolerance_minutes: formData.get("delivery_tolerance_minutes"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Neispravan unos" };
+
+  const { data: current } = await supabase
+    .from("companies")
+    .select("cutoff_time")
+    .eq("id", profile.company_id)
+    .single();
+  if (!current) return { error: "Firma nije pronađena." };
+
+  if (deliveryGapMinutes(current.cutoff_time, parsed.data.delivery_time) < MIN_DELIVERY_GAP_MINUTES) {
+    return { error: `Termin dostave mora biti bar ${MIN_DELIVERY_GAP_MINUTES} minuta posle roka za naručivanje (${current.cutoff_time.slice(0, 5)}).` };
+  }
 
   const { error } = await supabase
     .from("companies")

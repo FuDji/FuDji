@@ -9,6 +9,7 @@ import {
   campaignSchema,
   loyaltyRewardSchema,
 } from "@/lib/validations";
+import { deliveryGapMinutes, MIN_DELIVERY_GAP_MINUTES } from "@/lib/utils";
 import { z } from "zod";
 
 export type ActionState = { error?: string; success?: boolean; inviteLink?: string } | undefined;
@@ -34,6 +35,10 @@ export async function upsertCompany(_prev: ActionState, formData: FormData): Pro
     delivery_tolerance_minutes: formData.get("delivery_tolerance_minutes"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Neispravan unos" };
+
+  if (deliveryGapMinutes(parsed.data.cutoff_time, parsed.data.delivery_time) < MIN_DELIVERY_GAP_MINUTES) {
+    return { error: `Termin dostave mora biti bar ${MIN_DELIVERY_GAP_MINUTES} minuta posle roka za naručivanje.` };
+  }
 
   if (id) {
     const { error } = await supabase.from("companies").update(parsed.data).eq("id", id);
@@ -87,6 +92,30 @@ export async function inviteOfficeManager(
 
   if (error || !data) return { error: "Pozivnica nije mogla biti kreirana." };
   return { success: true, inviteLink: `${process.env.NEXT_PUBLIC_APP_URL}/invite/${data.token}` };
+}
+
+// ---------------------------------------------------------------------------
+// PEOPLE (office managers / restaurant staff — shared by companies + restaurants pages)
+// ---------------------------------------------------------------------------
+export async function toggleProfileActive(profileId: string, active: boolean): Promise<ActionState> {
+  const { supabase } = await requireRole("admin");
+  const { error } = await supabase.from("profiles").update({ active }).eq("id", profileId);
+  if (error) return { error: "Status nije mogao biti sačuvan." };
+  revalidatePath("/admin/companies");
+  revalidatePath("/admin/restaurants");
+  return { success: true };
+}
+
+export async function revokeInvitation(invitationId: string): Promise<ActionState> {
+  const { supabase } = await requireRole("admin");
+  const { error } = await supabase
+    .from("invitations")
+    .update({ status: "revoked" })
+    .eq("id", invitationId);
+  if (error) return { error: "Pozivnica nije mogla biti opozvana." };
+  revalidatePath("/admin/companies");
+  revalidatePath("/admin/restaurants");
+  return { success: true };
 }
 
 // ---------------------------------------------------------------------------

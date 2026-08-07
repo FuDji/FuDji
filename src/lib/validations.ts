@@ -85,6 +85,9 @@ export const companySchema = z.object({
   delivery_tolerance_minutes: z.coerce.number().int().min(0),
 });
 
+/** Office managers can tune delivery logistics but not the ordering cutoff — that's admin-only. */
+export const companySettingsSchema = companySchema.omit({ cutoff_time: true });
+
 export const restaurantSchema = z.object({
   name: z.string().min(2, "Naziv je obavezan"),
   address: optionalText(),

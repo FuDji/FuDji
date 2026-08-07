@@ -87,3 +87,15 @@ export function isPastCutoff(dateKey: string, cutoffTime: string, now = new Date
   cutoff.setHours(h ?? 0, m ?? 0, 0, 0);
   return now.getTime() >= cutoff.getTime();
 }
+
+function minutesOfDay(time: string) {
+  const [h, m] = time.split(":").map(Number);
+  return (h ?? 0) * 60 + (m ?? 0);
+}
+
+/** Minutes between cutoff and delivery time (same day, HH:MM strings). */
+export function deliveryGapMinutes(cutoffTime: string, deliveryTime: string) {
+  return minutesOfDay(deliveryTime) - minutesOfDay(cutoffTime);
+}
+
+export const MIN_DELIVERY_GAP_MINUTES = 60;
