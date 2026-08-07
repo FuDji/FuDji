@@ -10,7 +10,6 @@ import type { Order, OrderItem } from "@/types";
 
 type IncomingOrder = Order & {
   order_items: OrderItem[];
-  employee: { full_name: string | null } | null;
   company: { name: string } | null;
 };
 
@@ -28,7 +27,7 @@ export default async function IncomingOrdersPage({
 
   const { data: orders } = await supabase
     .from("orders")
-    .select("*, order_items(*), employee:profiles(full_name), company:companies(name)")
+    .select("*, order_items(*), company:companies(name)")
     .eq("restaurant_id", restaurant.id)
     .eq("order_date", selectedDay)
     .order("created_at", { ascending: true })

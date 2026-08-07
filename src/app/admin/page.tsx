@@ -3,12 +3,12 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { PageHeader } from "@/components/layout/page-header";
 import { StatCard } from "@/components/layout/stat-card";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { OrderStatusBadge } from "@/components/orders/status-badge";
+import { OrderDetailCard } from "@/components/admin/order-detail-card";
+import { computeOrderProfit } from "@/lib/orders";
 import { formatMoney, todayKey } from "@/lib/utils";
 import { Download, ListOrdered, Store, UtensilsCrossed, Wallet } from "lucide-react";
-import type { OrderWithNames } from "@/types";
+import type { OrderWithProfit } from "@/types";
 
 export default async function AdminOverviewPage() {
   const { supabase } = await requireRole("admin");
@@ -26,14 +26,18 @@ export default async function AdminOverviewPage() {
     supabase.from("restaurants").select("id", { count: "exact", head: true }).eq("status", "active"),
     supabase
       .from("orders")
-      .select("*, employee:profiles(full_name), company:companies(name), restaurant:restaurants(name)")
+      .select(
+        "*, order_items(*), company:companies(name, address), restaurant:restaurants(name, commission_percent)"
+      )
       .eq("order_date", today)
       .order("created_at", { ascending: false })
-      .returns<OrderWithNames[]>(),
+      .returns<OrderWithProfit[]>(),
     supabase.from("orders").select("id", { count: "exact", head: true }).gt("order_date", today),
   ]);
 
-  const revenueToday = (todayOrders ?? []).reduce((s, o) => s + o.subtotal, 0);
+  const revenueToday = (todayOrders ?? [])
+    .filter((o) => o.status !== "rejected")
+    .reduce((s, o) => s + computeOrderProfit(o.subtotal, o.restaurant?.commission_percent ?? 0).totalProfit, 0);
 
   return (
     <div>
@@ -52,7 +56,7 @@ export default async function AdminOverviewPage() {
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Narudžbine danas" value={todayOrders?.length ?? 0} icon={ListOrdered} />
         <StatCard label="Buduće narudžbine" value={futureOrders ?? 0} icon={ListOrdered} />
-        <StatCard label="Prihod danas" value={formatMoney(revenueToday)} icon={Wallet} tone="success" />
+        <StatCard label="Profit Prime Bite danas" value={formatMoney(revenueToday)} icon={Wallet} tone="success" />
         <StatCard
           label="Aktivne firme"
           value={`${activeCompanies ?? 0} / ${(activeCompanies ?? 0) + (inactiveCompanies ?? 0)}`}
@@ -70,18 +74,7 @@ export default async function AdminOverviewPage() {
       ) : (
         <div className="space-y-2">
           {todayOrders.slice(0, 20).map((o) => (
-            <Card key={o.id}>
-              <CardContent className="flex flex-wrap items-center justify-between gap-3 py-3">
-                <div className="text-sm">
-                  <span className="font-medium">{o.employee?.full_name}</span>
-                  <span className="text-muted-foreground"> · {o.company?.name} → {o.restaurant?.name}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-muted-foreground">{formatMoney(o.subtotal)}</span>
-                  <OrderStatusBadge status={o.status} />
-                </div>
-              </CardContent>
-            </Card>
+            <OrderDetailCard key={o.id} order={o} />
           ))}
         </div>
       )}

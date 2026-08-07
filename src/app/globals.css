@@ -19,6 +19,9 @@
   --primary: #4f8cff;
   --primary-foreground: #ffffff;
 
+  --cta: #ffc629;
+  --cta-foreground: #1a1300;
+
   --secondary: #1a1f2c;
   --secondary-foreground: #ffffff;
 
@@ -67,6 +70,8 @@
 
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-cta: var(--cta);
+  --color-cta-foreground: var(--cta-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
 
@@ -192,6 +197,10 @@
   .glow-primary {
     box-shadow: 0 0 0 1px color-mix(in oklab, var(--primary) 40%, transparent),
       0 8px 40px -8px color-mix(in oklab, var(--primary) 45%, transparent);
+  }
+  .glow-cta {
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--cta) 50%, transparent),
+      0 8px 40px -8px color-mix(in oklab, var(--cta) 55%, transparent);
   }
   .skeleton {
     background: linear-gradient(

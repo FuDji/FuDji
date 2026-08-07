@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { OrderStatusBadge } from "@/components/orders/status-badge";
-import { computeOrderSplit } from "@/lib/orders";
+import { computeOrderSplit, canEditOrder } from "@/lib/orders";
 import { formatMoney } from "@/lib/utils";
 import type { DailyMenu, MenuItem, OrderItem, OrderStatus, PaymentType, Restaurant } from "@/types";
 
@@ -132,7 +132,8 @@ export function DayOrderBuilder({
     );
   }
 
-  const readOnly = cutoffPassed || (existingOrder ? existingOrder.locked : false);
+  const readOnly =
+    cutoffPassed || (existingOrder ? !canEditOrder(existingOrder.status, existingOrder.locked) : false);
 
   if (restaurantId && selected) {
     return (
@@ -294,9 +295,7 @@ export function DayOrderBuilder({
               {r.full && <Badge variant="destructive">Popunjeno</Badge>}
             </div>
             <h3 className="mt-3 font-medium">{r.restaurant.name}</h3>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {r.menu.length} jela · {r.ordersCount}/{r.schedule.meal_limit} obroka danas
-            </p>
+            <p className="mt-1 text-xs text-muted-foreground">{r.menu.length} jela</p>
             {deals.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-1">
                 {deals.slice(0, 2).map((d) => (

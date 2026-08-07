@@ -9,7 +9,6 @@ import type { Order, OrderItem } from "@/types";
 
 type OrderRow = Order & {
   order_items: OrderItem[];
-  employee: { full_name: string | null } | null;
   restaurant: { name: string } | null;
 };
 
@@ -18,7 +17,7 @@ export default async function HistoryPage() {
 
   const { data: orders } = await supabase
     .from("orders")
-    .select("*, order_items(*), employee:profiles(full_name), restaurant:restaurants(name)")
+    .select("*, order_items(*), restaurant:restaurants(name)")
     .eq("company_id", company.id)
     .order("order_date", { ascending: false })
     .limit(100)
@@ -41,7 +40,7 @@ export default async function HistoryPage() {
                     <OrderStatusBadge status={o.status} />
                   </div>
                   <div className="mt-1 font-medium">
-                    {o.employee?.full_name} <span className="text-muted-foreground">· {o.restaurant?.name}</span>
+                    {o.employee_name_snapshot} <span className="text-muted-foreground">· {o.restaurant?.name}</span>
                   </div>
                   <ul className="mt-1 space-y-0.5 text-sm text-muted-foreground">
                     {o.order_items.map((item) => (

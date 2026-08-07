@@ -8,6 +8,7 @@ import { BulkUploadDialog } from "@/components/company/bulk-upload-dialog";
 import { BudgetCell } from "@/components/company/budget-cell";
 import { ActiveToggle } from "@/components/company/employee-row-actions";
 import { RevokeInviteButton } from "@/components/company/revoke-invite-button";
+import { DeleteEmployeeButton } from "@/components/company/delete-employee-button";
 import { formatMoney } from "@/lib/utils";
 import { UsersRound } from "lucide-react";
 
@@ -82,6 +83,7 @@ export default async function EmployeesPage() {
                   </div>
                   <BudgetCell employeeId={e.id} value={e.daily_budget_override} placeholder={company.daily_budget} />
                   <ActiveToggle employeeId={e.id} active={e.active} />
+                  <DeleteEmployeeButton employeeId={e.id} name={e.full_name ?? e.email ?? "zaposleni"} />
                 </div>
               </CardContent>
             </Card>

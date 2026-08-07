@@ -40,7 +40,7 @@ export async function rejectOrder(orderId: string, reason: string): Promise<Acti
 
 export async function setOrderStatus(
   orderId: string,
-  status: "preparing" | "ready" | "delivered"
+  status: "preparing" | "ready" | "picked_up"
 ): Promise<ActionState> {
   const { supabase, profile } = await requireRole("restaurant_staff");
   if (!profile.restaurant_id) return { error: "Nalog nije povezan ni sa jednim restoranom." };

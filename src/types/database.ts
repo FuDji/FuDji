@@ -1,6 +1,6 @@
 export type UserRole = "employee" | "office_manager" | "restaurant_staff" | "admin";
 export type PaymentType = "company_pays" | "employee_pays" | "mixed";
-export type OrderStatus = "pending" | "accepted" | "rejected" | "preparing" | "ready" | "delivered";
+export type OrderStatus = "pending" | "accepted" | "rejected" | "preparing" | "ready" | "picked_up" | "delivered";
 export type EntityStatus = "active" | "inactive";
 export type InvitationStatus = "pending" | "accepted" | "revoked";
 export type DeliveryStatus = "scheduled" | "delayed" | "delivered";
@@ -164,7 +164,8 @@ export type DailyMenuRow = {
 export type OrderRow = {
   id: string;
   company_id: string;
-  employee_id: string;
+  employee_id: string | null;
+  employee_name_snapshot: string | null;
   restaurant_id: string;
   order_date: string;
   status: OrderStatus;
@@ -255,7 +256,7 @@ export type Database = {
       restaurant_schedule: Table<RestaurantScheduleRow, "id" | "created_at" | "is_open" | "meal_limit", typeof RESTAURANT_SCHEDULE_RELATIONSHIPS>;
       menu_items: Table<MenuItemRow, "id" | "created_at" | "updated_at" | "active" | "category" | "description" | "image_url" | "calories", typeof MENU_ITEMS_RELATIONSHIPS>;
       daily_menu: Table<DailyMenuRow, "id" | "created_at" | "is_available" | "is_deal_of_day" | "deal_label" | "deal_price", typeof DAILY_MENU_RELATIONSHIPS>;
-      orders: Table<OrderRow, "id" | "created_at" | "updated_at" | "status" | "locked" | "company_covered" | "employee_paid" | "subtotal" | "rejection_reason" | "prep_time_minutes" | "note", typeof ORDERS_RELATIONSHIPS>;
+      orders: Table<OrderRow, "id" | "created_at" | "updated_at" | "status" | "locked" | "company_covered" | "employee_paid" | "subtotal" | "rejection_reason" | "prep_time_minutes" | "note" | "employee_id" | "employee_name_snapshot", typeof ORDERS_RELATIONSHIPS>;
       order_items: Table<OrderItemRow, "id" | "quantity" | "menu_item_id" | "note", typeof ORDER_ITEMS_RELATIONSHIPS>;
       campaigns: Table<CampaignRow, "id" | "created_at" | "active" | "campaign_type" | "starts_at" | "description" | "image_url" | "discount_percent" | "restaurant_id" | "ends_at", typeof CAMPAIGNS_RELATIONSHIPS>;
       loyalty_rewards: Table<LoyaltyRewardRow, "id" | "created_at" | "active" | "reward_type" | "description" | "image_url">;

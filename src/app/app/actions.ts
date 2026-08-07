@@ -120,6 +120,7 @@ export async function placeOrder(
         subtotal,
         company_covered: split.companyCovered,
         employee_paid: split.employeePaid,
+        employee_name_snapshot: profile.full_name,
       })
       .eq("id", orderId);
     await supabase.from("order_items").delete().eq("order_id", orderId);
@@ -129,6 +130,7 @@ export async function placeOrder(
       .insert({
         company_id: profile.company_id,
         employee_id: user.id,
+        employee_name_snapshot: profile.full_name,
         restaurant_id: restaurantId,
         order_date: date,
         note: note || null,

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { requireRole } from "@/lib/auth";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { inviteEmployeeSchema, companySettingsSchema } from "@/lib/validations";
 import { deliveryGapMinutes, MIN_DELIVERY_GAP_MINUTES } from "@/lib/utils";
 
@@ -84,6 +85,27 @@ export async function toggleEmployeeActive(employeeId: string, active: boolean):
 
   const { error } = await supabase.from("profiles").update({ active }).eq("id", employeeId);
   if (error) return { error: "Status nije mogao biti sačuvan." };
+
+  revalidatePath("/company/employees");
+  return { success: true };
+}
+
+export async function deleteEmployee(employeeId: string): Promise<ActionState> {
+  const { supabase, profile } = await requireRole("office_manager");
+
+  const { data: employee } = await supabase
+    .from("profiles")
+    .select("id, company_id, role")
+    .eq("id", employeeId)
+    .single();
+
+  if (!employee || employee.company_id !== profile.company_id || employee.role !== "employee") {
+    return { error: "Zaposleni nije pronađen." };
+  }
+
+  const admin = createAdminClient();
+  const { error } = await admin.auth.admin.deleteUser(employeeId);
+  if (error) return { error: "Zaposleni nije mogao biti obrisan." };
 
   revalidatePath("/company/employees");
   return { success: true };

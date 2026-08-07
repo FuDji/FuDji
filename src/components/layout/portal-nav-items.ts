@@ -3,6 +3,7 @@ import {
   CalendarDays,
   ClipboardList,
   Download,
+  FileText,
   Gift,
   LayoutDashboard,
   ListOrdered,
@@ -32,6 +33,7 @@ export const COMPANY_NAV: NavItem[] = [
   { href: "/company", label: "Pregled", icon: LayoutDashboard },
   { href: "/company/employees", label: "Zaposleni", icon: UsersRound },
   { href: "/company/expenses", label: "Troškovi", icon: Wallet },
+  { href: "/company/invoices", label: "Fakture", icon: FileText },
   { href: "/company/history", label: "Istorija", icon: ReceiptText },
   { href: "/company/settings", label: "Podešavanja", icon: Settings },
 ];

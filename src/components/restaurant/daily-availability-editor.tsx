@@ -46,8 +46,7 @@ export function DailyAvailabilityEditor({
     });
   }
 
-  function save(itemId: string) {
-    const row = rows.get(itemId)!;
+  function persist(itemId: string, row: Row) {
     startTransition(async () => {
       await setDailyAvailability(
         itemId,
@@ -62,6 +61,18 @@ export function DailyAvailabilityEditor({
     });
   }
 
+  // Switches save immediately — waiting for a separate click meant a flipped
+  // toggle looked "on" but reverted on refresh because nothing was written yet.
+  function toggle(itemId: string, patch: Partial<Row>) {
+    const next = { ...rows.get(itemId)!, ...patch };
+    update(itemId, patch);
+    persist(itemId, next);
+  }
+
+  function saveText(itemId: string) {
+    persist(itemId, rows.get(itemId)!);
+  }
+
   return (
     <div className="space-y-2">
       {items.map((item) => {
@@ -74,11 +85,11 @@ export function DailyAvailabilityEditor({
                 <div className="text-xs text-muted-foreground">{formatMoney(item.price)}</div>
               </div>
               <label className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Switch checked={row.available} onCheckedChange={(v) => update(item.id, { available: v })} />
+                <Switch checked={row.available} onCheckedChange={(v) => toggle(item.id, { available: v })} />
                 Dostupno
               </label>
               <label className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Switch checked={row.deal} onCheckedChange={(v) => update(item.id, { deal: v })} />
+                <Switch checked={row.deal} onCheckedChange={(v) => toggle(item.id, { deal: v })} />
                 Ponuda dana
               </label>
               {row.deal && (
@@ -87,6 +98,7 @@ export function DailyAvailabilityEditor({
                     placeholder="npr. Taco Monday"
                     value={row.label}
                     onChange={(e) => update(item.id, { label: e.target.value })}
+                    onBlur={() => saveText(item.id)}
                     className="h-8 w-36 text-xs"
                   />
                   <Input
@@ -94,11 +106,12 @@ export function DailyAvailabilityEditor({
                     placeholder="Akcijska cena"
                     value={row.price}
                     onChange={(e) => update(item.id, { price: e.target.value })}
+                    onBlur={() => saveText(item.id)}
                     className="h-8 w-28 text-xs"
                   />
                 </>
               )}
-              <Button size="icon-sm" variant="outline" onClick={() => save(item.id)} disabled={pending}>
+              <Button size="icon-sm" variant="outline" onClick={() => saveText(item.id)} disabled={pending}>
                 <Check className={savedId === item.id ? "text-success" : ""} />
               </Button>
               {row.deal && <Badge>Akcija</Badge>}

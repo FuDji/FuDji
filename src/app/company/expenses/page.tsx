@@ -9,7 +9,7 @@ import { formatMoney, toDateKey, addDays } from "@/lib/utils";
 import { ReceiptText, TrendingUp, Users, Wallet } from "lucide-react";
 import type { Order } from "@/types";
 
-type OrderRow = Order & { employee: { full_name: string | null } | null };
+type OrderRow = Order;
 
 export default async function ExpensesPage({
   searchParams,
@@ -24,7 +24,7 @@ export default async function ExpensesPage({
 
   const { data: orders } = await supabase
     .from("orders")
-    .select("*, employee:profiles(full_name)")
+    .select("*")
     .eq("company_id", company.id)
     .gte("order_date", from)
     .lte("order_date", to)
@@ -37,9 +37,9 @@ export default async function ExpensesPage({
 
   const byEmployee = new Map<string, { name: string; count: number; total: number; companyPaid: number }>();
   for (const o of orders ?? []) {
-    const key = o.employee_id;
+    const key = o.employee_id ?? `deleted:${o.id}`;
     const existing = byEmployee.get(key) ?? {
-      name: o.employee?.full_name ?? "Nepoznat",
+      name: o.employee_name_snapshot ?? "Nepoznat",
       count: 0,
       total: 0,
       companyPaid: 0,

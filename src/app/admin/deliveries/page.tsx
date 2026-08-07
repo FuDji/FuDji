@@ -15,13 +15,17 @@ export default async function AdminDeliveriesPage() {
   const [{ data: companies }, { data: deliveries }, { data: orders }] = await Promise.all([
     supabase.from("companies").select("*").eq("status", "active").order("name"),
     supabase.from("deliveries").select("*").eq("delivery_date", today),
-    supabase.from("orders").select("company_id").eq("order_date", today).neq("status", "rejected"),
+    supabase.from("orders").select("company_id, status").eq("order_date", today).neq("status", "rejected"),
   ]);
 
   const deliveryByCompany = new Map((deliveries ?? []).map((d) => [d.company_id, d]));
   const orderCounts = new Map<string, number>();
+  const notPickedUpCounts = new Map<string, number>();
   for (const o of orders ?? []) {
     orderCounts.set(o.company_id, (orderCounts.get(o.company_id) ?? 0) + 1);
+    if (o.status !== "picked_up" && o.status !== "delivered") {
+      notPickedUpCounts.set(o.company_id, (notPickedUpCounts.get(o.company_id) ?? 0) + 1);
+    }
   }
 
   const relevant = (companies ?? []).filter((c) => (orderCounts.get(c.id) ?? 0) > 0);
@@ -41,6 +45,7 @@ export default async function AdminDeliveriesPage() {
             const toleranceMs = c.delivery_tolerance_minutes * 60 * 1000;
             const delivered = delivery?.status === "delivered";
             const isDelayed = !delivered && now.getTime() > scheduled.getTime() + toleranceMs;
+            const notPickedUp = notPickedUpCounts.get(c.id) ?? 0;
 
             return (
               <Card key={c.id}>
@@ -49,15 +54,17 @@ export default async function AdminDeliveriesPage() {
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{c.name}</span>
                       {delivered && <Badge variant="success">Dostavljeno</Badge>}
-                      {!delivered && isDelayed && <Badge variant="destructive">Kasni</Badge>}
-                      {!delivered && !isDelayed && <Badge variant="warning">Zakazano</Badge>}
+                      {!delivered && notPickedUp > 0 && <Badge variant="secondary">Priprema u toku</Badge>}
+                      {!delivered && notPickedUp === 0 && isDelayed && <Badge variant="destructive">Kasni</Badge>}
+                      {!delivered && notPickedUp === 0 && !isDelayed && <Badge variant="warning">Preuzeto od kurira</Badge>}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       Termin {c.delivery_time.slice(0, 5)} (±{c.delivery_tolerance_minutes} min) ·{" "}
                       {orderCounts.get(c.id) ?? 0} obroka
+                      {!delivered && notPickedUp > 0 && ` · ${notPickedUp} još nije preuzeto od kurira`}
                     </div>
                   </div>
-                  {!delivered && (
+                  {!delivered && notPickedUp === 0 && (
                     <MarkDeliveredButton companyId={c.id} date={today} scheduledAt={scheduledAt} />
                   )}
                 </CardContent>

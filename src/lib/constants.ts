@@ -13,8 +13,12 @@ export const ORDER_STATUS_META = {
   rejected: { label: "Odbijeno", tone: "destructive" },
   preparing: { label: "U pripremi", tone: "default" },
   ready: { label: "Spremno", tone: "success" },
-  delivered: { label: "Dostavljeno", tone: "success" },
+  picked_up: { label: "Preuzeto od kurira", tone: "success" },
+  delivered: { label: "Dostavljeno u firmu", tone: "success" },
 } as const;
+
+/** Prime Bite's flat platform fee earned per delivered meal, charged to the company. */
+export const PLATFORM_FEE_PER_MEAL = 8;
 
 export const MENU_CATEGORIES = [
   { value: "main", label: "Glavno jelo" },

@@ -3,11 +3,10 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/layout/empty-state";
-import { Card, CardContent } from "@/components/ui/card";
-import { OrderStatusBadge } from "@/components/orders/status-badge";
-import { cn, formatDateSr, formatMoney, todayKey } from "@/lib/utils";
+import { OrderDetailCard } from "@/components/admin/order-detail-card";
+import { cn, todayKey } from "@/lib/utils";
 import { ListOrdered } from "lucide-react";
-import type { OrderWithNames } from "@/types";
+import type { OrderWithProfit } from "@/types";
 
 export default async function AdminOrdersPage({
   searchParams,
@@ -21,14 +20,16 @@ export default async function AdminOrdersPage({
 
   let query = supabase
     .from("orders")
-    .select("*, employee:profiles(full_name), company:companies(name), restaurant:restaurants(name)")
+    .select(
+      "*, order_items(*), company:companies(name, address), restaurant:restaurants(name, commission_percent)"
+    )
     .order("order_date", { ascending: false })
     .limit(150);
 
   if (scope === "today") query = query.eq("order_date", today);
   if (scope === "future") query = query.gt("order_date", today);
 
-  const { data: orders } = await query.returns<OrderWithNames[]>();
+  const { data: orders } = await query.returns<OrderWithProfit[]>();
 
   return (
     <div>
@@ -60,21 +61,7 @@ export default async function AdminOrdersPage({
       ) : (
         <div className="space-y-2">
           {orders.map((o) => (
-            <Card key={o.id}>
-              <CardContent className="flex flex-wrap items-center justify-between gap-3 py-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">{formatDateSr(o.order_date)}</span>
-                    <OrderStatusBadge status={o.status} />
-                  </div>
-                  <div className="mt-1 text-sm">
-                    <span className="font-medium">{o.employee?.full_name}</span>
-                    <span className="text-muted-foreground"> · {o.company?.name} → {o.restaurant?.name}</span>
-                  </div>
-                </div>
-                <span className="font-semibold">{formatMoney(o.subtotal)}</span>
-              </CardContent>
-            </Card>
+            <OrderDetailCard key={o.id} order={o} />
           ))}
         </div>
       )}

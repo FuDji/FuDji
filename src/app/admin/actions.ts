@@ -305,6 +305,19 @@ export async function markCompanyDelivered(
   scheduledAt: string
 ): Promise<ActionState> {
   const { supabase } = await requireRole("admin");
+
+  const { count: notPickedUp } = await supabase
+    .from("orders")
+    .select("id", { count: "exact", head: true })
+    .eq("company_id", companyId)
+    .eq("order_date", date)
+    .neq("status", "rejected")
+    .neq("status", "picked_up")
+    .neq("status", "delivered");
+  if ((notPickedUp ?? 0) > 0) {
+    return { error: "Neke narudžbine još nisu preuzete od restorana." };
+  }
+
   const { error } = await supabase.from("deliveries").upsert(
     {
       company_id: companyId,
@@ -316,6 +329,15 @@ export async function markCompanyDelivered(
     { onConflict: "company_id,delivery_date" }
   );
   if (error) return { error: "Dostava nije mogla biti označena." };
+
+  await supabase
+    .from("orders")
+    .update({ status: "delivered" })
+    .eq("company_id", companyId)
+    .eq("order_date", date)
+    .eq("status", "picked_up");
+
   revalidatePath("/admin/deliveries");
+  revalidatePath("/admin/orders");
   return { success: true };
 }

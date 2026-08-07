@@ -9,7 +9,6 @@ import { UsersRound, Wallet, ReceiptText, CalendarClock } from "lucide-react";
 import type { Order } from "@/types";
 
 type OrderRow = Order & {
-  employee: { full_name: string | null } | null;
   restaurant: { name: string } | null;
 };
 
@@ -26,7 +25,7 @@ export default async function CompanyOverviewPage() {
       .eq("active", true),
     supabase
       .from("orders")
-      .select("*, employee:profiles(full_name), restaurant:restaurants(name)")
+      .select("*, restaurant:restaurants(name)")
       .eq("company_id", company.id)
       .eq("order_date", today)
       .order("created_at", { ascending: false })
@@ -78,7 +77,7 @@ export default async function CompanyOverviewPage() {
             <Card key={o.id}>
               <CardContent className="flex items-center justify-between py-3">
                 <div>
-                  <span className="font-medium">{o.employee?.full_name}</span>
+                  <span className="font-medium">{o.employee_name_snapshot}</span>
                   <span className="ml-2 text-sm text-muted-foreground">{o.restaurant?.name}</span>
                 </div>
                 <div className="flex items-center gap-3">

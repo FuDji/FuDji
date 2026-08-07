@@ -46,16 +46,20 @@ export type DailyMenuWithItem = DailyMenu & { menu_item: MenuItem };
 export type CampaignWithRestaurant = Campaign & { restaurant: Pick<Restaurant, "name"> | null };
 
 export type OrderWithNames = Order & {
-  employee: { full_name: string | null } | null;
   company: { name: string } | null;
   restaurant: { name: string } | null;
 };
 
 export type OrderWithItems = Order & {
   order_items: OrderItem[];
-  employee?: Pick<Profile, "id" | "full_name" | "email"> | null;
   company?: Pick<Company, "id" | "name"> | null;
   restaurant?: Pick<Restaurant, "id" | "name"> | null;
+};
+
+export type OrderWithProfit = Order & {
+  order_items: OrderItem[];
+  company: { name: string; address: string | null } | null;
+  restaurant: { name: string; commission_percent: number } | null;
 };
 
 export const ORDER_STATUS_LABELS: Record<Order["status"], string> = {
@@ -64,7 +68,8 @@ export const ORDER_STATUS_LABELS: Record<Order["status"], string> = {
   rejected: "Odbijeno",
   preparing: "U pripremi",
   ready: "Spremno",
-  delivered: "Dostavljeno",
+  picked_up: "Preuzeto od kurira",
+  delivered: "Dostavljeno u firmu",
 };
 
 export const DAY_LABELS_SR = [
