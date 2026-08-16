@@ -1,7 +1,6 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 import type { Session } from "@supabase/supabase-js";
 
 import { createClient, type PortalScope } from "@/lib/supabase/server";
@@ -30,12 +29,6 @@ async function transferSessionToScope(session: Session, scope: PortalScope) {
     access_token: session.access_token,
     refresh_token: session.refresh_token,
   });
-
-  // A real login always means "not impersonating" — clear any leftover
-  // impersonation banner marker for this portal so it can't be shown to
-  // whoever legitimately logs in here next (see app/admin/actions.ts).
-  const cookieStore = await cookies();
-  cookieStore.delete({ name: `pb_impersonate_${scope}`, path: `/${scope}` });
 }
 
 export async function signIn(_prev: FormState, formData: FormData): Promise<FormState> {

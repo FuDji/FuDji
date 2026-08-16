@@ -1,6 +1,5 @@
 import { requireRole } from "@/lib/auth";
 import { PortalShell } from "@/components/layout/portal-shell";
-import { ImpersonationBanner } from "@/components/layout/impersonation-banner";
 import { RatingDialog } from "@/components/app/rating-dialog";
 import { getUnratedDeliveredOrder } from "./data";
 
@@ -9,21 +8,18 @@ export default async function EmployeeLayout({ children }: { children: React.Rea
   const unratedOrder = await getUnratedDeliveredOrder(supabase, user.id);
 
   return (
-    <>
-      <ImpersonationBanner scope="app" />
-      <PortalShell
-        portal="employee"
-        user={{ name: profile.full_name ?? user.email ?? "", email: user.email ?? "", avatarUrl: profile.avatar_url }}
-      >
-        {unratedOrder && (
-          <RatingDialog
-            orderId={unratedOrder.id}
-            mandatory
-            restaurantName={unratedOrder.restaurant?.name}
-          />
-        )}
-        {children}
-      </PortalShell>
-    </>
+    <PortalShell
+      portal="employee"
+      user={{ name: profile.full_name ?? user.email ?? "", email: user.email ?? "", avatarUrl: profile.avatar_url }}
+    >
+      {unratedOrder && (
+        <RatingDialog
+          orderId={unratedOrder.id}
+          mandatory
+          restaurantName={unratedOrder.restaurant?.name}
+        />
+      )}
+      {children}
+    </PortalShell>
   );
 }

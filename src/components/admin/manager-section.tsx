@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { Check, Copy, LogIn, X } from "lucide-react";
+import { useState } from "react";
+import { Check, Copy, X } from "lucide-react";
 
-import { impersonateUser, revokeInvitation, toggleProfileActive } from "@/app/admin/actions";
+import { revokeInvitation, toggleProfileActive } from "@/app/admin/actions";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -52,32 +52,6 @@ function InviteRow({ invite }: { invite: Invite }) {
   );
 }
 
-function ImpersonateButton({ profileId }: { profileId: string }) {
-  const [pending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-
-  return (
-    <div className="flex flex-col items-start gap-1">
-      <Button
-        type="button"
-        size="sm"
-        variant="outline"
-        disabled={pending}
-        onClick={() =>
-          startTransition(async () => {
-            setError(null);
-            const result = await impersonateUser(profileId);
-            if (result?.error) setError(result.error);
-          })
-        }
-      >
-        <LogIn className="size-3.5" /> Uđi kao
-      </Button>
-      {error && <span className="text-xs text-destructive">{error}</span>}
-    </div>
-  );
-}
-
 export function ManagerSection({ managers, invites }: { managers: Manager[]; invites: Invite[] }) {
   if (managers.length === 0 && invites.length === 0) return null;
 
@@ -90,7 +64,6 @@ export function ManagerSection({ managers, invites }: { managers: Manager[]; inv
               <div className="font-medium">{manager.full_name}</div>
               <div className="text-xs text-muted-foreground">{manager.email}</div>
             </div>
-            <ImpersonateButton profileId={manager.id} />
             <EditManagedUserDialog profileId={manager.id} fullName={manager.full_name} />
             <span className="text-xs text-muted-foreground">Ukloni pristup</span>
             <StatusToggle active={true} onToggle={toggleProfileActive.bind(null, manager.id)} />

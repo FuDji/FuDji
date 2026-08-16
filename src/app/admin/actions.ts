@@ -1,11 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 
-import { requireRole, ROLE_SCOPE } from "@/lib/auth";
-import { createClient, type PortalScope } from "@/lib/supabase/server";
+import { requireRole } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   companySchema,
@@ -15,10 +12,7 @@ import {
   menuItemSchema,
 } from "@/lib/validations";
 import { deliveryGapMinutes, MIN_DELIVERY_GAP_MINUTES } from "@/lib/utils";
-import { ROLE_HOME } from "@/lib/constants";
 import { z } from "zod";
-
-const impersonateCookieName = (scope: PortalScope) => `pb_impersonate_${scope}`;
 
 export type ActionState = { error?: string; success?: boolean; inviteLink?: string } | undefined;
 
@@ -143,67 +137,6 @@ export async function updateManagedUser(
   revalidatePath("/admin/companies");
   revalidatePath("/admin/restaurants");
   return { success: true };
-}
-
-/**
- * Logs the admin in as another user for support/debugging, without needing
- * their password. Each portal keeps its own isolated session cookie (see
- * lib/supabase/server.ts), so this writes the target's session into THEIR
- * portal's scope only — the admin's own /admin session is never touched and
- * stays valid the entire time, no "return token" juggling required.
- */
-export async function impersonateUser(targetProfileId: string): Promise<ActionState> {
-  const { supabase, profile: adminProfile } = await requireRole("admin");
-
-  const { data: target } = await supabase
-    .from("profiles")
-    .select("id, email, role, active")
-    .eq("id", targetProfileId)
-    .single();
-
-  if (!target) return { error: "Korisnik nije pronađen." };
-  if (target.role === "admin") return { error: "Ne možeš ući u nalog drugog admina." };
-  if (!target.active) return { error: "Nalog je deaktiviran." };
-  if (!target.email) return { error: "Ovaj nalog nema imejl adresu." };
-
-  const admin = createAdminClient();
-  const { data: targetLink, error: targetLinkError } = await admin.auth.admin.generateLink({
-    type: "magiclink",
-    email: target.email,
-  });
-  if (targetLinkError || !targetLink?.properties?.hashed_token) {
-    return { error: "Nije moguće ući u ovaj nalog." };
-  }
-
-  const targetScope = ROLE_SCOPE[target.role];
-  const scopedClient = await createClient(targetScope);
-  const { error: verifyError } = await scopedClient.auth.verifyOtp({
-    type: "magiclink",
-    token_hash: targetLink.properties.hashed_token,
-  });
-  if (verifyError) return { error: "Ulazak u nalog nije uspeo." };
-
-  const cookieStore = await cookies();
-  cookieStore.set(impersonateCookieName(targetScope), adminProfile.full_name ?? adminProfile.email ?? "Admin", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "lax",
-    path: `/${targetScope}`,
-    maxAge: 60 * 60,
-  });
-
-  redirect(ROLE_HOME[target.role] ?? "/login");
-}
-
-/** Ends the impersonated session in the given portal scope; the admin's own session is untouched. */
-export async function stopImpersonating(scope: PortalScope): Promise<ActionState> {
-  const supabase = await createClient(scope);
-  await supabase.auth.signOut();
-
-  const cookieStore = await cookies();
-  cookieStore.delete(impersonateCookieName(scope));
-
-  redirect("/admin");
 }
 
 export async function revokeInvitation(invitationId: string): Promise<ActionState> {
