@@ -1,119 +1,192 @@
 -- Row Level Security
+
+-- ============================================================================
+-- HELPERS (security definer so they can read profiles without recursive RLS)
+-- ============================================================================
+create or replace function public.current_role()
+returns public.user_role as $$
+  select role from public.profiles where id = auth.uid();
+$$ language sql security definer stable set search_path = public;
+
+create or replace function public.current_company_id()
+returns uuid as $$
+  select company_id from public.profiles where id = auth.uid();
+$$ language sql security definer stable set search_path = public;
+
+create or replace function public.current_restaurant_id()
+returns uuid as $$
+  select restaurant_id from public.profiles where id = auth.uid();
+$$ language sql security definer stable set search_path = public;
+
+create or replace function public.is_admin()
+returns boolean as $$
+  select public.current_role() = 'admin';
+$$ language sql security definer stable set search_path = public;
+
+alter table public.companies enable row level security;
+alter table public.restaurants enable row level security;
 alter table public.profiles enable row level security;
-alter table public.apartments enable row level security;
-alter table public.apartment_gallery enable row level security;
-alter table public.emergency_contacts enable row level security;
-alter table public.guide_sections enable row level security;
-alter table public.rooms enable row level security;
-alter table public.room_items enable row level security;
-alter table public.qr_codes enable row level security;
-alter table public.qr_scans enable row level security;
-alter table public.inventory_items enable row level security;
-alter table public.inventory_reports enable row level security;
-alter table public.maintenance_issues enable row level security;
-alter table public.maintenance_events enable row level security;
-alter table public.guide_views enable row level security;
-alter table public.ai_conversations enable row level security;
-alter table public.ai_messages enable row level security;
-alter table public.notification_preferences enable row level security;
+alter table public.invitations enable row level security;
+alter table public.restaurant_schedule enable row level security;
+alter table public.menu_items enable row level security;
+alter table public.daily_menu enable row level security;
+alter table public.orders enable row level security;
+alter table public.order_items enable row level security;
+alter table public.campaigns enable row level security;
+alter table public.loyalty_rewards enable row level security;
+alter table public.loyalty_redemptions enable row level security;
+alter table public.ratings enable row level security;
+alter table public.deliveries enable row level security;
 
--- profiles: user manages their own row
-create policy "profiles_select_own" on public.profiles for select using (auth.uid() = id);
-create policy "profiles_update_own" on public.profiles for update using (auth.uid() = id);
-
--- apartments: owner has full access; anonymous guests can read active apartments (needed for public guide page)
-create policy "apartments_owner_all" on public.apartments for all
-  using (auth.uid() = owner_id) with check (auth.uid() = owner_id);
-create policy "apartments_public_read" on public.apartments for select
-  using (status = 'active');
-
--- helper: is the current user the owner of the apartment referenced by apartment_id?
-create or replace function public.owns_apartment(target_apartment_id uuid)
-returns boolean as $$
-  select exists (
-    select 1 from public.apartments a
-    where a.id = target_apartment_id and a.owner_id = auth.uid()
-  );
-$$ language sql security definer stable;
-
--- apartment_gallery
-create policy "gallery_owner_all" on public.apartment_gallery for all
-  using (public.owns_apartment(apartment_id)) with check (public.owns_apartment(apartment_id));
-create policy "gallery_public_read" on public.apartment_gallery for select using (true);
-
--- emergency_contacts
-create policy "contacts_owner_all" on public.emergency_contacts for all
-  using (public.owns_apartment(apartment_id)) with check (public.owns_apartment(apartment_id));
-create policy "contacts_public_read" on public.emergency_contacts for select using (true);
-
--- guide_sections: owner full access, public can read published sections
-create policy "guide_sections_owner_all" on public.guide_sections for all
-  using (public.owns_apartment(apartment_id)) with check (public.owns_apartment(apartment_id));
-create policy "guide_sections_public_read" on public.guide_sections for select
-  using (published = true);
-
--- rooms
-create policy "rooms_owner_all" on public.rooms for all
-  using (public.owns_apartment(apartment_id)) with check (public.owns_apartment(apartment_id));
-create policy "rooms_public_read" on public.rooms for select using (true);
-
--- room_items (via room -> apartment)
-create or replace function public.owns_room(target_room_id uuid)
-returns boolean as $$
-  select exists (
-    select 1 from public.rooms r
-    where r.id = target_room_id and public.owns_apartment(r.apartment_id)
-  );
-$$ language sql security definer stable;
-
-create policy "room_items_owner_all" on public.room_items for all
-  using (public.owns_room(room_id)) with check (public.owns_room(room_id));
-create policy "room_items_public_read" on public.room_items for select using (true);
-
--- qr_codes
-create policy "qr_codes_owner_all" on public.qr_codes for all
-  using (public.owns_apartment(apartment_id)) with check (public.owns_apartment(apartment_id));
-create policy "qr_codes_public_read" on public.qr_codes for select using (true);
-
--- qr_scans: anyone (including anon) can insert a scan event; only owner can read
-create policy "qr_scans_public_insert" on public.qr_scans for insert with check (true);
-create policy "qr_scans_owner_read" on public.qr_scans for select
+-- ============================================================================
+-- PROFILES
+-- ============================================================================
+create policy "profiles_select_own" on public.profiles for select
+  using (auth.uid() = id);
+create policy "profiles_select_company" on public.profiles for select
+  using (public.current_role() = 'office_manager' and company_id = public.current_company_id());
+create policy "profiles_select_admin" on public.profiles for select
+  using (public.is_admin());
+create policy "profiles_update_own" on public.profiles for update
+  using (auth.uid() = id);
+create policy "profiles_office_manager_update_employees" on public.profiles for update
+  using (public.current_role() = 'office_manager' and company_id = public.current_company_id());
+create policy "profiles_restaurant_read_via_orders" on public.profiles for select
   using (exists (
-    select 1 from public.qr_codes q where q.id = qr_code_id and public.owns_apartment(q.apartment_id)
+    select 1 from public.orders o
+    where o.employee_id = profiles.id and o.restaurant_id = public.current_restaurant_id()
+  ));
+create policy "profiles_admin_all" on public.profiles for all
+  using (public.is_admin()) with check (public.is_admin());
+
+-- ============================================================================
+-- COMPANIES
+-- ============================================================================
+create policy "companies_select_own_members" on public.companies for select
+  using (id = public.current_company_id());
+create policy "companies_admin_all" on public.companies for all
+  using (public.is_admin()) with check (public.is_admin());
+create policy "companies_office_manager_update" on public.companies for update
+  using (public.current_role() = 'office_manager' and id = public.current_company_id());
+
+-- ============================================================================
+-- RESTAURANTS (public directory — everyone signed in can browse active ones)
+-- ============================================================================
+create policy "restaurants_read_active" on public.restaurants for select
+  using (status = 'active' or public.is_admin() or id = public.current_restaurant_id());
+create policy "restaurants_admin_all" on public.restaurants for all
+  using (public.is_admin()) with check (public.is_admin());
+create policy "restaurants_staff_update" on public.restaurants for update
+  using (public.current_role() = 'restaurant_staff' and id = public.current_restaurant_id());
+
+-- ============================================================================
+-- INVITATIONS
+-- ============================================================================
+create policy "invitations_office_manager_all" on public.invitations for all
+  using (public.current_role() = 'office_manager' and company_id = public.current_company_id())
+  with check (public.current_role() = 'office_manager' and company_id = public.current_company_id());
+create policy "invitations_admin_all" on public.invitations for all
+  using (public.is_admin()) with check (public.is_admin());
+
+-- ============================================================================
+-- RESTAURANT SCHEDULE
+-- ============================================================================
+create policy "schedule_read_all" on public.restaurant_schedule for select using (true);
+create policy "schedule_admin_all" on public.restaurant_schedule for all
+  using (public.is_admin()) with check (public.is_admin());
+create policy "schedule_staff_write" on public.restaurant_schedule for all
+  using (public.current_role() = 'restaurant_staff' and restaurant_id = public.current_restaurant_id())
+  with check (public.current_role() = 'restaurant_staff' and restaurant_id = public.current_restaurant_id());
+
+-- ============================================================================
+-- MENU ITEMS
+-- ============================================================================
+create policy "menu_items_read_all" on public.menu_items for select using (true);
+create policy "menu_items_admin_all" on public.menu_items for all
+  using (public.is_admin()) with check (public.is_admin());
+create policy "menu_items_staff_write" on public.menu_items for all
+  using (public.current_role() = 'restaurant_staff' and restaurant_id = public.current_restaurant_id())
+  with check (public.current_role() = 'restaurant_staff' and restaurant_id = public.current_restaurant_id());
+
+-- ============================================================================
+-- DAILY MENU
+-- ============================================================================
+create policy "daily_menu_read_all" on public.daily_menu for select using (true);
+create policy "daily_menu_admin_all" on public.daily_menu for all
+  using (public.is_admin()) with check (public.is_admin());
+create policy "daily_menu_staff_write" on public.daily_menu for all
+  using (public.current_role() = 'restaurant_staff' and restaurant_id = public.current_restaurant_id())
+  with check (public.current_role() = 'restaurant_staff' and restaurant_id = public.current_restaurant_id());
+
+-- ============================================================================
+-- ORDERS
+-- ============================================================================
+create policy "orders_employee_all" on public.orders for all
+  using (employee_id = auth.uid())
+  with check (employee_id = auth.uid());
+create policy "orders_office_manager_read" on public.orders for select
+  using (public.current_role() = 'office_manager' and company_id = public.current_company_id());
+create policy "orders_restaurant_read" on public.orders for select
+  using (public.current_role() = 'restaurant_staff' and restaurant_id = public.current_restaurant_id());
+create policy "orders_restaurant_update" on public.orders for update
+  using (public.current_role() = 'restaurant_staff' and restaurant_id = public.current_restaurant_id());
+create policy "orders_admin_all" on public.orders for all
+  using (public.is_admin()) with check (public.is_admin());
+
+-- ============================================================================
+-- ORDER ITEMS (inherit access via parent order)
+-- ============================================================================
+create policy "order_items_employee_all" on public.order_items for all
+  using (exists (select 1 from public.orders o where o.id = order_id and o.employee_id = auth.uid()))
+  with check (exists (select 1 from public.orders o where o.id = order_id and o.employee_id = auth.uid()));
+create policy "order_items_office_manager_read" on public.order_items for select
+  using (exists (
+    select 1 from public.orders o where o.id = order_id
+    and public.current_role() = 'office_manager' and o.company_id = public.current_company_id()
+  ));
+create policy "order_items_restaurant_read" on public.order_items for select
+  using (exists (
+    select 1 from public.orders o where o.id = order_id
+    and public.current_role() = 'restaurant_staff' and o.restaurant_id = public.current_restaurant_id()
+  ));
+create policy "order_items_admin_all" on public.order_items for all
+  using (public.is_admin()) with check (public.is_admin());
+
+-- ============================================================================
+-- CAMPAIGNS (public read for active, admin manages)
+-- ============================================================================
+create policy "campaigns_read_all" on public.campaigns for select using (true);
+create policy "campaigns_admin_all" on public.campaigns for all
+  using (public.is_admin()) with check (public.is_admin());
+
+-- ============================================================================
+-- LOYALTY
+-- ============================================================================
+create policy "loyalty_rewards_read_all" on public.loyalty_rewards for select using (true);
+create policy "loyalty_rewards_admin_all" on public.loyalty_rewards for all
+  using (public.is_admin()) with check (public.is_admin());
+
+create policy "loyalty_redemptions_own" on public.loyalty_redemptions for all
+  using (employee_id = auth.uid()) with check (employee_id = auth.uid());
+create policy "loyalty_redemptions_admin_all" on public.loyalty_redemptions for all
+  using (public.is_admin()) with check (public.is_admin());
+
+-- ============================================================================
+-- RATINGS
+-- ============================================================================
+create policy "ratings_employee_all" on public.ratings for all
+  using (employee_id = auth.uid()) with check (employee_id = auth.uid());
+create policy "ratings_admin_read" on public.ratings for select using (public.is_admin());
+create policy "ratings_restaurant_read" on public.ratings for select
+  using (exists (
+    select 1 from public.orders o where o.id = order_id
+    and public.current_role() = 'restaurant_staff' and o.restaurant_id = public.current_restaurant_id()
   ));
 
--- inventory
-create policy "inventory_items_owner_all" on public.inventory_items for all
-  using (public.owns_apartment(apartment_id)) with check (public.owns_apartment(apartment_id));
-
-create policy "inventory_reports_owner_read" on public.inventory_reports for select
-  using (exists (
-    select 1 from public.inventory_items i where i.id = item_id and public.owns_apartment(i.apartment_id)
-  ));
-create policy "inventory_reports_public_insert" on public.inventory_reports for insert with check (true);
-create policy "inventory_reports_owner_update" on public.inventory_reports for update
-  using (exists (
-    select 1 from public.inventory_items i where i.id = item_id and public.owns_apartment(i.apartment_id)
-  ));
-
--- maintenance
-create policy "maintenance_issues_owner_all" on public.maintenance_issues for all
-  using (public.owns_apartment(apartment_id)) with check (public.owns_apartment(apartment_id));
-
-create policy "maintenance_events_owner_all" on public.maintenance_events for all
-  using (exists (
-    select 1 from public.maintenance_issues m where m.id = issue_id and public.owns_apartment(m.apartment_id)
-  ));
-
--- guide_views: anyone can insert (guest page view tracking), owner can read
-create policy "guide_views_public_insert" on public.guide_views for insert with check (true);
-create policy "guide_views_owner_read" on public.guide_views for select
-  using (public.owns_apartment(apartment_id));
-
--- ai_conversations / ai_messages: public insert+read via session (guest chat), owner read-all
-create policy "ai_conversations_public_all" on public.ai_conversations for all using (true) with check (true);
-create policy "ai_messages_public_all" on public.ai_messages for all using (true) with check (true);
-
--- notification_preferences
-create policy "notification_prefs_owner_all" on public.notification_preferences for all
-  using (public.owns_apartment(apartment_id)) with check (public.owns_apartment(apartment_id));
+-- ============================================================================
+-- DELIVERIES
+-- ============================================================================
+create policy "deliveries_read_company" on public.deliveries for select
+  using (company_id = public.current_company_id() or public.is_admin());
+create policy "deliveries_admin_all" on public.deliveries for all
+  using (public.is_admin()) with check (public.is_admin());

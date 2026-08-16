@@ -1,13 +1,24 @@
-# Boravak
+# Prime Bite
 
-The guest experience layer for independent hosts. Boravak starts where the booking ends — digital
-guest guides, room-by-room instructions, QR codes, inventory and maintenance tracking, all in one
-premium dashboard.
+Naručivanje obroka za firme. Prime Bite povezuje zaposlene, office menadžere, restorane i
+administratore u jednu platformu: nedeljni meniji unapred, budžeti po firmi/zaposlenom, potvrda
+narudžbina od strane restorana i praćenje dostave.
 
 ## Stack
 
 Next.js 16 (App Router, Turbopack) · TypeScript · Tailwind CSS v4 · Supabase (Postgres + Auth) ·
-React Query · Zod · React Hook Form · Framer Motion · Recharts · `qrcode` · `jspdf`
+React Query · Zod · React Hook Form · Framer Motion · Recharts · `xlsx`
+
+## Portali
+
+- **Zaposleni** (`/app`) — ponuda dana, nedeljni meni i naručivanje, status narudžbine, akcije,
+  loyalty nagrade.
+- **Office menadžer** (`/company`) — zaposleni (pojedinačno ili bulk uvoz iz Excela), budžeti,
+  troškovi, istorija narudžbina.
+- **Restoran** (`/restaurant`) — dolazne narudžbine za danas/sutra, prihvatanje/odbijanje,
+  upravljanje menijem i dnevnim kapacitetom.
+- **Admin** (`/admin`) — firme, restorani, nedeljno planiranje, kampanje, praćenje dostave,
+  Excel export, sve narudžbine.
 
 ## Getting started
 
@@ -19,8 +30,8 @@ cp .env.example .env.local
 ### 1. Create a Supabase project
 
 Create a project at [supabase.com](https://supabase.com), then run the SQL files in
-`supabase/migrations/` **in order** (0001, 0002, 0003) via the SQL Editor — they create every
-table, RLS policy, and the cleaner-report trigger.
+`supabase/migrations/` **in order** (0001, 0002) via the SQL Editor — they create every table, enum,
+RLS policy and trigger.
 
 ### 2. Configure environment variables
 
@@ -29,12 +40,24 @@ Fill in `.env.local`:
 ```
 NEXT_PUBLIC_SUPABASE_URL=          # Project Settings → API
 NEXT_PUBLIC_SUPABASE_ANON_KEY=     # Project Settings → API
+SUPABASE_SERVICE_ROLE_KEY=         # Project Settings → API (server-only — invites, admin ops)
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-ANTHROPIC_API_KEY=                 # optional — powers the AI concierge; falls back to a
-                                    # simple keyword search over the guide content if unset
 ```
 
-### 3. Run it
+### 3. Bootstrap the first admin
+
+There is no public sign-up — every account is created by an invite. To get the very first admin
+account in, insert one row directly in the Supabase SQL editor after creating your own
+`auth.users` entry (Authentication → Users → Add user), then:
+
+```sql
+update public.profiles set role = 'admin' where email = 'you@company.com';
+```
+
+From there, the admin portal can invite everyone else (companies' office managers, restaurant
+staff, and — via each office manager — employees).
+
+### 4. Run it
 
 ```bash
 pnpm dev
@@ -53,21 +76,23 @@ redeploy.
 
 ## Project structure
 
-- `src/app/(auth)` — login, register, forgot/reset password, email verification
-- `src/app/dashboard`, `src/app/apartments` — owner-facing app, global shell
-- `src/app/apartments/[slug]/*` — per-apartment sections (Overview, Guest Guide, Room Guides,
-  QR Codes, Inventory, Maintenance, Analytics, Print Center, Settings)
-- `src/app/g/[slug]` — public, no-login guest page (mobile-first)
-- `src/app/qr/[slug]` — QR redirect + scan-tracking route
-- `src/app/api/concierge` — AI concierge endpoint
-- `src/lib/data/*` — Supabase data-access functions
-- `src/lib/pdf/*` — Print Center PDF templates
-- `supabase/migrations/*` — database schema, RLS policies, triggers
+- `src/app/(auth)` — login, forgot/reset password, invite acceptance
+- `src/app/app` — employee portal
+- `src/app/company` — office manager portal
+- `src/app/restaurant` — restaurant portal
+- `src/app/admin` — admin portal
+- `src/lib/supabase/*` — browser/server/admin Supabase clients + auth middleware
+- `supabase/migrations/*` — database schema, enums, RLS policies, triggers
 
-## Notes
+## Notes / known simplifications
 
-- Every room and room item automatically gets its own permanent QR code (`/qr/[slug]`) that
-  redirects to the current guest-facing content and logs a scan.
-- The AI concierge answers only from the apartment's own guide/room content (guest guide sections,
-  room instructions, FAQs) — no external knowledge, no booking data.
-- Analytics deliberately excludes booking revenue, per product scope.
+- **Invitations don't send real email.** Accepting an invite creates the auth user directly via
+  the service-role client; the office manager / admin UI surfaces a copyable invite link instead
+  of dispatching email. Wire up a transactional email provider (e.g. Resend) in
+  `src/app/(auth)/actions.ts` and the invite-creation actions to send it for real.
+  30-minute-before-cutoff and daily-deal emails described in the spec are likewise not wired to a
+  sender yet.
+- **Bulk employee upload** reads `.xlsx`/`.csv` client-side (columns: `full_name`, `email`,
+  optional `daily_budget_override`) and creates one invitation per row.
+- Loyalty points are awarded automatically (1 point per 100 RSD) when an order is marked
+  *delivered*.

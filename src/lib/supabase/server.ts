@@ -3,7 +3,14 @@ import { createServerClient } from "@supabase/ssr";
 
 import type { Database } from "@/types/database";
 
-export async function createClient() {
+/**
+ * One cookie namespace per portal (via auth.storageKey) so being logged into
+ * /restaurant in a tab doesn't kick out an /admin session in another tab of
+ * the same browser — each portal keeps its own independent session.
+ */
+export type PortalScope = "app" | "company" | "restaurant" | "admin";
+
+export async function createClient(scope?: PortalScope) {
   const cookieStore = await cookies();
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -18,6 +25,14 @@ export async function createClient() {
   }
 
   return createServerClient<Database>(url, key, {
+    // A path restriction is essential here, not just the name: without it
+    // every portal's session cookie (all potentially chunked, since JWTs
+    // don't fit in one 4KB cookie) rides along on every single request
+    // regardless of which portal is being visited, and the combined
+    // Cookie header can grow past what the browser/edge will forward —
+    // manifesting as blank pages or redirect loops once someone has logged
+    // into more than one portal in the same browser.
+    cookieOptions: scope ? { name: `sb-primebite-${scope}`, path: `/${scope}` } : undefined,
     cookies: {
       getAll() {
         return cookieStore.getAll();

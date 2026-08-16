@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, QrCode, Wrench, Package, BookOpenText } from "lucide-react";
+import { ArrowRight, UtensilsCrossed, Wallet, Truck, Star } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +29,7 @@ export function Hero() {
           transition={{ duration: 0.5 }}
         >
           <Badge variant="secondary" className="mb-6">
-            Napravljeno za samostalne domaćine i butik menadžere apartmana
+            Naručivanje obroka za firme, restorane i zaposlene
           </Badge>
         </motion.div>
 
@@ -39,8 +39,8 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.05 }}
           className="text-balance text-4xl font-semibold tracking-tight text-gradient sm:text-5xl md:text-6xl"
         >
-          Iskustvo gostiju
-          <br className="hidden sm:block" /> za tvoj apartman
+          Ručak za celu firmu,
+          <br className="hidden sm:block" /> naručen za par klikova
         </motion.h1>
 
         <motion.p
@@ -49,9 +49,8 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="mx-auto mt-6 max-w-xl text-balance text-lg text-muted-foreground"
         >
-          Boravak počinje tamo gde se rezervacija završava. Digitalni vodiči za goste,
-          uputstva po sobama, praćenje inventara i održavanja — sve u jednom
-          preglednom panelu.
+          Prime Bite povezuje firme, zaposlene i restorane u jednu platformu. Nedeljni meniji,
+          budžeti po zaposlenom, potvrde restorana i praćenje dostave — sve na jednom mestu.
         </motion.p>
 
         <motion.div
@@ -61,8 +60,8 @@ export function Hero() {
           className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
         >
           <Button asChild size="lg" className="group">
-            <Link href="/register">
-              Počni besplatno
+            <Link href="/login">
+              Prijavi se
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </Button>
@@ -87,10 +86,10 @@ export function Hero() {
           </div>
           <div className="grid gap-4 p-6 md:grid-cols-4">
             {[
-              { label: "Otvoreno održavanje", value: "3", icon: Wrench, tone: "warning" },
-              { label: "Upozorenja inventara", value: "2", icon: Package, tone: "destructive" },
-              { label: "QR skeniranja (7d)", value: "184", icon: QrCode, tone: "primary" },
-              { label: "Pregledi vodiča (7d)", value: "412", icon: BookOpenText, tone: "success" },
+              { label: "Narudžbine danas", value: "128", icon: UtensilsCrossed, tone: "primary" },
+              { label: "Ušteđeno kroz budžet", value: "42.500 RSD", icon: Wallet, tone: "success" },
+              { label: "Dostave na vreme", value: "96%", icon: Truck, tone: "primary" },
+              { label: "Prosečna ocena", value: "4.8", icon: Star, tone: "warning" },
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
@@ -106,7 +105,7 @@ export function Hero() {
             ))}
           </div>
           <div className="grid gap-4 px-6 pb-6 md:grid-cols-3">
-            {["Sunčani Studio — Beograd", "Pogled na Reku #4", "Apartman Cvetna"].map((name, i) => (
+            {["Taco Monday — Burrito Bar", "Sushi Day — Wasabi", "Dnevni meni — Trpeza"].map((name, i) => (
               <motion.div
                 key={name}
                 initial={{ opacity: 0, y: 12 }}
@@ -116,7 +115,7 @@ export function Hero() {
               >
                 <div className="mb-3 h-20 rounded-lg bg-gradient-to-br from-primary/20 to-transparent" />
                 <div className="text-sm font-medium">{name}</div>
-                <div className="mt-1 text-xs text-muted-foreground">Vodič · 12 sekcija</div>
+                <div className="mt-1 text-xs text-muted-foreground">Ponuda dana · -20%</div>
               </motion.div>
             ))}
           </div>

@@ -9,7 +9,10 @@ import { Label } from "@/components/ui/label";
 import { SubmitButton } from "@/components/auth/submit-button";
 
 export default function ResetPasswordPage() {
-  const [state, formAction] = useActionState<FormState, FormData>(updatePassword, undefined);
+  const [state, formAction] = useActionState<FormState, FormData>(
+    updatePassword.bind(null, undefined),
+    undefined
+  );
 
   return (
     <div>

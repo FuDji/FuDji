@@ -1,21 +1,50 @@
 import { z } from "zod";
 
+const optionalText = () =>
+  z
+    .string()
+    .optional()
+    .or(z.literal(""))
+    .transform((v) => (v ? v : null));
+
+const optionalUrl = () =>
+  z
+    .string()
+    .url()
+    .optional()
+    .or(z.literal(""))
+    .transform((v) => (v ? v : null));
+
+const optionalEmail = () =>
+  z
+    .string()
+    .email()
+    .optional()
+    .or(z.literal(""))
+    .transform((v) => (v ? v : null));
+
+const optionalUuid = () =>
+  z
+    .string()
+    .uuid()
+    .optional()
+    .or(z.literal(""))
+    .transform((v) => (v ? v : null));
+
+const optionalNumber = () =>
+  z.coerce
+    .number()
+    .optional()
+    .nullable()
+    .transform((v) => v ?? null);
+
 export const loginSchema = z.object({
   email: z.string().email("Unesi ispravan email"),
-  password: z.string().min(8, "Lozinka mora imati bar 8 karaktera"),
+  // No length/strength rule here — the account may have been created directly
+  // in Supabase with a shorter password. Strength rules belong on the forms
+  // that actually set a new password (reset / accept-invite), not on login.
+  password: z.string().min(1, "Unesi lozinku"),
 });
-
-export const registerSchema = z
-  .object({
-    fullName: z.string().min(2, "Unesi ime i prezime"),
-    email: z.string().email("Unesi ispravan email"),
-    password: z.string().min(8, "Lozinka mora imati bar 8 karaktera"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Lozinke se ne poklapaju",
-    path: ["confirmPassword"],
-  });
 
 export const forgotPasswordSchema = z.object({
   email: z.string().email("Unesi ispravan email"),
@@ -31,80 +60,90 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
-export const apartmentSchema = z.object({
+export const acceptInviteSchema = z
+  .object({
+    token: z.string().uuid(),
+    password: z.string().min(8, "Lozinka mora imati bar 8 karaktera"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Lozinke se ne poklapaju",
+    path: ["confirmPassword"],
+  });
+
+export const companySchema = z.object({
   name: z.string().min(2, "Naziv je obavezan"),
-  logo_url: z.string().url().optional().or(z.literal("")),
-  hero_image_url: z.string().url().optional().or(z.literal("")),
-  address: z.string().optional().or(z.literal("")),
-  country: z.string().optional().or(z.literal("")),
-  city: z.string().optional().or(z.literal("")),
-  lat: z.coerce.number().optional().nullable(),
-  lng: z.coerce.number().optional().nullable(),
-  phone: z.string().optional().or(z.literal("")),
-  email: z.string().email().optional().or(z.literal("")),
-  check_in_time: z.string().optional().or(z.literal("")),
-  check_out_time: z.string().optional().or(z.literal("")),
-  wifi_name: z.string().optional().or(z.literal("")),
-  wifi_password: z.string().optional().or(z.literal("")),
-  parking_info: z.string().optional().or(z.literal("")),
-  description: z.string().optional().or(z.literal("")),
+  address: optionalText(),
+  contact_phone: optionalText(),
+  contact_email: optionalEmail(),
+  payment_type: z.enum(["company_pays", "employee_pays", "mixed"]),
+  daily_budget: z.coerce.number().min(0),
+  monthly_budget: optionalNumber(),
+  mixed_cap: optionalNumber(),
+  cutoff_time: z.string().min(1),
+  delivery_time: z.string().min(1),
+  delivery_tolerance_minutes: z.coerce.number().int().min(0),
 });
 
-export const guideSectionSchema = z.object({
+/**
+ * Office managers can tune payment model, budgets, and delivery time — but
+ * the company's identity (name/address) and the cutoff/tolerance that admin
+ * uses to plan restaurant capacity stay admin-only (see CompanyDialog).
+ */
+export const companySettingsSchema = companySchema.omit({
+  cutoff_time: true,
+  name: true,
+  address: true,
+  delivery_tolerance_minutes: true,
+});
+
+export const restaurantSchema = z.object({
+  name: z.string().min(2, "Naziv je obavezan"),
+  address: optionalText(),
+  phone: optionalText(),
+  description: optionalText(),
+  logo_url: optionalUrl(),
+  commission_percent: z.coerce.number().min(0).max(100),
+});
+
+export const menuItemSchema = z.object({
+  name: z.string().min(1, "Naziv je obavezan"),
+  description: optionalText(),
+  image_url: optionalUrl(),
+  calories: optionalNumber(),
+  price: z.coerce.number().min(0),
+  category: optionalText(),
+});
+
+export const campaignSchema = z.object({
   title: z.string().min(1, "Naslov je obavezan"),
-  icon: z.string().optional(),
-  published: z.boolean().optional(),
+  description: optionalText(),
+  image_url: optionalUrl(),
+  campaign_type: z.enum(["discount", "free_item", "free_delivery", "other"]),
+  discount_percent: optionalNumber(),
+  restaurant_id: optionalUuid(),
+  starts_at: z.string().min(1),
+  ends_at: optionalText(),
 });
 
-export const roomSchema = z.object({
-  name: z.string().min(1, "Naziv je obavezan"),
-  icon: z.string().optional(),
-  cover_image_url: z.string().url().optional().or(z.literal("")),
-});
-
-export const roomItemSchema = z.object({
-  name: z.string().min(1, "Naziv je obavezan"),
-  icon: z.string().optional(),
-  instructions: z.string().optional().or(z.literal("")),
-  video_url: z.string().url().optional().or(z.literal("")),
-  warnings: z.string().optional().or(z.literal("")),
-  tips: z.string().optional().or(z.literal("")),
-});
-
-export const inventoryItemSchema = z.object({
-  name: z.string().min(1, "Naziv je obavezan"),
-  category: z.enum(["kitchen", "bathroom", "bedroom", "living_room", "outdoor", "cleaning_supplies"]),
-  quantity: z.coerce.number().int().min(0),
-  min_quantity: z.coerce.number().int().min(0),
-  location: z.string().optional().or(z.literal("")),
-  notes: z.string().optional().or(z.literal("")),
-  photo_url: z.string().url().optional().or(z.literal("")),
-});
-
-export const maintenanceIssueSchema = z.object({
+export const loyaltyRewardSchema = z.object({
   title: z.string().min(1, "Naslov je obavezan"),
-  description: z.string().optional().or(z.literal("")),
-  category: z.enum(["electrical", "water", "furniture", "appliances", "cleaning", "safety", "other"]),
-  priority: z.enum(["low", "medium", "high", "urgent"]),
-  room_id: z.string().uuid().optional().or(z.literal("")),
-  assigned_to: z.string().optional().or(z.literal("")),
-  due_date: z.string().optional().or(z.literal("")),
-  photo_url: z.string().url().optional().or(z.literal("")),
+  description: optionalText(),
+  image_url: optionalUrl(),
+  points_cost: z.coerce.number().int().min(1),
+  reward_type: z.enum(["free_meal", "dessert", "drink", "other"]),
 });
 
-export const apartmentBrandingSchema = z.object({
-  logo_url: z.string().url().optional().or(z.literal("")),
-  brand_color: z.string().optional().or(z.literal("")),
-  font: z.string().optional().or(z.literal("")),
-  language: z.string().optional().or(z.literal("")),
-  custom_domain: z.string().optional().or(z.literal("")),
-  timezone: z.string().optional().or(z.literal("")),
+export const inviteEmployeeSchema = z.object({
+  full_name: z.string().min(2, "Unesi ime i prezime"),
+  email: z.string().email("Unesi ispravan email"),
+  daily_budget_override: optionalNumber(),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
-export type RegisterInput = z.infer<typeof registerSchema>;
-export type ApartmentInput = z.infer<typeof apartmentSchema>;
-export type RoomInput = z.infer<typeof roomSchema>;
-export type RoomItemInput = z.infer<typeof roomItemSchema>;
-export type InventoryItemInput = z.infer<typeof inventoryItemSchema>;
-export type MaintenanceIssueInput = z.infer<typeof maintenanceIssueSchema>;
+export type CompanyInput = z.infer<typeof companySchema>;
+export type RestaurantInput = z.infer<typeof restaurantSchema>;
+export type MenuItemInput = z.infer<typeof menuItemSchema>;
+export type CampaignInput = z.infer<typeof campaignSchema>;
+export type LoyaltyRewardInput = z.infer<typeof loyaltyRewardSchema>;
+export type InviteEmployeeInput = z.infer<typeof inviteEmployeeSchema>;

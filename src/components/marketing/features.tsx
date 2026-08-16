@@ -1,64 +1,64 @@
 import {
-  BookOpenText,
-  DoorOpen,
-  QrCode,
-  Package,
-  Wrench,
+  CalendarDays,
+  Wallet,
+  Bell,
+  Truck,
+  Gift,
   BarChart3,
-  Printer,
-  Sparkles,
+  ClipboardCheck,
+  Megaphone,
 } from "lucide-react";
 
 import { Reveal } from "./reveal";
 
 const features = [
   {
-    icon: BookOpenText,
-    title: "Digitalni vodiči za goste",
+    icon: CalendarDays,
+    title: "Nedeljni meni unapred",
     description:
-      "WiFi, kućna pravila, restorani, hitni brojevi — lepo organizovano i uvek ažurno.",
+      "Zaposleni već u subotu vide ponudu za celu narednu nedelju i naručuju za bilo koji dan.",
   },
   {
-    icon: DoorOpen,
-    title: "Uputstva po sobama",
+    icon: Wallet,
+    title: "Fleksibilni budžeti",
     description:
-      "Svaki uređaj dobija svoj mini-vodič. Gosti vas više neće zvati u ponoć zbog klime.",
+      "Firma plaća sve, zaposleni plaća sam, ili kombinovano — do definisanog iznosa po obroku.",
   },
   {
-    icon: QrCode,
-    title: "Brendirani QR kodovi",
+    icon: ClipboardCheck,
+    title: "Potvrda restorana",
     description:
-      "Generiši kodove za skeniranje za svaku sobu i uređaj. Odštampaj nalepnice, postere ili A4 listove u jednom kliku.",
+      "Restoran prihvata ili odbija narudžbinu uz razlog, i ažurira status do trenutka isporuke.",
   },
   {
-    icon: Package,
-    title: "Praćenje inventara",
+    icon: Bell,
+    title: "Rok za naručivanje",
     description:
-      "Znaj tačno šta se nalazi u svakom apartmanu. Čistačice odmah prijavljuju nedostajuće ili pokvarene stvari.",
+      "Svaka firma ima cut-off vreme — posle njega narudžbina se zaključava i šalje restoranu.",
   },
   {
-    icon: Wrench,
-    title: "Održavanje bez glavobolje",
+    icon: Truck,
+    title: "Praćenje dostave",
     description:
-      "Prijavi probleme sa fotografijama, dodeli ih nekome i prati vreme rešavanja — sve sa telefona.",
+      "Termin dostave po firmi, tolerancija kašnjenja i automatska upozorenja u admin panelu.",
+  },
+  {
+    icon: Megaphone,
+    title: "Akcije i kampanje",
+    description:
+      "Taco Tuesday, Free Dessert Wednesday — admin kreira kampanju, korisnici je odmah vide.",
+  },
+  {
+    icon: Gift,
+    title: "Loyalty program",
+    description:
+      "Poeni po narudžbini koje zaposleni menjaju za besplatan obrok, dezert ili piće.",
   },
   {
     icon: BarChart3,
-    title: "Prava analitika korišćenja",
+    title: "Izveštaji i export",
     description:
-      "Vidi koje vodiče gosti zaista čitaju, koji QR kodovi se skeniraju i gde se problemi ponavljaju.",
-  },
-  {
-    icon: Printer,
-    title: "Šabloni spremni za štampu",
-    description:
-      "Knjige dobrodošlice, WiFi kartice, oznake soba i posteri — izvezi uređene PDF-ove za par sekundi.",
-  },
-  {
-    icon: Sparkles,
-    title: "AI concierge",
-    description:
-      "Gosti postavljaju pitanja na svom jeziku; Boravak odgovara koristeći bazu znanja tvog apartmana.",
+      "Pregled troškova po zaposlenom i periodu, plus Excel izvoz za organizaciju dostave.",
   },
 ];
 
@@ -67,11 +67,11 @@ export function Features() {
     <section id="features" className="mx-auto max-w-6xl px-6 py-24">
       <Reveal className="mx-auto max-w-2xl text-center">
         <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-          Sve se dešava posle check-in-a
+          Sve što ti treba za organizovan ručak
         </h2>
         <p className="mt-4 text-muted-foreground">
-          Boravak nije sistem za rezervacije. To je operativni sistem za sam boravak —
-          napravljen za domaćine kojima je stalo do iskustva gostiju.
+          Prime Bite povezuje četiri portala u jedan tok: zaposleni naručuje, restoran potvrđuje,
+          firma kontroliše troškove, admin drži sve pod kontrolom.
         </p>
       </Reveal>
 

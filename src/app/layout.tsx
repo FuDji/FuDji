@@ -12,11 +12,11 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Boravak — Operativni sistem za tvoj apartman",
-    template: "%s · Boravak",
+    default: "Prime Bite — Naručivanje obroka za firme",
+    template: "%s · Prime Bite",
   },
   description:
-    "Boravak pomaže vlasnicima apartmana da upravljaju vodičima za goste, uputstvima po sobama, inventarom i održavanjem — sve u jednom preglednom panelu.",
+    "Prime Bite povezuje firme, zaposlene i restorane u jednu platformu za naručivanje dnevnih obroka — budžeti, nedeljni meniji, praćenje narudžbina i dostave na jednom mestu.",
 };
 
 export default function RootLayout({

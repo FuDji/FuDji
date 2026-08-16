@@ -1,57 +1,38 @@
-"use client";
-
 import Link from "next/link";
-import { useActionState } from "react";
-import { AlertCircle } from "lucide-react";
+import { Building2, ShieldCheck, Store, UtensilsCrossed } from "lucide-react";
 
-import { signIn, type FormState } from "../actions";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { SubmitButton } from "@/components/auth/submit-button";
+const PORTALS = [
+  { href: "/app/login", label: "Zaposleni", description: "Naruči dnevni obrok", icon: UtensilsCrossed },
+  { href: "/company/login", label: "Firma", description: "Office menadžer", icon: Building2 },
+  { href: "/restaurant/login", label: "Restoran", description: "Upravljaj narudžbinama", icon: Store },
+  { href: "/admin/login", label: "Admin", description: "Prime Bite tim", icon: ShieldCheck },
+];
 
-export default function LoginPage() {
-  const [state, formAction] = useActionState<FormState, FormData>(signIn, undefined);
-
+export default function LoginPickerPage() {
   return (
     <div>
       <div className="mb-6 text-center">
         <h1 className="text-xl font-semibold">Dobrodošli nazad</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Prijavi se da upravljaš svojim nekretninama
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground">Izaberi kako se prijavljuješ</p>
       </div>
 
-      <form action={formAction} className="space-y-4">
-        <div className="space-y-1.5">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" placeholder="ti@primer.com" required />
-        </div>
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">Lozinka</Label>
-            <Link href="/forgot-password" className="text-xs text-primary hover:underline">
-              Zaboravljena lozinka?
-            </Link>
-          </div>
-          <Input id="password" name="password" type="password" placeholder="••••••••" required />
-        </div>
-
-        {state?.error && (
-          <div className="flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            <AlertCircle className="size-4 shrink-0" />
-            {state.error}
-          </div>
-        )}
-
-        <SubmitButton>Prijavi se</SubmitButton>
-      </form>
-
-      <p className="mt-6 text-center text-sm text-muted-foreground">
-        Nemaš nalog?{" "}
-        <Link href="/register" className="text-primary hover:underline">
-          Napravi ga
-        </Link>
-      </p>
+      <div className="space-y-2">
+        {PORTALS.map((p) => (
+          <Link
+            key={p.href}
+            href={p.href}
+            className="flex items-center gap-3 rounded-xl border border-border px-4 py-3 transition-colors hover:border-primary/40 hover:bg-secondary/40"
+          >
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <p.icon className="size-5" />
+            </div>
+            <div>
+              <div className="font-medium">{p.label}</div>
+              <div className="text-xs text-muted-foreground">{p.description}</div>
+            </div>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

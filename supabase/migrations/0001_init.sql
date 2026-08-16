@@ -1,24 +1,97 @@
--- Boravak core schema
--- Enable extensions
+-- Prime Bite core schema
 create extension if not exists "pgcrypto";
 
 -- ============================================================================
--- PROFILES
+-- ENUMS
 -- ============================================================================
-create table if not exists public.profiles (
-  id uuid primary key references auth.users (id) on delete cascade,
-  full_name text,
-  avatar_url text,
-  company_name text,
+do $$ begin
+  create type public.user_role as enum ('employee', 'office_manager', 'restaurant_staff', 'admin');
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create type public.payment_type as enum ('company_pays', 'employee_pays', 'mixed');
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create type public.order_status as enum ('pending', 'accepted', 'rejected', 'preparing', 'ready', 'delivered');
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create type public.entity_status as enum ('active', 'inactive');
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create type public.invitation_status as enum ('pending', 'accepted', 'revoked');
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create type public.delivery_status as enum ('scheduled', 'delayed', 'delivered');
+exception when duplicate_object then null; end $$;
+
+-- ============================================================================
+-- COMPANIES (Firme)
+-- ============================================================================
+create table if not exists public.companies (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  address text,
+  contact_phone text,
+  contact_email text,
+  payment_type public.payment_type not null default 'company_pays',
+  daily_budget numeric(10, 2) not null default 800,
+  monthly_budget numeric(10, 2),
+  mixed_cap numeric(10, 2),
+  cutoff_time time not null default '10:30',
+  delivery_time time not null default '12:00',
+  delivery_tolerance_minutes integer not null default 15,
+  status public.entity_status not null default 'active',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
+-- ============================================================================
+-- RESTAURANTS
+-- ============================================================================
+create table if not exists public.restaurants (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  logo_url text,
+  address text,
+  phone text,
+  description text,
+  commission_percent numeric(5, 2) not null default 0,
+  status public.entity_status not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- ============================================================================
+-- PROFILES (all portal users)
+-- ============================================================================
+create table if not exists public.profiles (
+  id uuid primary key references auth.users (id) on delete cascade,
+  email text,
+  full_name text,
+  phone text,
+  role public.user_role not null default 'employee',
+  company_id uuid references public.companies (id) on delete set null,
+  restaurant_id uuid references public.restaurants (id) on delete set null,
+  daily_budget_override numeric(10, 2),
+  loyalty_points integer not null default 0,
+  active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists profiles_company_id_idx on public.profiles (company_id);
+create index if not exists profiles_restaurant_id_idx on public.profiles (restaurant_id);
+
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
-  insert into public.profiles (id, full_name, avatar_url)
-  values (new.id, new.raw_user_meta_data ->> 'full_name', new.raw_user_meta_data ->> 'avatar_url');
+  insert into public.profiles (id, email, full_name)
+  values (new.id, new.email, new.raw_user_meta_data ->> 'full_name')
+  on conflict (id) do nothing;
   return new;
 end;
 $$ language plpgsql security definer set search_path = public;
@@ -29,245 +102,193 @@ create trigger on_auth_user_created
   for each row execute procedure public.handle_new_user();
 
 -- ============================================================================
--- APARTMENTS
+-- INVITATIONS (email-invite onboarding)
 -- ============================================================================
-create table if not exists public.apartments (
+create table if not exists public.invitations (
   id uuid primary key default gen_random_uuid(),
-  owner_id uuid not null references auth.users (id) on delete cascade,
+  company_id uuid references public.companies (id) on delete cascade,
+  restaurant_id uuid references public.restaurants (id) on delete cascade,
+  email text not null,
+  full_name text,
+  role public.user_role not null default 'employee',
+  daily_budget_override numeric(10, 2),
+  token uuid not null default gen_random_uuid() unique,
+  status public.invitation_status not null default 'pending',
+  invited_by uuid references public.profiles (id) on delete set null,
+  created_at timestamptz not null default now(),
+  accepted_at timestamptz
+);
+
+create index if not exists invitations_company_id_idx on public.invitations (company_id);
+create index if not exists invitations_email_idx on public.invitations (email);
+
+-- ============================================================================
+-- RESTAURANT WEEKLY SCHEDULE (which restaurants work which day + capacity)
+-- ============================================================================
+create table if not exists public.restaurant_schedule (
+  id uuid primary key default gen_random_uuid(),
+  restaurant_id uuid not null references public.restaurants (id) on delete cascade,
+  date date not null,
+  is_open boolean not null default true,
+  meal_limit integer not null default 50,
+  created_at timestamptz not null default now(),
+  unique (restaurant_id, date)
+);
+
+create index if not exists restaurant_schedule_date_idx on public.restaurant_schedule (date);
+
+-- ============================================================================
+-- MENU ITEMS
+-- ============================================================================
+create table if not exists public.menu_items (
+  id uuid primary key default gen_random_uuid(),
+  restaurant_id uuid not null references public.restaurants (id) on delete cascade,
   name text not null,
-  slug text not null unique,
-  logo_url text,
-  hero_image_url text,
-  address text,
-  country text,
-  city text,
-  lat double precision,
-  lng double precision,
-  phone text,
-  email text,
-  check_in_time text default '15:00',
-  check_out_time text default '11:00',
-  wifi_name text,
-  wifi_password text,
-  parking_info text,
   description text,
-  brand_color text default '#4F8CFF',
-  font text default 'Inter',
-  language text default 'en',
-  custom_domain text,
-  timezone text default 'UTC',
-  status text not null default 'active' check (status in ('active', 'draft', 'archived')),
+  image_url text,
+  calories integer,
+  price numeric(10, 2) not null default 0,
+  category text default 'main',
+  active boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
-create index if not exists apartments_owner_id_idx on public.apartments (owner_id);
+create index if not exists menu_items_restaurant_id_idx on public.menu_items (restaurant_id);
 
-create table if not exists public.apartment_gallery (
+-- daily availability + "deal of the day" (e.g. Taco Monday)
+create table if not exists public.daily_menu (
   id uuid primary key default gen_random_uuid(),
-  apartment_id uuid not null references public.apartments (id) on delete cascade,
-  url text not null,
-  position integer not null default 0,
-  created_at timestamptz not null default now()
-);
-
-create table if not exists public.emergency_contacts (
-  id uuid primary key default gen_random_uuid(),
-  apartment_id uuid not null references public.apartments (id) on delete cascade,
-  label text not null,
-  phone text not null,
-  notes text,
-  position integer not null default 0
-);
-
--- ============================================================================
--- GUEST GUIDE
--- ============================================================================
-create table if not exists public.guide_sections (
-  id uuid primary key default gen_random_uuid(),
-  apartment_id uuid not null references public.apartments (id) on delete cascade,
-  key text not null, -- e.g. 'welcome', 'wifi', 'house_rules', custom slug
-  title text not null,
-  icon text default 'Sparkles',
-  position integer not null default 0,
-  published boolean not null default true,
-  blocks jsonb not null default '[]'::jsonb, -- array of content blocks
-  view_count integer not null default 0,
+  restaurant_id uuid not null references public.restaurants (id) on delete cascade,
+  menu_item_id uuid not null references public.menu_items (id) on delete cascade,
+  date date not null,
+  is_available boolean not null default true,
+  is_deal_of_day boolean not null default false,
+  deal_label text,
+  deal_price numeric(10, 2),
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  unique (apartment_id, key)
+  unique (restaurant_id, menu_item_id, date)
 );
 
-create index if not exists guide_sections_apartment_id_idx on public.guide_sections (apartment_id);
+create index if not exists daily_menu_date_idx on public.daily_menu (date);
+create index if not exists daily_menu_restaurant_date_idx on public.daily_menu (restaurant_id, date);
 
 -- ============================================================================
--- ROOM GUIDES
+-- ORDERS
 -- ============================================================================
-create table if not exists public.rooms (
+create table if not exists public.orders (
   id uuid primary key default gen_random_uuid(),
-  apartment_id uuid not null references public.apartments (id) on delete cascade,
-  name text not null,
-  icon text default 'DoorOpen',
-  cover_image_url text,
-  position integer not null default 0,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create index if not exists rooms_apartment_id_idx on public.rooms (apartment_id);
-
-create table if not exists public.room_items (
-  id uuid primary key default gen_random_uuid(),
-  room_id uuid not null references public.rooms (id) on delete cascade,
-  name text not null,
-  icon text default 'Wrench',
-  images jsonb not null default '[]'::jsonb,
-  instructions text,
-  video_url text,
-  warnings text,
-  tips text,
-  faqs jsonb not null default '[]'::jsonb, -- [{question, answer}]
-  position integer not null default 0,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create index if not exists room_items_room_id_idx on public.room_items (room_id);
-
--- ============================================================================
--- QR CODES
--- ============================================================================
-create table if not exists public.qr_codes (
-  id uuid primary key default gen_random_uuid(),
-  apartment_id uuid not null references public.apartments (id) on delete cascade,
-  target_type text not null check (target_type in ('apartment', 'guide_section', 'room', 'room_item')),
-  target_id uuid not null,
-  label text not null,
-  slug text not null unique,
-  style jsonb not null default '{}'::jsonb,
-  scan_count integer not null default 0,
-  created_at timestamptz not null default now()
-);
-
-create index if not exists qr_codes_apartment_id_idx on public.qr_codes (apartment_id);
-
-create table if not exists public.qr_scans (
-  id uuid primary key default gen_random_uuid(),
-  qr_code_id uuid not null references public.qr_codes (id) on delete cascade,
-  scanned_at timestamptz not null default now(),
-  user_agent text,
-  referrer text,
-  country text
-);
-
-create index if not exists qr_scans_qr_code_id_idx on public.qr_scans (qr_code_id);
-
--- ============================================================================
--- INVENTORY
--- ============================================================================
-create table if not exists public.inventory_items (
-  id uuid primary key default gen_random_uuid(),
-  apartment_id uuid not null references public.apartments (id) on delete cascade,
-  category text not null check (
-    category in ('kitchen', 'bathroom', 'bedroom', 'living_room', 'outdoor', 'cleaning_supplies')
-  ),
-  name text not null,
-  photo_url text,
-  quantity integer not null default 1,
-  min_quantity integer not null default 1,
-  location text,
-  notes text,
-  status text not null default 'ok' check (status in ('ok', 'low', 'missing', 'broken', 'needs_replacement')),
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create index if not exists inventory_items_apartment_id_idx on public.inventory_items (apartment_id);
-
-create table if not exists public.inventory_reports (
-  id uuid primary key default gen_random_uuid(),
-  item_id uuid not null references public.inventory_items (id) on delete cascade,
-  reported_by text,
-  type text not null check (type in ('missing', 'broken', 'needs_replacement')),
-  notes text,
-  resolved boolean not null default false,
-  created_at timestamptz not null default now()
-);
-
--- ============================================================================
--- MAINTENANCE
--- ============================================================================
-create table if not exists public.maintenance_issues (
-  id uuid primary key default gen_random_uuid(),
-  apartment_id uuid not null references public.apartments (id) on delete cascade,
-  room_id uuid references public.rooms (id) on delete set null,
-  title text not null,
-  description text,
-  category text not null check (
-    category in ('electrical', 'water', 'furniture', 'appliances', 'cleaning', 'safety', 'other')
-  ),
-  priority text not null default 'medium' check (priority in ('low', 'medium', 'high', 'urgent')),
-  status text not null default 'open' check (status in ('open', 'in_progress', 'resolved', 'closed')),
-  photo_url text,
-  video_url text,
-  assigned_to text,
-  due_date date,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  resolved_at timestamptz
-);
-
-create index if not exists maintenance_issues_apartment_id_idx on public.maintenance_issues (apartment_id);
-
-create table if not exists public.maintenance_events (
-  id uuid primary key default gen_random_uuid(),
-  issue_id uuid not null references public.maintenance_issues (id) on delete cascade,
-  type text not null, -- 'created' | 'status_change' | 'comment' | 'assigned'
+  company_id uuid not null references public.companies (id) on delete cascade,
+  employee_id uuid not null references public.profiles (id) on delete cascade,
+  restaurant_id uuid not null references public.restaurants (id) on delete cascade,
+  order_date date not null,
+  status public.order_status not null default 'pending',
+  rejection_reason text,
+  prep_time_minutes integer,
   note text,
+  subtotal numeric(10, 2) not null default 0,
+  company_covered numeric(10, 2) not null default 0,
+  employee_paid numeric(10, 2) not null default 0,
+  locked boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (employee_id, order_date)
+);
+
+create index if not exists orders_company_date_idx on public.orders (company_id, order_date);
+create index if not exists orders_restaurant_date_idx on public.orders (restaurant_id, order_date);
+create index if not exists orders_employee_idx on public.orders (employee_id);
+
+create table if not exists public.order_items (
+  id uuid primary key default gen_random_uuid(),
+  order_id uuid not null references public.orders (id) on delete cascade,
+  menu_item_id uuid references public.menu_items (id) on delete set null,
+  name_snapshot text not null,
+  price_snapshot numeric(10, 2) not null default 0,
+  calories_snapshot integer,
+  quantity integer not null default 1,
+  note text
+);
+
+create index if not exists order_items_order_id_idx on public.order_items (order_id);
+
+-- ============================================================================
+-- CAMPAIGNS (Akcije)
+-- ============================================================================
+create table if not exists public.campaigns (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  description text,
+  image_url text,
+  campaign_type text not null default 'discount' check (
+    campaign_type in ('discount', 'free_item', 'free_delivery', 'other')
+  ),
+  discount_percent numeric(5, 2),
+  restaurant_id uuid references public.restaurants (id) on delete cascade,
+  starts_at date not null default current_date,
+  ends_at date,
+  active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists campaigns_active_idx on public.campaigns (active);
+
+-- ============================================================================
+-- LOYALTY
+-- ============================================================================
+create table if not exists public.loyalty_rewards (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  description text,
+  image_url text,
+  points_cost integer not null default 100,
+  reward_type text not null default 'other' check (
+    reward_type in ('free_meal', 'dessert', 'drink', 'other')
+  ),
+  active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.loyalty_redemptions (
+  id uuid primary key default gen_random_uuid(),
+  employee_id uuid not null references public.profiles (id) on delete cascade,
+  reward_id uuid not null references public.loyalty_rewards (id) on delete cascade,
+  points_spent integer not null,
+  status text not null default 'redeemed' check (status in ('pending', 'redeemed')),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists loyalty_redemptions_employee_idx on public.loyalty_redemptions (employee_id);
+
+-- ============================================================================
+-- RATINGS
+-- ============================================================================
+create table if not exists public.ratings (
+  id uuid primary key default gen_random_uuid(),
+  order_id uuid not null unique references public.orders (id) on delete cascade,
+  employee_id uuid not null references public.profiles (id) on delete cascade,
+  delivery_rating smallint check (delivery_rating between 1 and 5),
+  food_rating smallint check (food_rating between 1 and 5),
+  system_rating smallint check (system_rating between 1 and 5),
+  comment text,
   created_at timestamptz not null default now()
 );
 
 -- ============================================================================
--- ANALYTICS: guide views
+-- DELIVERIES (per company / day)
 -- ============================================================================
-create table if not exists public.guide_views (
+create table if not exists public.deliveries (
   id uuid primary key default gen_random_uuid(),
-  apartment_id uuid not null references public.apartments (id) on delete cascade,
-  section_id uuid references public.guide_sections (id) on delete cascade,
-  viewed_at timestamptz not null default now(),
-  session_id text
+  company_id uuid not null references public.companies (id) on delete cascade,
+  delivery_date date not null,
+  scheduled_at timestamptz not null,
+  delivered_at timestamptz,
+  status public.delivery_status not null default 'scheduled',
+  created_at timestamptz not null default now(),
+  unique (company_id, delivery_date)
 );
 
-create index if not exists guide_views_apartment_id_idx on public.guide_views (apartment_id);
-
--- ============================================================================
--- AI CONCIERGE
--- ============================================================================
-create table if not exists public.ai_conversations (
-  id uuid primary key default gen_random_uuid(),
-  apartment_id uuid not null references public.apartments (id) on delete cascade,
-  session_id text not null,
-  created_at timestamptz not null default now()
-);
-
-create table if not exists public.ai_messages (
-  id uuid primary key default gen_random_uuid(),
-  conversation_id uuid not null references public.ai_conversations (id) on delete cascade,
-  role text not null check (role in ('user', 'assistant')),
-  content text not null,
-  created_at timestamptz not null default now()
-);
-
--- ============================================================================
--- NOTIFICATION PREFERENCES
--- ============================================================================
-create table if not exists public.notification_preferences (
-  apartment_id uuid primary key references public.apartments (id) on delete cascade,
-  email_maintenance boolean not null default true,
-  email_inventory boolean not null default true,
-  email_guest_activity boolean not null default false,
-  email_weekly_report boolean not null default true
-);
+create index if not exists deliveries_date_idx on public.deliveries (delivery_date);
 
 -- ============================================================================
 -- updated_at triggers
@@ -284,9 +305,27 @@ do $$
 declare
   t text;
 begin
-  foreach t in array array['apartments','guide_sections','rooms','room_items','inventory_items','maintenance_issues','profiles']
+  foreach t in array array['companies','restaurants','profiles','menu_items','orders']
   loop
     execute format('drop trigger if exists set_updated_at on public.%I;', t);
     execute format('create trigger set_updated_at before update on public.%I for each row execute procedure public.set_updated_at();', t);
   end loop;
 end $$;
+
+-- award loyalty points (1 point per 100 RSD) when an order is marked delivered
+create or replace function public.award_loyalty_points()
+returns trigger as $$
+begin
+  if new.status = 'delivered' and old.status is distinct from 'delivered' then
+    update public.profiles
+    set loyalty_points = loyalty_points + greatest(floor(new.subtotal / 100), 1)::integer
+    where id = new.employee_id;
+  end if;
+  return new;
+end;
+$$ language plpgsql security definer set search_path = public;
+
+drop trigger if exists on_order_delivered on public.orders;
+create trigger on_order_delivered
+  after update on public.orders
+  for each row execute procedure public.award_loyalty_points();
