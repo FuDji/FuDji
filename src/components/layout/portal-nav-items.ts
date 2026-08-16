@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  Award,
   CalendarDays,
   ClipboardList,
   Download,
@@ -12,6 +13,7 @@ import {
   Settings,
   ShoppingBag,
   Sparkles,
+  Star,
   Store,
   Truck,
   UsersRound,
@@ -43,6 +45,7 @@ export const RESTAURANT_NAV: NavItem[] = [
   { href: "/restaurant/menu", label: "Meni", icon: UtensilsCrossed },
   { href: "/restaurant/capacity", label: "Kapacitet", icon: ClipboardList },
   { href: "/restaurant/stats", label: "Statistika", icon: Sparkles },
+  { href: "/restaurant/reviews", label: "Recenzije", icon: Star },
 ];
 
 export const ADMIN_NAV: NavItem[] = [
@@ -54,6 +57,9 @@ export const ADMIN_NAV: NavItem[] = [
   { href: "/admin/deliveries", label: "Dostave", icon: Truck },
   { href: "/admin/campaigns", label: "Kampanje", icon: Megaphone },
   { href: "/admin/rewards", label: "Nagrade", icon: Gift },
+  { href: "/admin/loyalty", label: "Loyalty poeni", icon: Award },
+  { href: "/admin/reviews", label: "Recenzije", icon: Star },
+  { href: "/admin/settings", label: "Podešavanja", icon: Settings },
   { href: "/admin/export", label: "Export", icon: Download },
 ];
 
@@ -69,4 +75,11 @@ export const NAV_BY_PORTAL: Record<PortalKey, NavItem[]> = {
   office_manager: COMPANY_NAV,
   restaurant_staff: RESTAURANT_NAV,
   admin: ADMIN_NAV,
+};
+
+export const PORTAL_ROOT: Record<PortalKey, string> = {
+  employee: "/app",
+  office_manager: "/company",
+  restaurant_staff: "/restaurant",
+  admin: "/admin",
 };

@@ -77,6 +77,15 @@ export function formatDateSr(date: string | Date) {
   }).format(new Date(date));
 }
 
+export function formatDateTimeSr(date: string | Date) {
+  return new Intl.DateTimeFormat("sr-Latn-RS", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(date));
+}
+
 /** Is "now" past HH:MM cutoff time for the given date-key? Always true for past dates. */
 export function isPastCutoff(dateKey: string, cutoffTime: string, now = new Date()) {
   const todayK = toDateKey(now);

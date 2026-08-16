@@ -82,3 +82,53 @@ export async function getOrderForDate(
     .returns<OrderForDate>();
   return data;
 }
+
+export type UnratedOrder = Pick<Order, "id"> & { restaurant: { name: string } | null };
+
+/** Most recently delivered order the employee hasn't rated yet, used to force the rating prompt. */
+export async function getUnratedDeliveredOrder(
+  supabase: Awaited<ReturnType<typeof getEmployeeContext>>["supabase"],
+  employeeId: string
+) {
+  const { data } = await supabase
+    .from("orders")
+    .select("id, restaurant:restaurants(name), rating:ratings(id)")
+    .eq("employee_id", employeeId)
+    .eq("status", "delivered")
+    .order("delivered_at", { ascending: false })
+    .limit(10)
+    .returns<(UnratedOrder & { rating: { id: string }[] })[]>();
+
+  return (data ?? []).find((o) => !o.rating?.length) ?? null;
+}
+
+export type RecentOrder = Order & {
+  order_items: OrderItem[];
+  restaurant: Pick<Restaurant, "id" | "name" | "logo_url" | "status"> | null;
+};
+
+/** Last order per restaurant the employee has placed, for a Wolt-style "order again" shortcut. */
+export async function getRecentOrders(
+  supabase: Awaited<ReturnType<typeof getEmployeeContext>>["supabase"],
+  employeeId: string
+) {
+  const { data } = await supabase
+    .from("orders")
+    .select("*, order_items(*), restaurant:restaurants(id, name, logo_url, status)")
+    .eq("employee_id", employeeId)
+    .neq("status", "rejected")
+    .order("created_at", { ascending: false })
+    .limit(20)
+    .returns<RecentOrder[]>();
+
+  const seenRestaurants = new Set<string>();
+  const recent: RecentOrder[] = [];
+  for (const o of data ?? []) {
+    if (!o.restaurant || o.restaurant.status !== "active") continue;
+    if (seenRestaurants.has(o.restaurant_id)) continue;
+    seenRestaurants.add(o.restaurant_id);
+    recent.push(o);
+    if (recent.length >= 4) break;
+  }
+  return recent;
+}

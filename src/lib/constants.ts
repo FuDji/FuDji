@@ -29,6 +29,10 @@ export const MENU_CATEGORIES = [
   { value: "side", label: "Prilog" },
 ] as const;
 
+export const MENU_CATEGORY_LABELS: Record<string, string> = Object.fromEntries(
+  MENU_CATEGORIES.map((c) => [c.value, c.label])
+);
+
 export const CAMPAIGN_TYPE_LABELS = {
   discount: "Popust",
   free_item: "Gratis proizvod",

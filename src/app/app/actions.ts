@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 
 import { requireRole } from "@/lib/auth";
 import { computeOrderSplit, canEditOrder } from "@/lib/orders";
-import { isPastCutoff } from "@/lib/utils";
-import type { DailyMenu, MenuItem } from "@/types";
+import { isPastCutoff, todayKey } from "@/lib/utils";
+import type { DailyMenu, MenuItem, Order, OrderItem } from "@/types";
 
 export type ActionState = { error?: string; success?: boolean } | undefined;
 
@@ -155,6 +155,34 @@ export async function placeOrder(
   return { success: true };
 }
 
+/** Re-places a past order for today, reusing its restaurant + items ("order again"). */
+export async function reorderPastOrder(pastOrderId: string): Promise<ActionState> {
+  const { supabase, user } = await requireRole("employee");
+
+  const { data: pastOrder } = await supabase
+    .from("orders")
+    .select("*, order_items(*)")
+    .eq("id", pastOrderId)
+    .eq("employee_id", user.id)
+    .maybeSingle()
+    .returns<Order & { order_items: OrderItem[] }>();
+
+  if (!pastOrder) return { error: "Prethodna narudžbina nije pronađena." };
+
+  const items = pastOrder.order_items
+    .filter((i) => i.menu_item_id)
+    .map((i) => ({
+      menuItemId: i.menu_item_id as string,
+      quantity: i.quantity,
+      note: i.note ?? undefined,
+    }));
+  if (items.length === 0) {
+    return { error: "Jela iz te narudžbine više nisu dostupna." };
+  }
+
+  return placeOrder(todayKey(), pastOrder.restaurant_id, items, "");
+}
+
 export async function cancelOrder(orderId: string): Promise<ActionState> {
   const { supabase, user } = await requireRole("employee");
 
@@ -185,16 +213,27 @@ export async function submitRating(
 ): Promise<ActionState> {
   const { supabase, user } = await requireRole("employee");
 
+  if (!comment.trim()) return { error: "Ostavi kratak komentar uz ocenu." };
+
+  const { data: order } = await supabase
+    .from("orders")
+    .select("id, employee_id, status")
+    .eq("id", orderId)
+    .maybeSingle();
+  if (!order || order.employee_id !== user.id) return { error: "Narudžbina nije pronađena." };
+  if (order.status !== "delivered") return { error: "Narudžbina još nije dostavljena." };
+
   const { error } = await supabase.from("ratings").insert({
     order_id: orderId,
     employee_id: user.id,
     delivery_rating: deliveryRating,
     food_rating: foodRating,
     system_rating: systemRating,
-    comment: comment || null,
+    comment: comment.trim(),
   });
   if (error) return { error: "Ocena nije mogla biti sačuvana." };
 
+  revalidatePath("/app");
   revalidatePath("/app/orders");
   return { success: true };
 }

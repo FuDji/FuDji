@@ -9,6 +9,7 @@ import type {
   MenuItemRow,
   OrderItemRow,
   OrderRow,
+  PlatformSettingsRow,
   ProfileRow,
   RatingRow,
   RestaurantRow,
@@ -40,6 +41,7 @@ export type LoyaltyReward = LoyaltyRewardRow;
 export type LoyaltyRedemption = LoyaltyRedemptionRow;
 export type Rating = RatingRow;
 export type Delivery = DeliveryRow;
+export type PlatformSettings = PlatformSettingsRow;
 
 export type DailyMenuWithItem = DailyMenu & { menu_item: MenuItem };
 

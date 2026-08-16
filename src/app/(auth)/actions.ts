@@ -1,10 +1,12 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import type { Session } from "@supabase/supabase-js";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, type PortalScope } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ROLE_HOME } from "@/lib/constants";
+import { ROLE_SCOPE } from "@/lib/auth";
 import {
   loginSchema,
   forgotPasswordSchema,
@@ -13,6 +15,21 @@ import {
 } from "@/lib/validations";
 
 export type FormState = { error?: string; success?: boolean } | undefined;
+
+/**
+ * Each portal keeps its own cookie-isolated session (see lib/supabase/server.ts)
+ * so a browser can stay logged into /admin and /restaurant at the same time.
+ * Auth flows that don't yet know the user's role (login, invite, password
+ * recovery) authenticate on the neutral/default cookie first, then copy the
+ * resulting session into the portal-scoped cookie once the role is known.
+ */
+async function transferSessionToScope(session: Session, scope: PortalScope) {
+  const scopedClient = await createClient(scope);
+  await scopedClient.auth.setSession({
+    access_token: session.access_token,
+    refresh_token: session.refresh_token,
+  });
+}
 
 export async function signIn(_prev: FormState, formData: FormData): Promise<FormState> {
   const parsed = loginSchema.safeParse({
@@ -32,6 +49,10 @@ export async function signIn(_prev: FormState, formData: FormData): Promise<Form
     .select("role")
     .eq("id", data.user.id)
     .single();
+
+  if (profile && data.session) {
+    await transferSessionToScope(data.session, ROLE_SCOPE[profile.role]);
+  }
 
   redirect((profile && ROLE_HOME[profile.role]) || "/app");
 }
@@ -54,7 +75,18 @@ export async function requestPasswordReset(
   return { success: true };
 }
 
-export async function updatePassword(_prev: FormState, formData: FormData): Promise<FormState> {
+/**
+ * Updates the current session's password. Used two ways: (a) a password
+ * recovery link, whose session always lands in the neutral cookie set by
+ * /auth/callback — pass no scope; and (b) the self-service profile page,
+ * already running inside a specific portal's scoped session — pass that
+ * scope so the right cookie is read/written.
+ */
+export async function updatePassword(
+  scope: PortalScope | undefined,
+  _prev: FormState,
+  formData: FormData
+): Promise<FormState> {
   const parsed = resetPasswordSchema.safeParse({
     password: formData.get("password"),
     confirmPassword: formData.get("confirmPassword"),
@@ -63,7 +95,7 @@ export async function updatePassword(_prev: FormState, formData: FormData): Prom
     return { error: parsed.error.issues[0]?.message ?? "Neispravan unos" };
   }
 
-  const supabase = await createClient();
+  const supabase = await createClient(scope);
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
   if (error) return { error: error.message };
 
@@ -74,11 +106,19 @@ export async function updatePassword(_prev: FormState, formData: FormData): Prom
     ? await supabase.from("profiles").select("role").eq("id", user.id).single()
     : { data: null };
 
+  if (profile) {
+    const targetScope = ROLE_SCOPE[profile.role];
+    if (targetScope !== scope) {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData.session) await transferSessionToScope(sessionData.session, targetScope);
+    }
+  }
+
   redirect((profile && ROLE_HOME[profile.role]) || "/app");
 }
 
-export async function signOut() {
-  const supabase = await createClient();
+export async function signOut(scope?: PortalScope) {
+  const supabase = await createClient(scope);
   await supabase.auth.signOut();
   redirect("/login");
 }
@@ -177,11 +217,15 @@ export async function acceptInvite(_prev: FormState, formData: FormData): Promis
     .eq("id", invite.id);
 
   const supabase = await createClient();
-  const { error: signInError } = await supabase.auth.signInWithPassword({
+  const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
     email: invite.email,
     password: parsed.data.password,
   });
   if (signInError) redirect("/login");
+
+  if (signInData.session) {
+    await transferSessionToScope(signInData.session, ROLE_SCOPE[invite.role]);
+  }
 
   redirect(ROLE_HOME[invite.role] ?? "/app");
 }

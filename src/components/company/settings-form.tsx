@@ -20,13 +20,15 @@ export function CompanySettingsForm({ company }: { company: Company }) {
       <input type="hidden" name="payment_type" value={paymentType} />
 
       <div className="space-y-1.5">
-        <Label htmlFor="name">Naziv firme</Label>
-        <Input id="name" name="name" defaultValue={company.name} required />
+        <Label htmlFor="name_readonly">Naziv firme</Label>
+        <Input id="name_readonly" value={company.name} disabled />
+        <p className="text-xs text-muted-foreground">Menja samo administrator.</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="address">Adresa</Label>
-          <Input id="address" name="address" defaultValue={company.address ?? ""} />
+          <Label htmlFor="address_readonly">Adresa</Label>
+          <Input id="address_readonly" value={company.address ?? ""} disabled />
+          <p className="text-xs text-muted-foreground">Menja samo administrator.</p>
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="contact_phone">Telefon</Label>
@@ -84,14 +86,9 @@ export function CompanySettingsForm({ company }: { company: Company }) {
           <p className="text-xs text-muted-foreground">Mora biti bar 1h posle roka za naručivanje.</p>
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="delivery_tolerance_minutes">Tolerancija (min)</Label>
-          <Input
-            id="delivery_tolerance_minutes"
-            name="delivery_tolerance_minutes"
-            type="number"
-            defaultValue={company.delivery_tolerance_minutes}
-            required
-          />
+          <Label htmlFor="delivery_tolerance_readonly">Tolerancija (min)</Label>
+          <Input id="delivery_tolerance_readonly" value={company.delivery_tolerance_minutes} disabled />
+          <p className="text-xs text-muted-foreground">Menja samo administrator.</p>
         </div>
       </div>
 

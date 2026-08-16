@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Separator } from "@/components/ui/separator";
 import { OrderStatusBadge } from "@/components/orders/status-badge";
 import { computeOrderProfit } from "@/lib/orders";
-import { formatDateSr, formatMoney } from "@/lib/utils";
+import { formatDateSr, formatDateTimeSr, formatMoney } from "@/lib/utils";
 import type { OrderWithProfit } from "@/types";
 
 export function OrderDetailCard({ order }: { order: OrderWithProfit }) {
@@ -57,6 +57,12 @@ export function OrderDetailCard({ order }: { order: OrderWithProfit }) {
               <span className="text-xs text-muted-foreground">Priprema: {order.prep_time_minutes} min</span>
             )}
           </div>
+
+          {order.status === "delivered" && order.delivered_at && (
+            <p className="text-xs text-muted-foreground">
+              Dostavljeno: {formatDateTimeSr(order.delivered_at)}
+            </p>
+          )}
 
           {order.status === "rejected" && order.rejection_reason && (
             <p className="rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">

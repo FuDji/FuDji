@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { AlertCircle, CheckCircle2, ChevronLeft, Minus, Plus, Store } from "lucide-react";
+import { AlertCircle, CheckCircle2, ChevronLeft, ChevronRight, Minus, Plus, Store } from "lucide-react";
 
 import { placeOrder, cancelOrder } from "@/app/app/actions";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { OrderStatusBadge } from "@/components/orders/status-badge";
 import { computeOrderSplit, canEditOrder } from "@/lib/orders";
+import { MENU_CATEGORY_LABELS } from "@/lib/constants";
 import { formatMoney } from "@/lib/utils";
 import type { DailyMenu, MenuItem, OrderItem, OrderStatus, PaymentType, Restaurant } from "@/types";
 
@@ -278,34 +279,76 @@ export function DayOrderBuilder({
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {restaurants.map((r) => {
-        const deals = r.menu.filter((m) => m.is_deal_of_day);
-        return (
-          <button
-            key={r.restaurant.id}
-            disabled={r.full && r.restaurant.id !== existingOrder?.restaurant_id}
-            onClick={() => setRestaurantId(r.restaurant.id)}
-            className="group rounded-2xl border border-border bg-card p-5 text-left transition-colors hover:border-primary/40 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <Store className="size-5" />
+    <div>
+      <p className="mb-4 text-sm text-muted-foreground">
+        Rok za naručivanje: <span className="font-medium text-foreground">{cutoffTime.slice(0, 5)}</span>
+      </p>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {restaurants.map((r) => {
+          const deals = r.menu.filter((m) => m.is_deal_of_day);
+          const categories = [...new Set(r.menu.map((m) => m.menu_item.category).filter((c): c is string => !!c))];
+          const disabled = r.full && r.restaurant.id !== existingOrder?.restaurant_id;
+          return (
+            <button
+              key={r.restaurant.id}
+              disabled={disabled}
+              onClick={() => setRestaurantId(r.restaurant.id)}
+              className="group flex flex-col rounded-2xl border border-border bg-card p-5 text-left transition-colors hover:border-primary/40 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex min-w-0 items-center gap-3">
+                  {r.restaurant.logo_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={r.restaurant.logo_url}
+                      alt={r.restaurant.name}
+                      className="size-11 shrink-0 rounded-xl object-cover"
+                    />
+                  ) : (
+                    <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                      <Store className="size-5" />
+                    </div>
+                  )}
+                  <h3 className="truncate font-medium">{r.restaurant.name}</h3>
+                </div>
+                {r.full && (
+                  <Badge variant="destructive" className="shrink-0">
+                    Popunjeno
+                  </Badge>
+                )}
               </div>
-              {r.full && <Badge variant="destructive">Popunjeno</Badge>}
-            </div>
-            <h3 className="mt-3 font-medium">{r.restaurant.name}</h3>
-            <p className="mt-1 text-xs text-muted-foreground">{r.menu.length} jela</p>
-            {deals.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1">
-                {deals.slice(0, 2).map((d) => (
-                  <Badge key={d.id}>{d.deal_label || "Ponuda dana"}</Badge>
-                ))}
+
+              {deals.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1">
+                  {deals.slice(0, 2).map((d) => (
+                    <Badge key={d.id}>{d.deal_label || "Ponuda dana"}</Badge>
+                  ))}
+                </div>
+              )}
+
+              {categories.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {categories.slice(0, 4).map((c) => (
+                    <span
+                      key={c}
+                      className="rounded-full bg-secondary px-2.5 py-1 text-xs text-muted-foreground"
+                    >
+                      {MENU_CATEGORY_LABELS[c] ?? c}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-4 flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">{r.menu.length} jela</span>
+                <span className="inline-flex items-center gap-1 font-medium text-primary">
+                  Vidi sve <ChevronRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                </span>
               </div>
-            )}
-          </button>
-        );
-      })}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

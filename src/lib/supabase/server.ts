@@ -3,7 +3,14 @@ import { createServerClient } from "@supabase/ssr";
 
 import type { Database } from "@/types/database";
 
-export async function createClient() {
+/**
+ * One cookie namespace per portal (via auth.storageKey) so being logged into
+ * /restaurant in a tab doesn't kick out an /admin session in another tab of
+ * the same browser — each portal keeps its own independent session.
+ */
+export type PortalScope = "app" | "company" | "restaurant" | "admin";
+
+export async function createClient(scope?: PortalScope) {
   const cookieStore = await cookies();
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -18,6 +25,7 @@ export async function createClient() {
   }
 
   return createServerClient<Database>(url, key, {
+    cookieOptions: scope ? { name: `sb-primebite-${scope}` } : undefined,
     cookies: {
       getAll() {
         return cookieStore.getAll();

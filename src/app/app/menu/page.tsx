@@ -13,8 +13,15 @@ export default async function WeeklyMenuPage({
   const { supabase, user, profile, company } = await getEmployeeContext();
   const params = await searchParams;
 
+  const { data: settings } = await supabase
+    .from("platform_settings")
+    .select("order_window_days")
+    .eq("id", true)
+    .single();
+
   const today = new Date();
-  const days = Array.from({ length: 14 }, (_, i) => toDateKey(addDays(today, i)));
+  const windowDays = settings?.order_window_days ?? 7;
+  const days = Array.from({ length: windowDays }, (_, i) => toDateKey(addDays(today, i)));
   const selectedDay = params.day && days.includes(params.day) ? params.day : todayKey();
 
   const [restaurants, order] = await Promise.all([

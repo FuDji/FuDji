@@ -101,6 +101,7 @@ export type ProfileRow = {
   email: string | null;
   full_name: string | null;
   phone: string | null;
+  avatar_url: string | null;
   role: UserRole;
   company_id: string | null;
   restaurant_id: string | null;
@@ -176,6 +177,7 @@ export type OrderRow = {
   company_covered: number;
   employee_paid: number;
   locked: boolean;
+  delivered_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -236,6 +238,12 @@ export type RatingRow = {
   created_at: string;
 };
 
+export type PlatformSettingsRow = {
+  id: boolean;
+  loyalty_rsd_per_point: number;
+  order_window_days: number;
+};
+
 export type DeliveryRow = {
   id: string;
   company_id: string;
@@ -251,18 +259,19 @@ export type Database = {
     Tables: {
       companies: Table<CompanyRow, "id" | "created_at" | "updated_at" | "status" | "payment_type" | "cutoff_time" | "delivery_time" | "delivery_tolerance_minutes" | "daily_budget" | "address" | "contact_phone" | "contact_email" | "monthly_budget" | "mixed_cap">;
       restaurants: Table<RestaurantRow, "id" | "created_at" | "updated_at" | "status" | "commission_percent" | "logo_url" | "address" | "phone" | "description">;
-      profiles: Table<ProfileRow, "created_at" | "updated_at" | "role" | "loyalty_points" | "active" | "email" | "full_name" | "phone" | "company_id" | "restaurant_id" | "daily_budget_override", typeof PROFILES_RELATIONSHIPS>;
+      profiles: Table<ProfileRow, "created_at" | "updated_at" | "role" | "loyalty_points" | "active" | "email" | "full_name" | "phone" | "avatar_url" | "company_id" | "restaurant_id" | "daily_budget_override", typeof PROFILES_RELATIONSHIPS>;
       invitations: Table<InvitationRow, "id" | "token" | "status" | "created_at" | "accepted_at" | "role" | "company_id" | "restaurant_id" | "full_name" | "daily_budget_override" | "invited_by", typeof INVITATIONS_RELATIONSHIPS>;
       restaurant_schedule: Table<RestaurantScheduleRow, "id" | "created_at" | "is_open" | "meal_limit", typeof RESTAURANT_SCHEDULE_RELATIONSHIPS>;
       menu_items: Table<MenuItemRow, "id" | "created_at" | "updated_at" | "active" | "category" | "description" | "image_url" | "calories", typeof MENU_ITEMS_RELATIONSHIPS>;
       daily_menu: Table<DailyMenuRow, "id" | "created_at" | "is_available" | "is_deal_of_day" | "deal_label" | "deal_price", typeof DAILY_MENU_RELATIONSHIPS>;
-      orders: Table<OrderRow, "id" | "created_at" | "updated_at" | "status" | "locked" | "company_covered" | "employee_paid" | "subtotal" | "rejection_reason" | "prep_time_minutes" | "note" | "employee_id" | "employee_name_snapshot", typeof ORDERS_RELATIONSHIPS>;
+      orders: Table<OrderRow, "id" | "created_at" | "updated_at" | "status" | "locked" | "company_covered" | "employee_paid" | "subtotal" | "rejection_reason" | "prep_time_minutes" | "note" | "employee_id" | "employee_name_snapshot" | "delivered_at", typeof ORDERS_RELATIONSHIPS>;
       order_items: Table<OrderItemRow, "id" | "quantity" | "menu_item_id" | "note", typeof ORDER_ITEMS_RELATIONSHIPS>;
       campaigns: Table<CampaignRow, "id" | "created_at" | "active" | "campaign_type" | "starts_at" | "description" | "image_url" | "discount_percent" | "restaurant_id" | "ends_at", typeof CAMPAIGNS_RELATIONSHIPS>;
       loyalty_rewards: Table<LoyaltyRewardRow, "id" | "created_at" | "active" | "reward_type" | "description" | "image_url">;
       loyalty_redemptions: Table<LoyaltyRedemptionRow, "id" | "created_at" | "status", typeof LOYALTY_REDEMPTIONS_RELATIONSHIPS>;
       ratings: Table<RatingRow, "id" | "created_at" | "delivery_rating" | "food_rating" | "system_rating" | "comment", typeof RATINGS_RELATIONSHIPS>;
       deliveries: Table<DeliveryRow, "id" | "created_at" | "status" | "delivered_at", typeof DELIVERIES_RELATIONSHIPS>;
+      platform_settings: Table<PlatformSettingsRow, "id" | "loyalty_rsd_per_point" | "order_window_days">;
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

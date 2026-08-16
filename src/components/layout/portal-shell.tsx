@@ -7,7 +7,8 @@ import { Logo } from "@/components/brand/logo";
 import { UserMenu } from "@/components/layout/user-menu";
 import { PortalMobileNav } from "@/components/layout/portal-mobile-nav";
 import { cn } from "@/lib/utils";
-import { NAV_BY_PORTAL, type PortalKey } from "@/components/layout/portal-nav-items";
+import { NAV_BY_PORTAL, PORTAL_ROOT, type PortalKey } from "@/components/layout/portal-nav-items";
+import type { PortalScope } from "@/lib/supabase/server";
 
 const ROOTS = ["/app", "/company", "/restaurant", "/admin"];
 
@@ -24,6 +25,8 @@ export function PortalShell({
 }) {
   const pathname = usePathname();
   const navItems = NAV_BY_PORTAL[portal];
+  const root = PORTAL_ROOT[portal];
+  const scope = root.slice(1) as PortalScope;
 
   return (
     <div className="flex min-h-screen">
@@ -63,7 +66,14 @@ export function PortalShell({
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur-xl md:px-8">
           <PortalMobileNav portal={portal} />
           <div className="hidden md:block" />
-          <UserMenu name={user.name} email={user.email} avatarUrl={user.avatarUrl} />
+          <UserMenu
+            name={user.name}
+            email={user.email}
+            avatarUrl={user.avatarUrl}
+            profileHref={`${root}/profile`}
+            settingsHref={portal === "office_manager" ? "/company/settings" : undefined}
+            scope={scope}
+          />
         </header>
         <main className="flex-1 px-4 py-8 md:px-8">{children}</main>
       </div>

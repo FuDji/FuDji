@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { Check, Copy, X } from "lucide-react";
+import { useState, useTransition } from "react";
+import { Check, Copy, LogIn, X } from "lucide-react";
 
-import { revokeInvitation, toggleProfileActive } from "@/app/admin/actions";
+import { impersonateUser, revokeInvitation, toggleProfileActive } from "@/app/admin/actions";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StatusToggle } from "@/components/admin/status-toggle";
+import { EditManagedUserDialog } from "@/components/admin/edit-managed-user-dialog";
 
 type Manager = { id: string; full_name: string | null; email: string | null };
 type Invite = { id: string; email: string; full_name: string | null; token: string };
@@ -51,6 +52,26 @@ function InviteRow({ invite }: { invite: Invite }) {
   );
 }
 
+function ImpersonateButton({ profileId }: { profileId: string }) {
+  const [pending, startTransition] = useTransition();
+
+  return (
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      disabled={pending}
+      onClick={() =>
+        startTransition(async () => {
+          await impersonateUser(profileId);
+        })
+      }
+    >
+      <LogIn className="size-3.5" /> Uđi kao
+    </Button>
+  );
+}
+
 export function ManagerSection({ managers, invites }: { managers: Manager[]; invites: Invite[] }) {
   if (managers.length === 0 && invites.length === 0) return null;
 
@@ -63,6 +84,8 @@ export function ManagerSection({ managers, invites }: { managers: Manager[]; inv
               <div className="font-medium">{manager.full_name}</div>
               <div className="text-xs text-muted-foreground">{manager.email}</div>
             </div>
+            <ImpersonateButton profileId={manager.id} />
+            <EditManagedUserDialog profileId={manager.id} fullName={manager.full_name} />
             <span className="text-xs text-muted-foreground">Ukloni pristup</span>
             <StatusToggle active={true} onToggle={toggleProfileActive.bind(null, manager.id)} />
           </CardContent>

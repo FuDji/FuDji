@@ -119,8 +119,6 @@ export async function updateCompanySettings(
   if (!profile.company_id) return { error: "Nalog nije povezan ni sa jednom firmom." };
 
   const parsed = companySettingsSchema.safeParse({
-    name: formData.get("name"),
-    address: formData.get("address"),
     contact_phone: formData.get("contact_phone"),
     contact_email: formData.get("contact_email"),
     payment_type: formData.get("payment_type"),
@@ -128,7 +126,6 @@ export async function updateCompanySettings(
     monthly_budget: formData.get("monthly_budget") || null,
     mixed_cap: formData.get("mixed_cap") || null,
     delivery_time: formData.get("delivery_time"),
-    delivery_tolerance_minutes: formData.get("delivery_tolerance_minutes"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Neispravan unos" };
 

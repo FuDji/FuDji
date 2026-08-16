@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Flame, UtensilsCrossed, Wallet, Clock } from "lucide-react";
 
-import { getEmployeeContext, getOrderForDate, getRestaurantsForDate } from "./data";
+import { getEmployeeContext, getOrderForDate, getRecentOrders, getRestaurantsForDate } from "./data";
 import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/layout/empty-state";
 import { StatCard } from "@/components/layout/stat-card";
@@ -9,15 +9,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { OrderStatusBadge } from "@/components/orders/status-badge";
+import { ReorderSection } from "@/components/app/reorder-section";
 import { formatMoney, isPastCutoff, todayKey } from "@/lib/utils";
 
 export default async function TodayPage() {
   const { supabase, user, profile, company } = await getEmployeeContext();
   const today = todayKey();
 
-  const [order, restaurants] = await Promise.all([
+  const [order, restaurants, recentOrders] = await Promise.all([
     getOrderForDate(supabase, user.id, today),
     getRestaurantsForDate(supabase, today),
+    getRecentOrders(supabase, user.id),
   ]);
 
   const budget = profile.daily_budget_override ?? company?.daily_budget ?? 0;
@@ -115,6 +117,8 @@ export default async function TodayPage() {
           />
         )}
       </div>
+
+      <ReorderSection orders={recentOrders} disabled={cutoffPassed} />
 
       <div>
         <h2 className="mb-3 text-lg font-semibold">Ponuda dana</h2>

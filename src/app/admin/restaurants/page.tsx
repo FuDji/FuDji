@@ -1,8 +1,11 @@
+import Link from "next/link";
+
 import { requireRole } from "@/lib/auth";
 import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/layout/empty-state";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { RestaurantDialog } from "@/components/admin/restaurant-dialog";
 import { InviteRestaurantStaffDialog } from "@/components/admin/invite-restaurant-staff-dialog";
 import { StatusToggle } from "@/components/admin/status-toggle";
@@ -70,6 +73,11 @@ export default async function AdminRestaurantsPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <StatusToggle active={r.status === "active"} onToggle={toggleRestaurantStatus.bind(null, r.id)} />
+                    <Button asChild size="sm" variant="outline">
+                      <Link href={`/admin/restaurants/${r.id}/menu`}>
+                        <UtensilsCrossed className="size-3.5" /> Meni
+                      </Link>
+                    </Button>
                     <InviteRestaurantStaffDialog restaurantId={r.id} />
                     <RestaurantDialog restaurant={r} />
                   </div>
