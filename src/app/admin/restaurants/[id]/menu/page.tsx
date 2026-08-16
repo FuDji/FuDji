@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/layout/empty-state";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AdminMenuItemToggle } from "@/components/admin/menu-item-toggle";
+import { AdminMenuItemDialog } from "@/components/admin/menu-item-dialog";
 import { MENU_CATEGORIES } from "@/lib/constants";
 import { formatMoney } from "@/lib/utils";
 import { UtensilsCrossed } from "lucide-react";
@@ -32,7 +33,8 @@ export default async function AdminRestaurantMenuPage({
     <div>
       <PageHeader
         title={`Meni — ${restaurant.name}`}
-        description="Uključi ili isključi jela ako restoran to sam ne uradi na vreme."
+        description="Dodaj, izmeni ili uključi/isključi jela ako restoran to sam ne uradi na vreme."
+        actions={<AdminMenuItemDialog restaurantId={id} />}
       />
 
       {!items || items.length === 0 ? (
@@ -53,7 +55,10 @@ export default async function AdminRestaurantMenuPage({
                     {item.calories != null && ` · ${item.calories} kcal`}
                   </div>
                 </div>
-                <AdminMenuItemToggle itemId={item.id} active={item.active} />
+                <div className="flex items-center gap-2">
+                  <AdminMenuItemToggle itemId={item.id} active={item.active} />
+                  <AdminMenuItemDialog restaurantId={id} item={item} />
+                </div>
               </CardContent>
             </Card>
           ))}

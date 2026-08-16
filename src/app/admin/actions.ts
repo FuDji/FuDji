@@ -12,6 +12,7 @@ import {
   restaurantSchema,
   campaignSchema,
   loyaltyRewardSchema,
+  menuItemSchema,
 } from "@/lib/validations";
 import { deliveryGapMinutes, MIN_DELIVERY_GAP_MINUTES } from "@/lib/utils";
 import { ROLE_HOME } from "@/lib/constants";
@@ -187,7 +188,7 @@ export async function impersonateUser(targetProfileId: string): Promise<ActionSt
     httpOnly: true,
     secure: true,
     sameSite: "lax",
-    path: "/",
+    path: `/${targetScope}`,
     maxAge: 60 * 60,
   });
 
@@ -297,6 +298,45 @@ export async function toggleMenuItemActiveAdmin(itemId: string, active: boolean)
   const { error } = await supabase.from("menu_items").update({ active }).eq("id", itemId);
   if (error) return { error: "Status nije mogao biti sačuvan." };
   if (item) revalidatePath(`/admin/restaurants/${item.restaurant_id}/menu`);
+  return { success: true };
+}
+
+/** Full add/edit of a restaurant's menu item, for when the restaurant can't or doesn't do it themselves. */
+export async function upsertMenuItemAdmin(
+  restaurantId: string,
+  _prev: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const { supabase } = await requireRole("admin");
+  const id = formData.get("id") as string | null;
+
+  const parsed = menuItemSchema.safeParse({
+    name: formData.get("name"),
+    description: formData.get("description"),
+    image_url: formData.get("image_url"),
+    calories: formData.get("calories") || null,
+    price: formData.get("price"),
+    category: formData.get("category"),
+  });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Neispravan unos" };
+
+  if (id) {
+    const { error } = await supabase
+      .from("menu_items")
+      .update({ ...parsed.data, image_url: parsed.data.image_url || null })
+      .eq("id", id)
+      .eq("restaurant_id", restaurantId);
+    if (error) return { error: "Jelo nije moglo biti sačuvano." };
+  } else {
+    const { error } = await supabase.from("menu_items").insert({
+      ...parsed.data,
+      image_url: parsed.data.image_url || null,
+      restaurant_id: restaurantId,
+    });
+    if (error) return { error: "Jelo nije moglo biti kreirano." };
+  }
+
+  revalidatePath(`/admin/restaurants/${restaurantId}/menu`);
   return { success: true };
 }
 

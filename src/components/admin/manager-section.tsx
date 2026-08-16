@@ -54,21 +54,27 @@ function InviteRow({ invite }: { invite: Invite }) {
 
 function ImpersonateButton({ profileId }: { profileId: string }) {
   const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   return (
-    <Button
-      type="button"
-      size="sm"
-      variant="outline"
-      disabled={pending}
-      onClick={() =>
-        startTransition(async () => {
-          await impersonateUser(profileId);
-        })
-      }
-    >
-      <LogIn className="size-3.5" /> Uđi kao
-    </Button>
+    <div className="flex flex-col items-start gap-1">
+      <Button
+        type="button"
+        size="sm"
+        variant="outline"
+        disabled={pending}
+        onClick={() =>
+          startTransition(async () => {
+            setError(null);
+            const result = await impersonateUser(profileId);
+            if (result?.error) setError(result.error);
+          })
+        }
+      >
+        <LogIn className="size-3.5" /> Uđi kao
+      </Button>
+      {error && <span className="text-xs text-destructive">{error}</span>}
+    </div>
   );
 }
 
