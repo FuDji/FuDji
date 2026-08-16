@@ -8,7 +8,7 @@ export async function getRestaurantContext() {
   const ctx = await requireRole("restaurant_staff");
   const { supabase, profile } = ctx;
 
-  if (!profile.restaurant_id) redirect("/login");
+  if (!profile.restaurant_id) redirect("/restaurant/login");
 
   const { data: restaurant } = await supabase
     .from("restaurants")
@@ -16,7 +16,7 @@ export async function getRestaurantContext() {
     .eq("id", profile.restaurant_id)
     .single();
 
-  if (!restaurant) redirect("/login");
+  if (!restaurant) redirect("/restaurant/login");
 
   return { ...ctx, restaurant };
 }

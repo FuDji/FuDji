@@ -1,4 +1,4 @@
-import { getCompanyContext } from "../data";
+import { getCompanyContext } from "@/app/company/data";
 import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/layout/empty-state";
 import { Card, CardContent } from "@/components/ui/card";

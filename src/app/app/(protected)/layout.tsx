@@ -1,7 +1,7 @@
 import { requireRole } from "@/lib/auth";
 import { PortalShell } from "@/components/layout/portal-shell";
 import { RatingDialog } from "@/components/app/rating-dialog";
-import { getUnratedDeliveredOrder } from "./data";
+import { getUnratedDeliveredOrder } from "@/app/app/data";
 
 export default async function EmployeeLayout({ children }: { children: React.ReactNode }) {
   const { supabase, user, profile } = await requireRole("employee");

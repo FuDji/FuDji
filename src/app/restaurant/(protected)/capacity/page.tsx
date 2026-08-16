@@ -1,4 +1,4 @@
-import { getRestaurantContext } from "../data";
+import { getRestaurantContext } from "@/app/restaurant/data";
 import { PageHeader } from "@/components/layout/page-header";
 import { CapacityEditor } from "@/components/restaurant/capacity-editor";
 import { toDateKey, addDays } from "@/lib/utils";

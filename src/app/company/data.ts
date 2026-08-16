@@ -8,7 +8,7 @@ export async function getCompanyContext() {
   const ctx = await requireRole("office_manager");
   const { supabase, profile } = ctx;
 
-  if (!profile.company_id) redirect("/login");
+  if (!profile.company_id) redirect("/company/login");
 
   const { data: company } = await supabase
     .from("companies")
@@ -16,7 +16,7 @@ export async function getCompanyContext() {
     .eq("id", profile.company_id)
     .single();
 
-  if (!company) redirect("/login");
+  if (!company) redirect("/company/login");
 
   return { ...ctx, company };
 }

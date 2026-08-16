@@ -31,7 +31,17 @@ async function transferSessionToScope(session: Session, scope: PortalScope) {
   });
 }
 
-export async function signIn(_prev: FormState, formData: FormData): Promise<FormState> {
+/**
+ * Each portal has its own login page (see app/{app,company,restaurant,admin}/login)
+ * that only accepts accounts belonging to that portal — this is what keeps
+ * portal sessions properly separated, rather than one shared login redirecting
+ * by role after the fact.
+ */
+export async function signInPortal(
+  scope: PortalScope,
+  _prev: FormState,
+  formData: FormData
+): Promise<FormState> {
   const parsed = loginSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
@@ -50,11 +60,16 @@ export async function signIn(_prev: FormState, formData: FormData): Promise<Form
     .eq("id", data.user.id)
     .single();
 
-  if (profile && data.session) {
-    await transferSessionToScope(data.session, ROLE_SCOPE[profile.role]);
+  if (!profile || ROLE_SCOPE[profile.role] !== scope) {
+    await supabase.auth.signOut();
+    return { error: "Ovaj nalog nije povezan sa ovim portalom." };
   }
 
-  redirect((profile && ROLE_HOME[profile.role]) || "/app");
+  if (data.session) {
+    await transferSessionToScope(data.session, scope);
+  }
+
+  redirect(ROLE_HOME[profile.role] ?? "/app");
 }
 
 export async function requestPasswordReset(
@@ -120,7 +135,7 @@ export async function updatePassword(
 export async function signOut(scope?: PortalScope) {
   const supabase = await createClient(scope);
   await supabase.auth.signOut();
-  redirect("/login");
+  redirect(scope ? `/${scope}/login` : "/login");
 }
 
 /**
@@ -221,7 +236,7 @@ export async function acceptInvite(_prev: FormState, formData: FormData): Promis
     email: invite.email,
     password: parsed.data.password,
   });
-  if (signInError) redirect("/login");
+  if (signInError) redirect(`/${ROLE_SCOPE[invite.role]}/login`);
 
   if (signInData.session) {
     await transferSessionToScope(signInData.session, ROLE_SCOPE[invite.role]);

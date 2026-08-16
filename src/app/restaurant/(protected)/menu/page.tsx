@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { getRestaurantContext } from "../data";
+import { getRestaurantContext } from "@/app/restaurant/data";
 import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/layout/empty-state";
 import { Card, CardContent } from "@/components/ui/card";

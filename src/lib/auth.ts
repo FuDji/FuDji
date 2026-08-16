@@ -14,18 +14,22 @@ export const ROLE_SCOPE: Record<UserRole, PortalScope> = {
   admin: "admin",
 };
 
+function loginPath(scope?: PortalScope) {
+  return scope ? `/${scope}/login` : "/login";
+}
+
 export async function requireUser(scope?: PortalScope) {
   const supabase = await createClient(scope);
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login");
+  if (!user) redirect(loginPath(scope));
 
   return { supabase, user };
 }
 
-/** Loads the current user's profile row, redirecting to /login if unauthenticated. */
+/** Loads the current user's profile row, redirecting to that portal's login if unauthenticated. */
 export async function requireProfile(scope?: PortalScope) {
   const { supabase, user } = await requireUser(scope);
 
@@ -35,11 +39,11 @@ export async function requireProfile(scope?: PortalScope) {
     .eq("id", user.id)
     .single<Profile>();
 
-  if (!profile) redirect("/login");
+  if (!profile) redirect(loginPath(scope));
 
   if (!profile.active) {
     await supabase.auth.signOut();
-    redirect("/login?error=account_deactivated");
+    redirect(`${loginPath(scope)}?error=account_deactivated`);
   }
 
   return { supabase, user, profile };

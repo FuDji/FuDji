@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Flame, UtensilsCrossed, Wallet, Clock } from "lucide-react";
 
-import { getEmployeeContext, getOrderForDate, getRecentOrders, getRestaurantsForDate } from "./data";
+import { getEmployeeContext, getOrderForDate, getRecentOrders, getRestaurantsForDate } from "@/app/app/data";
 import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/layout/empty-state";
 import { StatCard } from "@/components/layout/stat-card";
