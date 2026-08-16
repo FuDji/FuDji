@@ -25,7 +25,14 @@ export async function createClient(scope?: PortalScope) {
   }
 
   return createServerClient<Database>(url, key, {
-    cookieOptions: scope ? { name: `sb-primebite-${scope}` } : undefined,
+    // A path restriction is essential here, not just the name: without it
+    // every portal's session cookie (all potentially chunked, since JWTs
+    // don't fit in one 4KB cookie) rides along on every single request
+    // regardless of which portal is being visited, and the combined
+    // Cookie header can grow past what the browser/edge will forward —
+    // manifesting as blank pages or redirect loops once someone has logged
+    // into more than one portal in the same browser.
+    cookieOptions: scope ? { name: `sb-primebite-${scope}`, path: `/${scope}` } : undefined,
     cookies: {
       getAll() {
         return cookieStore.getAll();
